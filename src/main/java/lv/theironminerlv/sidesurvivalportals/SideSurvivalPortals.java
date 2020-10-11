@@ -1,5 +1,6 @@
 package lv.theironminerlv.sidesurvivalportals;
 
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import fr.minuskube.inv.InventoryManager;
@@ -16,6 +17,7 @@ public class SideSurvivalPortals extends JavaPlugin
     private static InventoryManager invManager; // shouldn't be static in the end... (rework needed)
     private PortalManager portalManager;
     private PortalData portalData;
+    private FileConfiguration config = getConfig();
 
     public static SideSurvivalPortals getInstance() {
         return instance;
@@ -27,6 +29,8 @@ public class SideSurvivalPortals extends JavaPlugin
         portalData = new PortalData(this);
         portalManager = new PortalManager(this);
         getLogger().info("SideSurvivalPortals starting!");
+
+        this.saveDefaultConfig();
 
         this.getCommand("test").setExecutor(new test());
 
@@ -48,6 +52,10 @@ public class SideSurvivalPortals extends JavaPlugin
 
     public PortalManager getPortalManager() {
         return portalManager;
+    }
+
+    public FileConfiguration getConfig() {
+        return config;
     }
 
     @Override
