@@ -9,15 +9,24 @@ public class Portal
     private Location pos1;
     private Location pos2;
     private World world;
-    private boolean isPublic = false;
+    // private boolean isPublic = false;
     private Location tpLoc;
 
     public Portal(Location pos1, Location pos2, World world, Location tpLoc) {
         this.pos1 = pos1;
         this.pos2 = pos2;
         this.world = world;
-        this.tpLoc = tpLoc;
+        this.tpLoc = pos1;
     }
+
+    public Portal(Location pos1, Location pos2, World world, Location tpLoc, String id) {
+        this.pos1 = pos1;
+        this.pos2 = pos2;
+        this.world = world;
+        this.tpLoc = pos1;
+        this.id = id;
+    }
+
 
     public String getId() {
         return id;

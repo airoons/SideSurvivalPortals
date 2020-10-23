@@ -1,5 +1,7 @@
 package lv.theironminerlv.sidesurvivalportals;
 
+import java.io.File;
+
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -9,6 +11,7 @@ import lv.theironminerlv.sidesurvivalportals.data.PortalData;
 import lv.theironminerlv.sidesurvivalportals.listeners.PortalBreakListener;
 import lv.theironminerlv.sidesurvivalportals.listeners.PortalCreateListener;
 import lv.theironminerlv.sidesurvivalportals.listeners.PortalEnterListener;
+import lv.theironminerlv.sidesurvivalportals.managers.DataManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 
 public class SideSurvivalPortals extends JavaPlugin
@@ -16,8 +19,11 @@ public class SideSurvivalPortals extends JavaPlugin
     private static SideSurvivalPortals instance;
     private static InventoryManager invManager; // shouldn't be static in the end... (rework needed)
     private PortalManager portalManager;
+    private DataManager dataManager;
     private PortalData portalData;
-    private FileConfiguration config = getConfig();
+    
+    private FileConfiguration config;
+    private File portalFolder = new File(this.getDataFolder() + "/portals");
 
     public static SideSurvivalPortals getInstance() {
         return instance;
@@ -26,8 +32,11 @@ public class SideSurvivalPortals extends JavaPlugin
     @Override
     public void onEnable() {
         instance = this;
+        config = getConfig();
+        dataManager = new DataManager(this);
         portalData = new PortalData(this);
         portalManager = new PortalManager(this);
+
         getLogger().info("SideSurvivalPortals starting!");
 
         this.saveDefaultConfig();
@@ -40,6 +49,8 @@ public class SideSurvivalPortals extends JavaPlugin
 
         invManager = new InventoryManager(this);
         invManager.init();
+
+        dataManager.loadPortals();
     }
 
     public static InventoryManager getInvManager() {
@@ -54,8 +65,16 @@ public class SideSurvivalPortals extends JavaPlugin
         return portalManager;
     }
 
-    public FileConfiguration getConfig() {
+    public DataManager getDataManager() {
+        return dataManager;
+    }
+
+    public FileConfiguration getConfiguration() {
         return config;
+    }
+
+    public File getPortalFolder() {
+        return portalFolder;
     }
 
     @Override

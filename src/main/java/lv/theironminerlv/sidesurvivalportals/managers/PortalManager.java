@@ -29,11 +29,9 @@ import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
 public class PortalManager
 {
     private SideSurvivalPortals plugin;
-    private static PortalData portalData;
 
     public PortalManager(SideSurvivalPortals plugin) {
         this.plugin = plugin;
-        portalData = this.plugin.getPortalData();
     }
 
     // Fully creates portal (region + blocks), but saving has to be done after
@@ -62,7 +60,7 @@ public class PortalManager
         region.setFlag(Flags.BUILD, StateFlag.State.DENY);
         regionManager.addRegion(region);
 
-        portalData.addPortal(portal);
+        PortalData.addPortal(portal, true);
 
         setPortalGlass(pos1, pos2, isNorthSouth);
 
@@ -80,7 +78,7 @@ public class PortalManager
             blockLoc.getBlock().breakNaturally();
         }
 
-        portalData.removePortal(portal);
+        PortalData.removePortal(portal);
         removeRegion(portal.getId(), portal.getWorld());
     }
 
@@ -126,7 +124,7 @@ public class PortalManager
         ProtectedRegion region = getRegionAt(loc);
         if ((region != null) && (region.getId().contains("portal_"))) {
 
-            return portalData.CACHED_PORTALS.get(region.getId());
+            return PortalData.CACHED_PORTALS.get(region.getId());
         }
 
         return null;
