@@ -64,4 +64,5 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/io/papermc/paperlib/1.0.4/paperlib-1.0.4.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/sk89q/commandbook/2.3/commandbook-2.3.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/bstats/bstats-bukkit/1.7/bstats-bukkit-1.7.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/dev/dbassett/skullcreator/3.0.0/skullcreator-3.0.0.jar" enabled="true" runInBatchMode="false"/>
 </factorypath>

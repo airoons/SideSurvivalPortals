@@ -27,6 +27,10 @@
           <id>sk89q-repo</id>
           <url>https://maven.enginehub.org/repo/</url>
       </repository>
+      <repository>
+          <id>skullcreator-repo</id>
+          <url>https://dl.bintray.com/deanveloper/SkullCreator</url>
+      </repository>
   </repositories>
 
   <dependencies>
@@ -46,6 +50,12 @@
           <artifactId>worldguard-bukkit</artifactId>
           <version>7.0.4</version>
           <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>dev.dbassett</groupId>
+          <artifactId>skullcreator</artifactId>
+          <version>3.0.0</version>
+          <scope>compile</scope>
       </dependency>
   </dependencies>
 
@@ -78,6 +88,10 @@
             <relocation>
               <pattern>fr.minuskube.inv</pattern>
               <shadedPattern>libs.fr.minuskube.inv</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>dev.dbassett</pattern>
+              <shadedPattern>libs.dev.dbassett</shadedPattern>
             </relocation>
           </relocations>
         </configuration>

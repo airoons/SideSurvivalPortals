@@ -1,11 +1,14 @@
 package lv.theironminerlv.sidesurvivalportals.commands;
 
+import java.util.Map;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import lv.theironminerlv.sidesurvivalportals.managers.SimpleInventory;
+import lv.theironminerlv.sidesurvivalportals.data.PortalData;
+import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 
 public class test implements CommandExecutor
 {
@@ -16,8 +19,9 @@ public class test implements CommandExecutor
 
             player.sendMessage("whatisthis");
 
-            SimpleInventory inv = new SimpleInventory();
-            inv.open(player);
+            Map<String, Portal> portals;
+            portals = PortalData.getByWorld(player.getWorld());
+            player.sendMessage("array size " + portals.size());
         }
         
         return true;

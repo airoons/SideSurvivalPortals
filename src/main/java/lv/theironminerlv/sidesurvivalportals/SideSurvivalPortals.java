@@ -8,10 +8,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import fr.minuskube.inv.InventoryManager;
 import lv.theironminerlv.sidesurvivalportals.commands.test;
 import lv.theironminerlv.sidesurvivalportals.data.PortalData;
+import lv.theironminerlv.sidesurvivalportals.gui.MenuItems;
 import lv.theironminerlv.sidesurvivalportals.listeners.PortalBreakListener;
 import lv.theironminerlv.sidesurvivalportals.listeners.PortalCreateListener;
 import lv.theironminerlv.sidesurvivalportals.listeners.PortalEnterListener;
 import lv.theironminerlv.sidesurvivalportals.managers.DataManager;
+import lv.theironminerlv.sidesurvivalportals.managers.MenuManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 
 public class SideSurvivalPortals extends JavaPlugin
@@ -20,8 +22,10 @@ public class SideSurvivalPortals extends JavaPlugin
     private static InventoryManager invManager; // shouldn't be static in the end... (rework needed)
     private PortalManager portalManager;
     private DataManager dataManager;
+    private MenuManager menuManager;
     private PortalData portalData;
-    
+    private MenuItems menuItems;
+
     private FileConfiguration config;
     private File portalFolder = new File(this.getDataFolder() + "/portals");
 
@@ -36,6 +40,8 @@ public class SideSurvivalPortals extends JavaPlugin
         dataManager = new DataManager(this);
         portalData = new PortalData(this);
         portalManager = new PortalManager(this);
+        menuManager = new MenuManager(this);
+        menuItems = new MenuItems();
 
         getLogger().info("SideSurvivalPortals starting!");
 
@@ -67,6 +73,10 @@ public class SideSurvivalPortals extends JavaPlugin
 
     public DataManager getDataManager() {
         return dataManager;
+    }
+
+    public MenuManager getMenuManager() {
+        return menuManager;
     }
 
     public FileConfiguration getConfiguration() {

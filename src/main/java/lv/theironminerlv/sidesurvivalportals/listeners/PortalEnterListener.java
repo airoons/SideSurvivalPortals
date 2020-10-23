@@ -8,16 +8,19 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
+import lv.theironminerlv.sidesurvivalportals.managers.MenuManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 
 public class PortalEnterListener implements Listener
 {
     private SideSurvivalPortals plugin;
     private static PortalManager portalManager;
+    private static MenuManager menuManager;
 
     public PortalEnterListener(SideSurvivalPortals plugin) {
         this.plugin = plugin;
         portalManager = this.plugin.getPortalManager();
+        menuManager = this.plugin.getMenuManager();
     }
 
     @EventHandler
@@ -31,6 +34,10 @@ public class PortalEnterListener implements Listener
         if ((toRegion == null) || (toRegion.equals(portalManager.getRegionAt(event.getFrom()))))
             return;
 
+        if (!portalManager.isPortalAt(event.getTo()))
+            return;
+
+        menuManager.openMain(event.getPlayer(), portalManager.getPortalAt(event.getTo()));
         //Bukkit.broadcastMessage("[debug yes] " + event.getPlayer().getName() + " entered region " + toRegion.getId());
     }
 }
