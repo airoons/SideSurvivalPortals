@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.PortalCreateEvent;
@@ -15,15 +16,20 @@ import org.bukkit.event.world.PortalCreateEvent;
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
+import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
+import me.angeschossen.lands.api.integration.LandsIntegration;
+import me.angeschossen.lands.api.land.Land;
 
 public class PortalCreateListener implements Listener
 {
     private SideSurvivalPortals plugin;
     private static PortalManager portalManager;
+    private static LandsIntegration landsAPI;
 
     public PortalCreateListener(SideSurvivalPortals plugin) {
         this.plugin = plugin;
         portalManager = this.plugin.getPortalManager();
+        landsAPI = this.plugin.getLandsAPI();
     }
 
     @EventHandler
@@ -35,11 +41,19 @@ public class PortalCreateListener implements Listener
         Block block;
         BlockVector3 min = null;
         BlockVector3 max = null;
-        Location tpLoc = null;
+        Land land = null;
 
         // Gets portal facing...
         for (BlockState portalBlock : event.getBlocks()) {
             block = portalBlock.getBlock();
+
+            if (!landsAPI.isClaimed(block.getLocation())) {
+                if (event.getEntity() != null) {
+                    Player player = (Player)(event.getEntity());
+                    player.sendMessage(ConvertUtils.color("&cPortālu var uztaisīt tikai kādā teritorijā! (kāds no portāla blokiem atrodas ārpus teritorijas)"));
+                }
+                return;
+            }
 
             if (block.getType() != Material.OBSIDIAN) {
                 for (BlockState portalBlock2 : event.getBlocks()) {
@@ -58,6 +72,9 @@ public class PortalCreateListener implements Listener
         // Gets min and max coords of the portal
         for (BlockState portalBlock : event.getBlocks()) {
             block = portalBlock.getBlock();
+
+            if (land == null)
+                land = landsAPI.getLand(block.getLocation());
             
             if (block.getType() != Material.OBSIDIAN) {
                 if (isNorthSouth) {
@@ -76,7 +93,7 @@ public class PortalCreateListener implements Listener
             }
         }
 
-        Portal portal = new Portal(BukkitAdapter.adapt(event.getWorld(), min), BukkitAdapter.adapt(event.getWorld(), max), event.getWorld(), tpLoc);
+        Portal portal = new Portal(BukkitAdapter.adapt(event.getWorld(), min), BukkitAdapter.adapt(event.getWorld(), max), event.getWorld(), isNorthSouth, land);
 
         if (!portalManager.create(portal, isNorthSouth))
             return;

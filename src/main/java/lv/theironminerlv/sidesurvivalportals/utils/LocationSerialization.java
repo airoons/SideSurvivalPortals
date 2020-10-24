@@ -6,11 +6,14 @@ import org.bukkit.World;
 
 public class LocationSerialization
 {
-    public static String getStringFromLocation(Location loc) {
+    public static String getStringFromLocation(Location loc, boolean strict) {
         if (loc == null) {
             return "";
         }
-        return loc.getWorld().getName() + ";" + loc.getBlockX() + ";" + loc.getBlockY() + ";" + loc.getBlockZ();
+        if (strict)
+            return loc.getWorld().getName() + ";" + loc.getX() + ";" + loc.getY() + ";" + loc.getZ();
+        else
+            return loc.getWorld().getName() + ";" + loc.getBlockX() + ";" + loc.getBlockY() + ";" + loc.getBlockZ();
     }
 
     public static Location getLocationFromString(String s) {

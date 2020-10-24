@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.gui.MainMenu;
+import lv.theironminerlv.sidesurvivalportals.gui.PrivatePortalsMenu;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 
 public class MenuManager
@@ -17,5 +18,10 @@ public class MenuManager
     public void openMain(Player player, Portal portal) {
         MainMenu gui = new MainMenu(portal);
         gui.open(player, portal);
+    }
+
+    public void openPrivate(Player player) {
+        PrivatePortalsMenu gui = new PrivatePortalsMenu();
+        gui.open(player);
     }
 }

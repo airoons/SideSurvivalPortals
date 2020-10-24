@@ -31,14 +31,18 @@
           <id>skullcreator-repo</id>
           <url>https://dl.bintray.com/deanveloper/SkullCreator</url>
       </repository>
+      <repository>
+          <id>jitpack.io</id>
+          <url>https://jitpack.io</url>
+      </repository>
   </repositories>
 
   <dependencies>
       <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.16.2-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
+          <groupId>org.spigotmc</groupId>
+          <artifactId>spigot-api</artifactId>
+          <version>1.16.2-R0.1-SNAPSHOT</version>
+          <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>fr.minuskube.inv</groupId>
@@ -56,6 +60,12 @@
           <artifactId>skullcreator</artifactId>
           <version>3.0.0</version>
           <scope>compile</scope>
+      </dependency>
+      <dependency>
+          <groupId>com.github.angeschossen</groupId>
+          <artifactId>LandsAPI</artifactId>
+          <version>4.10.17</version>
+          <scope>provided</scope>
       </dependency>
   </dependencies>
 

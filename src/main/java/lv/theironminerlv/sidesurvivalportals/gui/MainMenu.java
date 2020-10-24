@@ -21,8 +21,10 @@ import lv.theironminerlv.sidesurvivalportals.data.PortalData;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
 
-public class MainMenu implements InventoryProvider {
-    private static InventoryManager invManager = SideSurvivalPortals.getInvManager();
+public class MainMenu implements InventoryProvider
+{
+    private static SideSurvivalPortals plugin = SideSurvivalPortals.getInstance();
+    private InventoryManager invManager = plugin.getInvManager();
     private SmartInventory inventory;
     private Portal portal;
 
@@ -77,7 +79,7 @@ public class MainMenu implements InventoryProvider {
         meta.setDisplayName(ConvertUtils.color("&5Privātie portāli"));
         item.setItemMeta(meta);
 
-        contents.set(1, 3, ClickableItem.of(item, e -> player.sendMessage(ChatColor.BOLD + "Privātie portāli yo")));
+        contents.set(1, 3, ClickableItem.of(item, e -> openPrivatePortals(player)));
 
         item = MenuItems.miniGlobe;
         meta = item.getItemMeta();
@@ -124,5 +126,9 @@ public class MainMenu implements InventoryProvider {
     public void teleportToNetherSpawn(Player player) {
         Location loc = PortalData.getNetherSpawnLocation();
         player.teleport(loc);
+    }
+
+    public void openPrivatePortals(Player player) {
+        plugin.getMenuManager().openPrivate(player);
     }
 }

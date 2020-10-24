@@ -1,5 +1,6 @@
 package lv.theironminerlv.sidesurvivalportals.utils;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,16 +18,28 @@ public class ConvertUtils
         return BlockVector3.at(loc.getX(), loc.getY(), loc.getZ());
     }
   
+    public static List<String> color(List<String> input) {
+        for (int i = 0; i < input.size(); i++) {
+            input.set(i, color(input.get(i)));
+        }
+
+        return input;
+    }
+
     public static String color(String input) {
-      Matcher m = HEX_PATTERN.matcher(input);
-      try {
-        ChatColor.class.getDeclaredMethod("of", new Class[] { String.class });
-        while (m.find())
-          input = input.replace(m.group(), ChatColor.of(m.group(1)).toString()); 
-      } catch (Exception e) {
-        while (m.find())
-          input = input.replace(m.group(), ""); 
-      } 
-      return ChatColor.translateAlternateColorCodes('&', input);
+        Matcher m = HEX_PATTERN.matcher(input);
+        try {
+            ChatColor.class.getDeclaredMethod("of", new Class[] { String.class });
+            while (m.find())
+                input = input.replace(m.group(), ChatColor.of(m.group(1)).toString()); 
+        } catch (Exception e) {
+            while (m.find())
+                input = input.replace(m.group(), ""); 
+        } 
+        return ChatColor.translateAlternateColorCodes('&', input);
+    }
+
+    public static String readableLoc(Location loc) {
+        return loc.getWorld().getName() + ", X: " + loc.getBlockX() + ", Y: " + loc.getBlockY() + ", Z: " + loc.getBlockZ();
     }
 }

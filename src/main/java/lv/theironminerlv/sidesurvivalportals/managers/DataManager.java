@@ -13,13 +13,17 @@ import lv.theironminerlv.sidesurvivalportals.data.PortalData;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.objects.SaveFile;
 import lv.theironminerlv.sidesurvivalportals.utils.LocationSerialization;
+import me.angeschossen.lands.api.integration.LandsIntegration;
+import me.angeschossen.lands.api.land.Land;
 
 public class DataManager
 {
     private SideSurvivalPortals plugin;
+    private static LandsIntegration landsAPI;
 
     public DataManager(SideSurvivalPortals plugin) {
         this.plugin = plugin;
+        landsAPI = this.plugin.getLandsAPI();
     }
 
     public void save(Portal portal) {
@@ -27,9 +31,11 @@ public class DataManager
 
         save.getConfig().set("id", portal.getId());
         save.getConfig().set("world", portal.getWorld().getName());
-        save.getConfig().set("pos1", LocationSerialization.getStringFromLocation(portal.getPos1()));
-        save.getConfig().set("pos2", LocationSerialization.getStringFromLocation(portal.getPos2()));
-        save.getConfig().set("tploc", LocationSerialization.getStringFromLocation(portal.getTpLoc()));
+        save.getConfig().set("pos1", LocationSerialization.getStringFromLocation(portal.getPos1(), false));
+        save.getConfig().set("pos2", LocationSerialization.getStringFromLocation(portal.getPos2(), false));
+        save.getConfig().set("tploc", LocationSerialization.getStringFromLocation(portal.getTpLoc(), true));
+        save.getConfig().set("isnorthsouth", portal.getNorthSouth());
+        save.getConfig().set("landid", portal.getLand().getId());
         
         save.save();
     }
@@ -45,22 +51,28 @@ public class DataManager
         Portal portal;
         Location pos1;
         Location pos2;
-        Location tpLoc;
+        boolean isNorthSouth;
         World world;
+        Land land;
 
         if (portalFiles.length > 0) {
             for (File file : portalFiles) {
                 portal =  null;
+
                 save = YamlConfiguration.loadConfiguration(file);
+                if (!save.contains("landid") || !save.contains("pos1") || !save.contains("pos2") || !save.contains("id") || !save.contains("isnorthsouth"))
+                    continue;
+
+                land = landsAPI.getLand((int)save.getInt("landid"));
 
                 pos1 = LocationSerialization.getLocationFromString(save.getString("pos1"));
                 pos2 = LocationSerialization.getLocationFromString(save.getString("pos2"));
-                tpLoc = LocationSerialization.getLocationFromString(save.getString("tploc"));
                 world = Bukkit.getWorld(save.getString("world"));
+                isNorthSouth = save.getBoolean("isnorthsouth");
 
-                portal = new Portal(pos1, pos2, world, tpLoc, save.getString("id"));
+                portal = new Portal(pos1, pos2, world, isNorthSouth, land, save.getString("id"));
 
-                if (portal != null)
+                if (portal != null && land != null)
                     PortalData.addPortal(portal, false);
             }
         }

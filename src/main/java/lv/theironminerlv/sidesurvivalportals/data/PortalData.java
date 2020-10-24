@@ -11,6 +11,7 @@ import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.managers.DataManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.LocationSerialization;
+import me.angeschossen.lands.api.land.Land;
 
 public class PortalData
 {
@@ -44,6 +45,16 @@ public class PortalData
         return CACHED_PORTALS.entrySet().stream()
         .filter(map -> map.getValue().getWorld().equals(world))
         .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+    }
+
+    public static Map<String, Portal> getByLand(Land land) {
+        return CACHED_PORTALS.entrySet().stream()
+        .filter(map -> map.getValue().getLand().equals(land))
+        .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+    }
+
+    public static boolean portalExists(String id) {
+        return CACHED_PORTALS.containsKey(id);
     }
 
     public static Location getSpawnLocation() {

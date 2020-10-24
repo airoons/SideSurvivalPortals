@@ -1,5 +1,6 @@
 package lv.theironminerlv.sidesurvivalportals.listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -8,6 +9,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
+import me.angeschossen.lands.api.events.ChunkDeleteEvent;
 
 public class PortalBreakListener implements Listener
 {
@@ -30,5 +32,12 @@ public class PortalBreakListener implements Listener
                 portalManager.remove(portal);
             }
         }
+    }
+
+    @EventHandler
+    public void onChunkDelete(ChunkDeleteEvent event)
+    {
+        Bukkit.broadcastMessage("[debug] deleted chunk " + event.getX() + ", " + event.getZ());
+        portalManager.recheckPortals(event.getLand());
     }
 }

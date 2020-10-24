@@ -1,6 +1,7 @@
 package lv.theironminerlv.sidesurvivalportals.managers;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
@@ -12,6 +13,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -19,19 +21,25 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.GlassPane;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.data.PortalData;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.BlockUtils;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
+import lv.theironminerlv.sidesurvivalportals.utils.LocationSerialization;
+import me.angeschossen.lands.api.integration.LandsIntegration;
+import me.angeschossen.lands.api.land.Land;
 
 public class PortalManager
 {
     private SideSurvivalPortals plugin;
+    private static LandsIntegration landsAPI;
 
     public PortalManager(SideSurvivalPortals plugin) {
         this.plugin = plugin;
+        landsAPI = this.plugin.getLandsAPI();
     }
 
     // Fully creates portal (region + blocks), but saving has to be done after
@@ -60,9 +68,15 @@ public class PortalManager
         region.setFlag(Flags.BUILD, StateFlag.State.DENY);
         regionManager.addRegion(region);
 
-        PortalData.addPortal(portal, true);
-
         setPortalGlass(pos1, pos2, isNorthSouth);
+
+        Location safeLoc = getSafeTeleportLoc(portal);
+        if (safeLoc != null)
+            portal.setTpLoc(safeLoc);
+        else
+            portal.setTpLoc(pos1);
+
+        PortalData.addPortal(portal, true);
 
         return true;
     }
@@ -74,9 +88,13 @@ public class PortalManager
     
         ArrayList<Location> portalBlocks = BlockUtils.getBlocksBetween(portal.getPos1(), portal.getPos2());
 
-        for (Location blockLoc : portalBlocks) {
-            blockLoc.getBlock().breakNaturally();
-        }
+        new BukkitRunnable(){
+            public void run() {
+                for (Location blockLoc : portalBlocks) {
+                    blockLoc.getBlock().breakNaturally();
+                }
+            }
+        }.runTask(plugin);
 
         PortalData.removePortal(portal);
         removeRegion(portal.getId(), portal.getWorld());
@@ -113,11 +131,17 @@ public class PortalManager
 
     public boolean isPortalAt(Location loc) {
         ProtectedRegion region = getRegionAt(loc);
-        if ((region != null) && (region.getId().contains("portal_"))) {
-            return true;
-        }
 
-        return false;
+        if (region == null)
+            return false;
+
+        if (!region.getId().contains("portal_"))
+            return false;
+
+        if (!PortalData.portalExists(region.getId()))
+            return false;
+
+        return true;
     }
 
     public Portal getPortalAt(Location loc) {
@@ -155,5 +179,50 @@ public class PortalManager
             return;
 
         regionManager.removeRegion(id);
+    }
+
+    public void recheckPortals(Land land) {
+        Map<String, Portal> portals = PortalData.getByLand(land);
+
+        if (portals.size() > 0) {
+            for (Portal portal : portals.values()) {
+                if (landsAPI.getLand(portal.getPos1()) == null) {
+                    remove(portal);
+                }
+            }
+        }
+    }
+
+    public Location getSafeTeleportLoc(Portal portal) {
+        Location pos1 = portal.getPos1().clone();
+        Location pos2 = portal.getPos2().clone();
+        Block checkBlock;
+        ArrayList<Location> portalBlocks;
+
+        pos2.setY(pos1.getY());
+        if (portal.getNorthSouth()){
+            portalBlocks = BlockUtils.getBlocksBetween(pos1.add(1.0, 0.0, 0.0), pos2.add(-1.0, 0.0, 0.0));
+        } else {
+            portalBlocks = BlockUtils.getBlocksBetween(pos1.add(0.0, 0.0, 1.0), pos2.add(0.0, 0.0, -1.0));
+        }
+
+        for (Location loc : portalBlocks) {
+            if (loc.getBlock().isEmpty() && loc.getBlock().getRelative(BlockFace.UP).isEmpty()) {
+                checkBlock = loc.getBlock().getRelative(BlockFace.DOWN);
+                if (!checkBlock.isEmpty() && !checkBlock.isLiquid() && !checkBlock.isPassable()) {
+                    loc.add(0.5, 0, 0.5);
+                    return loc;
+                } else if (checkBlock.isEmpty()) {
+                    checkBlock = checkBlock.getRelative(BlockFace.DOWN);
+                    if (!checkBlock.isEmpty() && !checkBlock.isLiquid() && !checkBlock.isPassable()) {
+                        loc.add(0.5, 0, 0.5);
+                        return loc;
+                    }
+                }
+
+            }
+        }
+
+        return null;
     }
 }

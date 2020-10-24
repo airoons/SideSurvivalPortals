@@ -9,10 +9,19 @@ public class BlockUtils
     public static ArrayList<Location> getBlocksBetween(Location min, Location max) {
         ArrayList<Location> locs = new ArrayList<>();
 
-        for (int i = max.getBlockX(); i <= min.getBlockX(); i++) {
-            for (int j = min.getBlockY(); j <= max.getBlockY(); j++) {
-                for (int k = min.getBlockZ(); k <= max.getBlockZ(); k++) {
-                    locs.add(new Location(min.getWorld(), i, j, k));
+        int topBlockX = (min.getBlockX() < max.getBlockX() ? max.getBlockX() : min.getBlockX());
+        int bottomBlockX = (min.getBlockX() > max.getBlockX() ? max.getBlockX() : min.getBlockX());
+
+        int topBlockY = (min.getBlockY() < max.getBlockY() ? max.getBlockY() : min.getBlockY());
+        int bottomBlockY = (min.getBlockY() > max.getBlockY() ? max.getBlockY() : min.getBlockY());
+
+        int topBlockZ = (min.getBlockZ() < max.getBlockZ() ? max.getBlockZ() : min.getBlockZ());
+        int bottomBlockZ = (min.getBlockZ() > max.getBlockZ() ? max.getBlockZ() : min.getBlockZ());
+
+        for (int x = bottomBlockX; x <= topBlockX; x++) {
+            for (int z = bottomBlockZ; z <= topBlockZ; z++) {
+                for (int y = bottomBlockY; y <= topBlockY; y++) {
+                    locs.add(new Location(min.getWorld(), x, y, z));
                 }
             }
         }

@@ -15,11 +15,12 @@ import lv.theironminerlv.sidesurvivalportals.listeners.PortalEnterListener;
 import lv.theironminerlv.sidesurvivalportals.managers.DataManager;
 import lv.theironminerlv.sidesurvivalportals.managers.MenuManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
+import me.angeschossen.lands.api.integration.LandsIntegration;
 
 public class SideSurvivalPortals extends JavaPlugin
 {
     private static SideSurvivalPortals instance;
-    private static InventoryManager invManager; // shouldn't be static in the end... (rework needed)
+    private InventoryManager invManager; // shouldn't be static in the end... (rework needed)
     private PortalManager portalManager;
     private DataManager dataManager;
     private MenuManager menuManager;
@@ -29,6 +30,8 @@ public class SideSurvivalPortals extends JavaPlugin
     private FileConfiguration config;
     private File portalFolder = new File(this.getDataFolder() + "/portals");
 
+    private LandsIntegration landsAPI;
+
     public static SideSurvivalPortals getInstance() {
         return instance;
     }
@@ -37,6 +40,9 @@ public class SideSurvivalPortals extends JavaPlugin
     public void onEnable() {
         instance = this;
         config = getConfig();
+
+        landsAPI = new LandsIntegration(this);
+
         dataManager = new DataManager(this);
         portalData = new PortalData(this);
         portalManager = new PortalManager(this);
@@ -46,7 +52,6 @@ public class SideSurvivalPortals extends JavaPlugin
         getLogger().info("SideSurvivalPortals starting!");
 
         this.saveDefaultConfig();
-
         this.getCommand("test").setExecutor(new test());
 
         getServer().getPluginManager().registerEvents(new PortalCreateListener(this), this);
@@ -59,12 +64,12 @@ public class SideSurvivalPortals extends JavaPlugin
         dataManager.loadPortals();
     }
 
-    public static InventoryManager getInvManager() {
+    public InventoryManager getInvManager() {
         return invManager;
     }
 
     public PortalData getPortalData() {
-        return this.portalData;
+        return portalData;
     }
 
     public PortalManager getPortalManager() {
@@ -85,6 +90,10 @@ public class SideSurvivalPortals extends JavaPlugin
 
     public File getPortalFolder() {
         return portalFolder;
+    }
+
+    public LandsIntegration getLandsAPI() {
+        return landsAPI;
     }
 
     @Override
