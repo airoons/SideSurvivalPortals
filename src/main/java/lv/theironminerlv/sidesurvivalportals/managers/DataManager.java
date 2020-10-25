@@ -36,6 +36,7 @@ public class DataManager
         save.getConfig().set("tploc", LocationSerialization.getStringFromLocation(portal.getTpLoc(), true));
         save.getConfig().set("isnorthsouth", portal.getNorthSouth());
         save.getConfig().set("landid", portal.getLand().getId());
+        save.getConfig().set("settings.icon", portal.getIcon().getType().toString());
         
         save.save();
     }
@@ -54,13 +55,14 @@ public class DataManager
         boolean isNorthSouth;
         World world;
         Land land;
+        String icon;
 
         if (portalFiles.length > 0) {
             for (File file : portalFiles) {
                 portal =  null;
 
                 save = YamlConfiguration.loadConfiguration(file);
-                if (!save.contains("landid") || !save.contains("pos1") || !save.contains("pos2") || !save.contains("id") || !save.contains("isnorthsouth"))
+                if (!save.contains("landid") || !save.contains("pos1") || !save.contains("pos2") || !save.contains("id") || !save.contains("isnorthsouth") || !save.contains("settings.icon"))
                     continue;
 
                 land = landsAPI.getLand((int)save.getInt("landid"));
@@ -69,8 +71,9 @@ public class DataManager
                 pos2 = LocationSerialization.getLocationFromString(save.getString("pos2"));
                 world = Bukkit.getWorld(save.getString("world"));
                 isNorthSouth = save.getBoolean("isnorthsouth");
+                icon = save.getString("settings.icon");
 
-                portal = new Portal(pos1, pos2, world, isNorthSouth, land, save.getString("id"));
+                portal = new Portal(pos1, pos2, world, isNorthSouth, land, save.getString("id"), icon);
 
                 if (portal != null && land != null)
                     PortalData.addPortal(portal, false);

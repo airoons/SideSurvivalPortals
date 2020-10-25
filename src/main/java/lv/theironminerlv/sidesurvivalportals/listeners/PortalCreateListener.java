@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.world.PortalCreateEvent;
 
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
+import lv.theironminerlv.sidesurvivalportals.managers.PermissionManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
@@ -24,11 +25,13 @@ public class PortalCreateListener implements Listener
 {
     private SideSurvivalPortals plugin;
     private static PortalManager portalManager;
+    private static PermissionManager permissionManager;
     private static LandsIntegration landsAPI;
 
     public PortalCreateListener(SideSurvivalPortals plugin) {
         this.plugin = plugin;
         portalManager = this.plugin.getPortalManager();
+        permissionManager = this.plugin.getPermissionManager();
         landsAPI = this.plugin.getLandsAPI();
     }
 
@@ -37,21 +40,22 @@ public class PortalCreateListener implements Listener
     {
         event.setCancelled(true);
 
+        if (event.getEntity() == null)
+            return;
+
         boolean isNorthSouth = false;
         Block block;
         BlockVector3 min = null;
         BlockVector3 max = null;
         Land land = null;
+        Player player = (Player)(event.getEntity());
 
         // Gets portal facing...
         for (BlockState portalBlock : event.getBlocks()) {
             block = portalBlock.getBlock();
 
             if (!landsAPI.isClaimed(block.getLocation())) {
-                if (event.getEntity() != null) {
-                    Player player = (Player)(event.getEntity());
-                    player.sendMessage(ConvertUtils.color("&cPortālu var uztaisīt tikai kādā teritorijā! (kāds no portāla blokiem atrodas ārpus teritorijas)"));
-                }
+                player.sendMessage(ConvertUtils.color("&cPortālu var uztaisīt tikai kādā teritorijā! (kāds no portāla blokiem atrodas ārpus teritorijas)"));
                 return;
             }
 
@@ -69,7 +73,7 @@ public class PortalCreateListener implements Listener
             }
         }
 
-        // Gets min and max coords of the portal
+        // Gets min and max coords of the portal + land
         for (BlockState portalBlock : event.getBlocks()) {
             block = portalBlock.getBlock();
 
@@ -91,6 +95,11 @@ public class PortalCreateListener implements Listener
                     }
                 }
             }
+        }
+
+        if (!permissionManager.canCreatePortal(player, land)) {
+            player.sendMessage(ConvertUtils.color("&cTev nav atļauts izveidot šeit portālu!"));
+            return;
         }
 
         Portal portal = new Portal(BukkitAdapter.adapt(event.getWorld(), min), BukkitAdapter.adapt(event.getWorld(), max), event.getWorld(), isNorthSouth, land);

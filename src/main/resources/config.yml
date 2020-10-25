@@ -3,3 +3,14 @@
 teleportLocs:
   spawn: world;0.5;113;-0.5;0;0
   netherspawn: world_nether;0.5;93;-1.5;-125;0
+availableIcons:
+  - PAPER
+  - DIRT
+  - STONE
+  - OBSIDIAN
+  - SAND
+  - GRAVEL
+  - PISTON
+  - MINECART
+  - BREAD
+  - APPLE

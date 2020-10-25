@@ -49,7 +49,7 @@ public class PrivatePortalsMenu implements InventoryProvider {
 
     private void load() {
         this.inventory = SmartInventory.builder().manager(invManager).id("portal").provider(new PrivatePortalsMenu())
-                .size(6, 9).title(ChatColor.DARK_PURPLE + "Privātie portāli").build();
+                .size(6, 9).title("Privātie portāli").build();
     }
 
     public void open(Player player) {
@@ -76,17 +76,24 @@ public class PrivatePortalsMenu implements InventoryProvider {
         }
 
         int portalAmount = portals.size();
+        String posReadable;
+
         
         ClickableItem[] items = new ClickableItem[portalAmount];
 
         for(int i = 0; i < items.length; i++) {
             Portal portal = portals.get(i);
             
-            item = new ItemStack(Material.PAPER);
+            item = portal.getIcon().clone();
             itemMeta = item.getItemMeta();
             itemMeta.setDisplayName(ConvertUtils.color("&5&lPortāls"));
-            String posReadable = ConvertUtils.readableLoc(portal.getPos1());
-            itemMeta.setLore(ConvertUtils.color(Arrays.asList("", "&7Teritorija: &f" + portal.getLand().getName(), "&7Lokācija: &f" + posReadable, "", "&dSpied, lai teleportētos!")));
+            posReadable = ConvertUtils.readableLoc(portal.getPos1());
+            itemMeta.setLore(ConvertUtils.color(Arrays.asList(
+                "",
+                "&7Teritorija: &f" + portal.getLand().getName(),
+                "&7Lokācija: &f" + posReadable,
+                "",
+                "&dSpied, lai teleportētos!")));
             item.setItemMeta(itemMeta);
 
             items[i] = ClickableItem.of(item, 
