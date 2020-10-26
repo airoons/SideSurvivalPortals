@@ -49,8 +49,8 @@ public class InventoryCloseListener implements Listener
                 if (portal != null) {
                     new BukkitRunnable(){
                         public void run() {
-                            menuManager.openMain(player, portal);
                             plugin.handleClose.remove(player);
+                            menuManager.openMain(player, portal);
                         }
                     }.runTaskLater(plugin, 1);
                 }
@@ -60,8 +60,8 @@ public class InventoryCloseListener implements Listener
                 if (portal != null) {
                     new BukkitRunnable(){
                         public void run() {
-                            menuManager.openEditPortal(player, portal);
                             plugin.handleClose.remove(player);
+                            menuManager.openEditPortal(player, portal);
                         }
                     }.runTaskLater(plugin, 1);
                 }
@@ -71,8 +71,8 @@ public class InventoryCloseListener implements Listener
                 if (portal != null) {
                     new BukkitRunnable(){
                         public void run() {
-                            menuManager.openMain(player, portal);
                             plugin.handleClose.remove(player);
+                            menuManager.openMain(player, portal);
                         }
                     }.runTaskLater(plugin, 1);
                 }

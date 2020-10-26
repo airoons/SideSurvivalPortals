@@ -95,6 +95,11 @@ public class EditPortalIcon implements InventoryProvider
     }
 
     public void changePortalIcon(Player player, Portal portal, ItemStack icon) {
+        if (!menuManager.portalPermCheck(player, portal)) {
+            player.closeInventory();
+            return;
+        }
+
         portal.setIcon(icon);
         dataManager.save(portal);
         

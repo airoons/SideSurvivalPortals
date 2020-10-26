@@ -70,43 +70,22 @@ public class MainMenu implements InventoryProvider
             offset = 1;
         }
 
-        if (player.getWorld().getEnvironment().equals(Environment.NETHER)) {
-            item = MenuItems.miniGrass;
-            meta = item.getItemMeta();
-            meta.setDisplayName(ConvertUtils.color("&eDoties uz spawn"));
-            item.setItemMeta(meta);
-
-            contents.set(1, 1 + offset, ClickableItem.of(item, e -> teleportToSpawn(player)));
-        } else {
-            item = MenuItems.miniNetherrack;
-            meta = item.getItemMeta();
-            meta.setDisplayName(ConvertUtils.color("&eDoties uz Nether"));
-            item.setItemMeta(meta);
-
-            contents.set(1, 1 + offset, ClickableItem.of(item, e -> teleportToNetherSpawn(player)));
-        }
+        if (player.getWorld().getEnvironment().equals(Environment.NETHER))
+            contents.set(1, 1 + offset, ClickableItem.of(MenuItems.goSpawn, e -> teleportToSpawn(player)));
+        else
+            contents.set(1, 1 + offset, ClickableItem.of(MenuItems.goNetherSpawn, e -> teleportToNetherSpawn(player)));
+        
 
         item = SkullCreator.itemFromUuid(player.getUniqueId());
         meta = item.getItemMeta();
         meta.setDisplayName(ConvertUtils.color("&5Privātie portāli"));
         item.setItemMeta(meta);
-
         contents.set(1, 3 + offset, ClickableItem.of(item, e -> plugin.getMenuManager().openPrivate(player)));
 
-        item = MenuItems.miniGlobe;
-        meta = item.getItemMeta();
-        meta.setDisplayName(ConvertUtils.color("&ePubliskie portāli"));
-        item.setItemMeta(meta);
+        contents.set(1, 5 + offset, ClickableItem.of(MenuItems.pubPortals, e -> player.sendMessage(ChatColor.BOLD + "Dodas uz spawn")));
 
-        contents.set(1, 5 + offset, ClickableItem.of(item, e -> player.sendMessage(ChatColor.BOLD + "Dodas uz spawn")));
-
-        if (offset == 0) {
-            item = new ItemStack(Material.WRITABLE_BOOK);
-            meta = item.getItemMeta();
-            meta.setDisplayName(ConvertUtils.color("&fPortāla iestatījumi"));
-            item.setItemMeta(meta);
-    
-            contents.set(1, 7, ClickableItem.of(item, e -> plugin.getMenuManager().openEditPortal(player, portal)));
+        if (offset == 0) {    
+            contents.set(1, 7, ClickableItem.of(MenuItems.portalSettings, e -> plugin.getMenuManager().openEditPortal(player, portal)));
         }
     }
 

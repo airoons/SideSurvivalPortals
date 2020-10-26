@@ -15,15 +15,16 @@ import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
 
 public class MenuItems
 {
-    public static SideSurvivalPortals plugin;
+    public static SideSurvivalPortals plugin = SideSurvivalPortals.getInstance();
 
     public static ItemStack lightGrayPane = new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE);
     public static ItemStack grayPane = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
     public static ItemStack blackPane = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
 
-    public static ItemStack miniGrass = SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk1ZDM3OTkzZTU5NDA4MjY3ODQ3MmJmOWQ4NjgyMzQxM2MyNTBkNDMzMmEyYzdkOGM1MmRlNDk3NmIzNjIifX19");
-    public static ItemStack miniNetherrack = SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTliOTRlNWFkOTNkYzdhZGY1OTAwNTZkNGExZTAzNDA5MjUzZGZlY2ZjODhlODMxNTQxYzhkZjU0ZmYwNWNhNiJ9fX0=");
-    public static ItemStack miniGlobe = SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjFkZDRmZTRhNDI5YWJkNjY1ZGZkYjNlMjEzMjFkNmVmYTZhNmI1ZTdiOTU2ZGI5YzVkNTljOWVmYWIyNSJ9fX0");
+    public static ItemStack goSpawn = SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk1ZDM3OTkzZTU5NDA4MjY3ODQ3MmJmOWQ4NjgyMzQxM2MyNTBkNDMzMmEyYzdkOGM1MmRlNDk3NmIzNjIifX19");
+    public static ItemStack goNetherSpawn = SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTliOTRlNWFkOTNkYzdhZGY1OTAwNTZkNGExZTAzNDA5MjUzZGZlY2ZjODhlODMxNTQxYzhkZjU0ZmYwNWNhNiJ9fX0=");
+    public static ItemStack pubPortals = SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjFkZDRmZTRhNDI5YWJkNjY1ZGZkYjNlMjEzMjFkNmVmYTZhNmI1ZTdiOTU2ZGI5YzVkNTljOWVmYWIyNSJ9fX0");
+    public static ItemStack portalSettings = new ItemStack(Material.WRITABLE_BOOK);
 
     public static ItemStack prevPage = new ItemStack(Material.ARROW);
     public static ItemStack nextPage = new ItemStack(Material.ARROW);
@@ -34,9 +35,13 @@ public class MenuItems
     public static ItemStack defaultIcon = new ItemStack(Material.PAPER);
     public static List<ItemStack> availableIcons = new ArrayList<ItemStack>();
 
-    public MenuItems(SideSurvivalPortals plugin) {
-        this.plugin = plugin;
+    public static ItemStack accessPublic = new ItemStack(Material.OBSIDIAN);
+    public static ItemStack accessPrivate = new ItemStack(Material.CRYING_OBSIDIAN);
+    
+    public static ItemStack accessLands = goSpawn.clone();
+    public static ItemStack accessPlayers = new ItemStack(Material.PLAYER_HEAD);
 
+    public MenuItems() {
         ItemMeta itemMeta;
         itemMeta = lightGrayPane.getItemMeta();
         itemMeta.setDisplayName(" ");
@@ -49,6 +54,22 @@ public class MenuItems
         itemMeta = blackPane.getItemMeta();
         itemMeta.setDisplayName(" ");
         blackPane.setItemMeta(itemMeta);
+
+        itemMeta = goSpawn.getItemMeta();
+        itemMeta.setDisplayName(ConvertUtils.color("&eDoties uz spawn"));
+        goSpawn.setItemMeta(itemMeta);
+
+        itemMeta = goNetherSpawn.getItemMeta();
+        itemMeta.setDisplayName(ConvertUtils.color("&eDoties uz Nether"));
+        goNetherSpawn.setItemMeta(itemMeta);
+
+        itemMeta = pubPortals.getItemMeta();
+        itemMeta.setDisplayName(ConvertUtils.color("&ePubliskie portāli"));
+        pubPortals.setItemMeta(itemMeta);
+
+        itemMeta = portalSettings.getItemMeta();
+        itemMeta.setDisplayName(ConvertUtils.color("&fPortāla iestatījumi"));
+        portalSettings.setItemMeta(itemMeta);
 
         itemMeta = prevPage.getItemMeta();
         itemMeta.setDisplayName(ConvertUtils.color("&a&lIepriekšējā lapa"));
@@ -84,5 +105,45 @@ public class MenuItems
             availableIcons.add(item);
         }
         
+        itemMeta = accessPublic.getItemMeta();
+        itemMeta.setDisplayName(ConvertUtils.color("&7Portāls ir: &a&lPUBLISKS"));
+        itemMeta.setLore(ConvertUtils.color(Arrays.asList(
+            "",
+            "&7Portālu pašlaik var izmantot visi.",
+            "",
+            "&eSpied, lai mainītu!")));
+        accessPublic.setItemMeta(itemMeta);
+
+        itemMeta = accessPrivate.getItemMeta();
+        itemMeta.setDisplayName(ConvertUtils.color("&7Portāls ir: &c&lPRIVĀTS"));
+        itemMeta.setLore(ConvertUtils.color(Arrays.asList(
+            "",
+            "&7Portālu pašlaik var izmantot tikai",
+            "&7šīs teritorijas biedri.",
+            "",
+            "&eSpied, lai mainītu!")));
+        accessPrivate.setItemMeta(itemMeta);
+
+        itemMeta = accessLands.getItemMeta();
+        itemMeta.setDisplayName(ConvertUtils.color("&a&lCitu teritoriju piekļuve"));
+        itemMeta.setLore(ConvertUtils.color(Arrays.asList(
+            "",
+            "&7Atļauj citām teritorijām lietot",
+            "&7šo portālu (pat ja ir privāts) ar komandu:",
+            "&f/p pievienot t <teritorijas nosaukums>",
+            "",
+            "&eSpied, lai apskatītu atļautās teritorijas!")));
+        accessLands.setItemMeta(itemMeta);
+
+        itemMeta = accessPlayers.getItemMeta();
+        itemMeta.setDisplayName(ConvertUtils.color("&6&lCitu spēlētāju piekļuve"));
+        itemMeta.setLore(ConvertUtils.color(Arrays.asList(
+            "",
+            "&7Atļauj citiem spēlētājiem lietot",
+            "&7šo portālu (pat ja ir privāts) ar komandu:",
+            "&f/p pievienot s <spēlētājs>",
+            "",
+            "&eSpied, lai apskatītu atļautos spēlētājus!")));
+        accessPlayers.setItemMeta(itemMeta);
     }
 }

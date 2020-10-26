@@ -131,4 +131,8 @@ public class Portal
     public void setAllowedPlayers(List<UUID> allowedPlayers) {
         this.allowedPlayers = allowedPlayers;
     }
+
+    public void setIsPublic(boolean isPublic) {
+        this.isPublic = isPublic;
+    }
 }

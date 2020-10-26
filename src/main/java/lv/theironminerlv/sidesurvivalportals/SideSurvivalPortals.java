@@ -28,12 +28,11 @@ public class SideSurvivalPortals extends JavaPlugin
 {
     private static SideSurvivalPortals instance;
     private InventoryManager invManager; // shouldn't be static in the end... (rework needed)
-    private PortalManager portalManager;
     private DataManager dataManager;
+    private PortalManager portalManager;
     private PermissionManager permissionManager;
     private MenuManager menuManager;
     private PortalData portalData;
-    private MenuItems menuItems;
 
     private FileConfiguration config;
     private File portalFolder = new File(this.getDataFolder() + "/portals");
@@ -60,7 +59,7 @@ public class SideSurvivalPortals extends JavaPlugin
         portalManager = new PortalManager(this);
         permissionManager = new PermissionManager(this);
         menuManager = new MenuManager(this);
-        menuItems = new MenuItems(this);
+        new MenuItems();
 
         getLogger().info("SideSurvivalPortals starting!");
 

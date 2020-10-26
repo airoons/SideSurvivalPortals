@@ -1,7 +1,9 @@
 package lv.theironminerlv.sidesurvivalportals.managers;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
@@ -36,10 +38,12 @@ public class PortalManager
 {
     private SideSurvivalPortals plugin;
     private static LandsIntegration landsAPI;
+    private static DataManager dataManager;
 
     public PortalManager(SideSurvivalPortals plugin) {
         this.plugin = plugin;
         landsAPI = this.plugin.getLandsAPI();
+        dataManager = this.plugin.getDataManager();
     }
 
     // Fully creates portal (region + blocks), but saving has to be done after
@@ -224,5 +228,38 @@ public class PortalManager
         }
 
         return null;
+    }
+    
+    public void removeLandAccess(Portal portal, Land land) {
+        if (portal == null || portal.getId() == null)
+            return;
+
+        List<Integer> allowedLands = portal.getAllowedLands();
+        
+        allowedLands.remove((Object)land.getId());
+        portal.setAllowedlands(allowedLands);
+        dataManager.save(portal);
+    }
+
+    public void removeLandAccess(Portal portal, int landId) {
+        if (portal == null || portal.getId() == null)
+            return;
+
+        List<Integer> allowedLands = portal.getAllowedLands();
+        
+        allowedLands.remove((Object)landId);
+        portal.setAllowedlands(allowedLands);
+        dataManager.save(portal);
+    }
+
+    public void removePlayerAccess(Portal portal, UUID uuid) {
+        if (portal == null || portal.getId() == null)
+            return;
+
+        List<UUID> allowedPlayers = portal.getAllowedPlayers();
+        
+        allowedPlayers.remove(uuid);
+        portal.setAllowedPlayers(allowedPlayers);
+        dataManager.save(portal);
     }
 }

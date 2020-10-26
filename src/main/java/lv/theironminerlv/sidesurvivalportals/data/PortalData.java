@@ -1,11 +1,14 @@
 package lv.theironminerlv.sidesurvivalportals.data;
 
+import java.util.Collection;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.managers.DataManager;
@@ -64,4 +67,16 @@ public class PortalData
     public static Location getNetherSpawnLocation() {
         return netherSpawn;
     }
+
+	public static Map<String, Portal> getAccessablePortalsByLand(Land land) {
+		return CACHED_PORTALS.entrySet().stream()
+        .filter(map -> map.getValue().getAllowedLands().contains(land.getId()))
+        .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+    }
+    
+    public static Map<String, Portal> getAccessablePortalsByPlayer(UUID uuid) {
+		return CACHED_PORTALS.entrySet().stream()
+        .filter(map -> map.getValue().getAllowedPlayers().contains(uuid))
+        .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+	}
 }

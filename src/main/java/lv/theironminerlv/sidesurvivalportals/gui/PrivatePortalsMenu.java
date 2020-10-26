@@ -2,9 +2,12 @@ package lv.theironminerlv.sidesurvivalportals.gui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 
@@ -48,7 +51,7 @@ public class PrivatePortalsMenu implements InventoryProvider {
             .manager(invManager)
             .id("portal")
             .provider(new PrivatePortalsMenu())
-            .size(6, 9)
+            .size(4, 9)
             .title("Privātie portāli")
             .build();
     }
@@ -72,11 +75,14 @@ public class PrivatePortalsMenu implements InventoryProvider {
         Pagination pagination = contents.pagination();
 
         Set<? extends Land> playerLands = landsAPI.getLandPlayer(player.getUniqueId()).getLands();
-        List<Portal> portals = new ArrayList<Portal>();
+        Map<String, Portal> portals = new ConcurrentHashMap<>();
 
         for (Land land : playerLands) {
-            portals.addAll(PortalData.getByLand(land).values());
+            portals.putAll(PortalData.getByLand(land));
+            portals.putAll(PortalData.getAccessablePortalsByLand(land));
         }
+
+        portals.putAll(PortalData.getAccessablePortalsByPlayer(player.getUniqueId()));
 
         int portalAmount = portals.size();
         String posReadable;
@@ -86,9 +92,8 @@ public class PrivatePortalsMenu implements InventoryProvider {
 
         ClickableItem[] items = new ClickableItem[portalAmount];
 
-        for(int i = 0; i < items.length; i++) {
-            Portal portal = portals.get(i);
-            
+        int i = 0;
+        for (Portal portal : portals.values()) {
             item = portal.getIcon().clone();
             itemMeta = item.getItemMeta();
             itemMeta.setDisplayName(ConvertUtils.color("&5&lPortāls"));
@@ -120,15 +125,16 @@ public class PrivatePortalsMenu implements InventoryProvider {
 
             items[i] = ClickableItem.of(item, 
                 e -> teleportTo(player, portal));
+            i++;
         }
 
         pagination.setItems(items);
-        pagination.setItemsPerPage(45);
+        pagination.setItemsPerPage(27);
         pagination.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 0, 0));
 
-        contents.set(5, 2, ClickableItem.of(MenuItems.prevPage,
+        contents.set(3, 2, ClickableItem.of(MenuItems.prevPage,
             e -> open(player, pagination.previous().getPage())));
-        contents.set(5, 6, ClickableItem.of(MenuItems.nextPage,
+        contents.set(3, 6, ClickableItem.of(MenuItems.nextPage,
             e -> open(player, pagination.next().getPage())));
 
     }

@@ -19,21 +19,23 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.data.PortalData;
+import lv.theironminerlv.sidesurvivalportals.managers.DataManager;
 import lv.theironminerlv.sidesurvivalportals.managers.MenuManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PermissionManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
 
-public class EditPortalMenu implements InventoryProvider
+public class EditPortalAccess implements InventoryProvider
 {
     private static SideSurvivalPortals plugin = SideSurvivalPortals.getInstance();
     private InventoryManager invManager = plugin.getInvManager();
     private PermissionManager permissionManager = plugin.getPermissionManager();
     private MenuManager menuManager = plugin.getMenuManager();
+    private DataManager dataManager = plugin.getDataManager();
     private SmartInventory inventory;
     private Portal portal;
 
-    public EditPortalMenu(Portal portal) {
+    public EditPortalAccess(Portal portal) {
         this.portal = portal;
     }
 
@@ -41,9 +43,9 @@ public class EditPortalMenu implements InventoryProvider
         this.inventory = SmartInventory.builder()
             .manager(invManager).
             id("portal")
-            .provider(new EditPortalMenu(portal))
+            .provider(new EditPortalAccess(portal))
             .size(3, 9)
-            .title("Portāla iestatījumi")
+            .title("Portāla piekļuves atļaujas")
             .build();
     }
 
@@ -70,14 +72,13 @@ public class EditPortalMenu implements InventoryProvider
         contents.set(2, 4, ClickableItem.empty(MenuItems.lightGrayPane));
         contents.set(2, 7, ClickableItem.empty(MenuItems.blackPane));
 
-        contents.set(1, 2, ClickableItem.of(MenuItems.editPortalAccess, e -> menuManager.openEditPortalAccess(player, portal)));
-        contents.set(1, 4, ClickableItem.of(MenuItems.editPortalDescr, e -> editPortalDescr(player, portal)));
+        if (portal.getIsPublic())
+            contents.set(1, 2, ClickableItem.of(MenuItems.accessPublic, e -> togglePublic(player, portal, false, contents)));
+        else
+            contents.set(1, 2, ClickableItem.of(MenuItems.accessPrivate, e -> togglePublic(player, portal, true, contents)));
 
-        item = portal.getIcon().clone();
-        meta = item.getItemMeta();
-        meta.setDisplayName(ConvertUtils.color("&a&lMainīt ikonu"));
-        item.setItemMeta(meta);
-        contents.set(1, 6, ClickableItem.of(item, e -> menuManager.openEditPortalIcon(player, portal)));
+        contents.set(1, 4, ClickableItem.of(MenuItems.accessLands, e -> menuManager.openPortalLandAccess(player, portal)));
+        contents.set(1, 6, ClickableItem.of(MenuItems.accessPlayers, e -> menuManager.openPortalPlayerAccess(player, portal)));
     }
 
     @Override
@@ -85,9 +86,19 @@ public class EditPortalMenu implements InventoryProvider
 
     }
 
-    public void editPortalDescr(Player player, Portal portal) {
-        plugin.handleClose.remove(player);
-        player.closeInventory();
-        player.sendMessage(ConvertUtils.color("&7Raksti komandu &f/p apraksts <jaunais apraksts>&7, lai mainītu portāla aprakstu!"));
+    public void togglePublic(Player player, Portal portal, boolean isPublic, InventoryContents contents) {
+        if (!menuManager.portalPermCheck(player, portal)) {
+            plugin.handleClose.remove(player);
+            player.closeInventory();
+            return;
+        }
+
+        if (isPublic)
+            contents.set(1, 2, ClickableItem.of(MenuItems.accessPublic, e -> togglePublic(player, portal, false, contents)));
+        else
+            contents.set(1, 2, ClickableItem.of(MenuItems.accessPrivate, e -> togglePublic(player, portal, true, contents)));
+        
+        portal.setIsPublic(isPublic);
+        dataManager.save(portal);
     }
 }

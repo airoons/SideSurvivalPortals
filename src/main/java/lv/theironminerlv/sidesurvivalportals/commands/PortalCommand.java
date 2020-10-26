@@ -3,8 +3,10 @@ package lv.theironminerlv.sidesurvivalportals.commands;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -181,16 +183,13 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                                 return true;
                             }
 
-                            List<Integer> allowedLands = portal.getAllowedLands();
                             
-                            if (!allowedLands.contains(land.getId())) {
+                            if (!portal.getAllowedLands().contains(land.getId())) {
                                 player.sendMessage(ConvertUtils.color("&cKļūda: tādai teritorija nav pievienota šī portāla atļautajā sarakstā!"));
                                 return true;
                             }
                             
-                            allowedLands.remove((Object)land.getId());
-                            portal.setAllowedlands(allowedLands);
-                            dataManager.save(portal);
+                            portalManager.removeLandAccess(portal, land);
 
                             player.sendMessage(ConvertUtils.color("&7Veiksmīgi noņēmi teritoriju &f" + land.getName() + " &7atļauju izmantot šo portālu!"));
 
@@ -202,17 +201,13 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                                 player.sendMessage(ConvertUtils.color("&cKļūda: tāds spēlētājs nav iepriekš pievienojies serverim!"));
                                 return true;
                             }
-
-                            List<UUID> allowedPlayers = portal.getAllowedPlayers();
                             
-                            if (!allowedPlayers.contains(remPlayer.getUniqueId())) {
+                            if (!portal.getAllowedPlayers().contains(remPlayer.getUniqueId())) {
                                 player.sendMessage(ConvertUtils.color("&cKļūda: tas spēlētājs nav pievienots šī portāla atļautajā sarakstā!"));
                                 return true;
                             }
                             
-                            allowedPlayers.remove(remPlayer.getUniqueId());
-                            portal.setAllowedPlayers(allowedPlayers);
-                            dataManager.save(portal);
+                            portalManager.removePlayerAccess(portal, remPlayer.getUniqueId());
 
                             player.sendMessage(ConvertUtils.color("&7Veiksmīgi noņēmi spēlētājam &f" + remPlayer.getName() + " &7atļauju izmantot šo portālu!"));
 
@@ -249,9 +244,11 @@ public class PortalCommand implements CommandExecutor, TabExecutor
         List<String> completions = new ArrayList<String>();
 
         if (args.length == 1) {
-            completions.add("apraksts");
-            completions.add("pievienot");
-            completions.add("nonemt");
+            List<String> commands = Arrays.asList("apraksts", "pievienot", "nonemt");
+            return commands
+            .stream()
+            .filter(c -> c.startsWith(args[0]))
+            .collect(Collectors.toList());
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("pievienot") || args[0].equalsIgnoreCase("nonemt")) {
                 completions.add("s");
