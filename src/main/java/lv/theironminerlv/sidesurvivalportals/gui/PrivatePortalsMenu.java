@@ -43,10 +43,6 @@ public class PrivatePortalsMenu implements InventoryProvider {
     private LandsIntegration landsAPI = plugin.getLandsAPI();
     private SmartInventory inventory;
 
-    public PrivatePortalsMenu() {
-
-    }
-
     private void load() {
         this.inventory = SmartInventory.builder()
             .manager(invManager)
@@ -82,7 +78,7 @@ public class PrivatePortalsMenu implements InventoryProvider {
             portals.addAll(PortalData.getByLand(land).values());
         }
 
-        int portalAmount = portals.size() + 100;
+        int portalAmount = portals.size();
         String posReadable;
         String desc;
         List<String> descLines = new ArrayList<>();
@@ -91,41 +87,39 @@ public class PrivatePortalsMenu implements InventoryProvider {
         ClickableItem[] items = new ClickableItem[portalAmount];
 
         for(int i = 0; i < items.length; i++) {
-            items[i] = ClickableItem.empty(new ItemStack(Material.PAPER));
-
-            // Portal portal = portals.get(i);
+            Portal portal = portals.get(i);
             
-            // item = portal.getIcon().clone();
-            // itemMeta = item.getItemMeta();
-            // itemMeta.setDisplayName(ConvertUtils.color("&5&lPortāls"));
-            // posReadable = ConvertUtils.readableLoc(portal.getPos1());
-            // descLines.clear();
+            item = portal.getIcon().clone();
+            itemMeta = item.getItemMeta();
+            itemMeta.setDisplayName(ConvertUtils.color("&5&lPortāls"));
+            posReadable = ConvertUtils.readableLoc(portal.getPos1());
+            descLines.clear();
 
-            // desc = portal.getDescription();
+            desc = portal.getDescription();
 
-            // descLines.add("");
-            // descLines.add("&7Teritorija: &f" + portal.getLand().getName());
-            // descLines.add("&7Lokācija: &f" + posReadable);
-            // descLines.add("&7Apraksts:");
+            descLines.add("");
+            descLines.add("&7Teritorija: &f" + portal.getLand().getName());
+            descLines.add("&7Lokācija: &f" + posReadable);
+            descLines.add("&7Apraksts:");
 
-            // index = 0;
-            // while (index < desc.length()) {
-            //     if (index + 31 < desc.length() && desc.charAt(index + 31) != ' ')
-            //         descLines.add("  &f"+ desc.substring(index, Math.min(index + 30,desc.length())) + "-");
-            //     else
-            //         descLines.add("  &f"+ desc.substring(index, Math.min(index + 30,desc.length())));
+            index = 0;
+            while (index < desc.length()) {
+                if (index + 31 < desc.length() && desc.charAt(index + 31) != ' ')
+                    descLines.add("  &f"+ desc.substring(index, Math.min(index + 30,desc.length())) + "-");
+                else
+                    descLines.add("  &f"+ desc.substring(index, Math.min(index + 30,desc.length())));
 
-            //     index += 30;
-            // }
+                index += 30;
+            }
 
-            // descLines.add("");
-            // descLines.add("&dSpied, lai teleportētos!");
+            descLines.add("");
+            descLines.add("&dSpied, lai teleportētos!");
             
-            // itemMeta.setLore(ConvertUtils.color(descLines));
-            // item.setItemMeta(itemMeta);
+            itemMeta.setLore(ConvertUtils.color(descLines));
+            item.setItemMeta(itemMeta);
 
-            // items[i] = ClickableItem.of(item, 
-            //     e -> teleportTo(player, portal));
+            items[i] = ClickableItem.of(item, 
+                e -> teleportTo(player, portal));
         }
 
         pagination.setItems(items);
@@ -145,6 +139,9 @@ public class PrivatePortalsMenu implements InventoryProvider {
     }
 
     public void teleportTo(Player player, Portal portal) {
+        plugin.handleClose.remove(player);
+        player.closeInventory();
+        
         Location loc = portal.getTpLoc().clone();
 
         if (!loc.getBlock().isEmpty() || !loc.getBlock().getRelative(BlockFace.UP).isEmpty()) {
@@ -166,7 +163,7 @@ public class PrivatePortalsMenu implements InventoryProvider {
             loc = portalManager.getSafeTeleportLoc(portal);
             
             if (loc == null) {
-                player.sendMessage(ConvertUtils.color("&cThe teleport location is unsafe!"));
+                player.sendMessage(ConvertUtils.color("&cTeleportācijas galamērķis nav drošs!"));
                 return;
             }
             

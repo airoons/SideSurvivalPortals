@@ -37,7 +37,6 @@ public class PortalBreakListener implements Listener
     @EventHandler
     public void onChunkDelete(ChunkDeleteEvent event)
     {
-        Bukkit.broadcastMessage("[debug] deleted chunk " + event.getX() + ", " + event.getZ());
         portalManager.recheckPortals(event.getLand());
     }
 }
