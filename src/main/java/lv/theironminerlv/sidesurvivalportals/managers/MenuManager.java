@@ -28,7 +28,7 @@ public class MenuManager
 
     public void openPrivate(Player player) {
         PrivatePortalsMenu gui = new PrivatePortalsMenu();
-        gui.open(player, true);
+        gui.open(player);
     }
 
     public void openEditPortal(Player player, Portal portal) {
@@ -56,6 +56,8 @@ public class MenuManager
             player.sendMessage(ConvertUtils.color("&cTev nav atļauts labot portālu!"));
             return;
         }
+
+        plugin.handleClose.remove(player);
 
         EditPortalIcon gui = new EditPortalIcon(portal);
         gui.open(player, portal);

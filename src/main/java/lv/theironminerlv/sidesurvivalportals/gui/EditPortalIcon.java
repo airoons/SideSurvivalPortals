@@ -53,6 +53,7 @@ public class EditPortalIcon implements InventoryProvider
     public void open(Player player, Portal portal) {
         this.portal = portal;
         this.load(portal);
+        player.closeInventory();
         this.inventory.open(player);
     }
 

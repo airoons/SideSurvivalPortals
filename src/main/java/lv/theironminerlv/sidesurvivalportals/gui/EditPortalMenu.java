@@ -36,8 +36,13 @@ public class EditPortalMenu implements InventoryProvider
     }
 
     private void load(Portal portal) {
-        this.inventory = SmartInventory.builder().manager(invManager).id("portal").provider(new EditPortalMenu(portal))
-                .size(3, 9).title("Portāla iestatījumi").build();
+        this.inventory = SmartInventory.builder()
+            .manager(invManager).
+            id("portal")
+            .provider(new EditPortalMenu(portal))
+            .size(3, 9)
+            .title("Portāla iestatījumi")
+            .build();
     }
 
     public void open(Player player, Portal portal) {
@@ -45,6 +50,7 @@ public class EditPortalMenu implements InventoryProvider
         this.load(portal);
         player.closeInventory();
         this.inventory.open(player);
+        plugin.handleClose.add(player);
     }
 
     @Override

@@ -5,6 +5,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.LazyMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import fr.minuskube.inv.InventoryManager;
@@ -40,33 +43,36 @@ public class InventoryCloseListener implements Listener
         if (invManager.getInventory(player).isPresent()) {
             SmartInventory inv = invManager.getInventory(player).get();
 
-            if (inv.getProvider() instanceof EditPortalMenu) {
+            if (inv.getProvider() instanceof EditPortalMenu && plugin.handleClose.contains(player)) {
                 Portal portal = portalManager.getPortalAt(player.getLocation());
 
                 if (portal != null) {
                     new BukkitRunnable(){
                         public void run() {
                             menuManager.openMain(player, portal);
+                            plugin.handleClose.remove(player);
                         }
                     }.runTaskLater(plugin, 1);
                 }
-            } else if (inv.getProvider() instanceof EditPortalIcon) {
+            } else if (inv.getProvider() instanceof EditPortalIcon && plugin.handleClose.contains(player)) {
                 Portal portal = portalManager.getPortalAt(player.getLocation());
 
                 if (portal != null) {
                     new BukkitRunnable(){
                         public void run() {
                             menuManager.openEditPortal(player, portal);
+                            plugin.handleClose.remove(player);
                         }
                     }.runTaskLater(plugin, 1);
                 }
-            } else if (inv.getProvider() instanceof PrivatePortalsMenu) {
+            } else if (inv.getProvider() instanceof PrivatePortalsMenu && plugin.handleClose.contains(player)) {
                 Portal portal = portalManager.getPortalAt(player.getLocation());
 
                 if (portal != null) {
                     new BukkitRunnable(){
                         public void run() {
                             menuManager.openMain(player, portal);
+                            plugin.handleClose.remove(player);
                         }
                     }.runTaskLater(plugin, 1);
                 }

@@ -1,8 +1,13 @@
 package lv.theironminerlv.sidesurvivalportals;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import fr.minuskube.inv.InventoryManager;
@@ -34,6 +39,8 @@ public class SideSurvivalPortals extends JavaPlugin
     private File portalFolder = new File(this.getDataFolder() + "/portals");
 
     private LandsIntegration landsAPI;
+
+    public Set<Player> handleClose = new HashSet<Player>();
 
     public static SideSurvivalPortals getInstance() {
         return instance;

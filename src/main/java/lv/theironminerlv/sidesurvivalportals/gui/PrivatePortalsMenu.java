@@ -57,17 +57,15 @@ public class PrivatePortalsMenu implements InventoryProvider {
             .build();
     }
 
-    public void open(Player player, boolean close) {
+    public void open(Player player) {
         this.load();
-        if (close)
-            player.closeInventory();
+        player.closeInventory();
         this.inventory.open(player);
+        plugin.handleClose.add(player);
     }
 
-    public void open(Player player, boolean close, int page) {
+    public void open(Player player, int page) {
         this.load();
-        if (close)
-            player.closeInventory();
         this.inventory.open(player, page);
     }
 
@@ -135,9 +133,9 @@ public class PrivatePortalsMenu implements InventoryProvider {
         pagination.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 0, 0));
 
         contents.set(5, 2, ClickableItem.of(MenuItems.prevPage,
-            e -> open(player, false, pagination.previous().getPage())));
+            e -> open(player, pagination.previous().getPage())));
         contents.set(5, 6, ClickableItem.of(MenuItems.nextPage,
-            e -> open(player, false, pagination.next().getPage())));
+            e -> open(player, pagination.next().getPage())));
 
     }
 
