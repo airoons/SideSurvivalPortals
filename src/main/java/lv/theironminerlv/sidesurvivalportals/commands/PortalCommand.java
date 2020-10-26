@@ -16,7 +16,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
-import lv.theironminerlv.sidesurvivalportals.data.PortalData;
 import lv.theironminerlv.sidesurvivalportals.managers.DataManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PermissionManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
@@ -34,12 +33,12 @@ public class PortalCommand implements CommandExecutor, TabExecutor
     private static LandsIntegration landsAPI = plugin.getLandsAPI();
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         if (sender instanceof Player) {
-            Player player = (Player) sender;
+            final Player player = (Player) sender;
 
             if (args.length >= 1) {
-                Portal portal = portalManager.getPortalAt(player.getLocation());
+                final Portal portal = portalManager.getPortalAt(player.getLocation());
                 
                 if (portal == null) {
                     player.sendMessage(ConvertUtils.color("&cTev ir jāatrodas portālā, lai izmantotu šo komandu!"));
@@ -62,14 +61,14 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                 }
 
                 if (args[0].equalsIgnoreCase("apraksts")) {
-                    StringBuilder builder = new StringBuilder();
+                    final StringBuilder builder = new StringBuilder();
                     for (int i = 1; i < args.length; i++) {
                         builder.append(args[i]);
 
                         if (i < args.length - 1)
                             builder.append(" ");
                     }
-                    String desc = builder.toString();
+                    final String desc = builder.toString();
     
                     if (desc.length() > 90) {
                         player.sendMessage(ConvertUtils.color("&cApraksts nedrīkst būt garāks par 90 rakstzīmēm!"));
@@ -97,21 +96,21 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                             return true;
                         }
 
-                        StringBuilder builder = new StringBuilder();
+                        final StringBuilder builder = new StringBuilder();
                         for (int i = 2; i < args.length; i++) {
                             builder.append(args[i]);
                         }
-                        String input = builder.toString();
+                        final String input = builder.toString();
 
                         if (args[1].equalsIgnoreCase("t")) {
-                            Land land = landsAPI.getLand(input);
+                            final Land land = landsAPI.getLand(input);
 
                             if (land == null) {
                                 player.sendMessage(ConvertUtils.color("&cKļūda: tāda teritorija neeksistē!"));
                                 return true;
                             }
 
-                            List<Integer> allowedLands = portal.getAllowedLands();
+                            final List<Integer> allowedLands = portal.getAllowedLands();
                             
                             if (allowedLands.contains(land.getId())) {
                                 player.sendMessage(ConvertUtils.color("&cKļūda: tādai teritorijai jau ir atļauts izmantot šo portālu!"));
@@ -131,14 +130,14 @@ public class PortalCommand implements CommandExecutor, TabExecutor
 
                             return true;
                         } else {
-                            Player addPlayer = Bukkit.getPlayer(input);
+                            final Player addPlayer = Bukkit.getPlayer(input);
 
                             if (addPlayer == null) {
                                 player.sendMessage(ConvertUtils.color("&cKļūda: tāds spēlētājs nav tiešsaistē!"));
                                 return true;
                             }
 
-                            List<UUID> allowedPlayers = portal.getAllowedPlayers();
+                            final List<UUID> allowedPlayers = portal.getAllowedPlayers();
                             
                             if (allowedPlayers.contains(addPlayer.getUniqueId())) {
                                 player.sendMessage(ConvertUtils.color("&cKļūda: tam spēlētājam jau ir atļauts izmantot šo portālu!"));
@@ -169,14 +168,14 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                             return true;
                         }
 
-                        StringBuilder builder = new StringBuilder();
+                        final StringBuilder builder = new StringBuilder();
                         for (int i = 2; i < args.length; i++) {
                             builder.append(args[i]);
                         }
-                        String input = builder.toString();
+                        final String input = builder.toString();
 
                         if (args[1].equalsIgnoreCase("t")) {
-                            Land land = landsAPI.getLand(input);
+                            final Land land = landsAPI.getLand(input);
 
                             if (land == null) {
                                 player.sendMessage(ConvertUtils.color("&cKļūda: tāda teritorija neeksistē!"));
@@ -195,7 +194,7 @@ public class PortalCommand implements CommandExecutor, TabExecutor
 
                             return true;
                         } else {
-                            OfflinePlayer remPlayer = Bukkit.getOfflinePlayer(input);
+                            final OfflinePlayer remPlayer = Bukkit.getOfflinePlayer(input);
 
                             if (!remPlayer.hasPlayedBefore()) {
                                 player.sendMessage(ConvertUtils.color("&cKļūda: tāds spēlētājs nav iepriekš pievienojies serverim!"));
@@ -219,7 +218,7 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                 return true;
             }
 
-            String[] messages = {
+            final String[] messages = {
                 "",
                 "  &5&lPortālu komandas",
                 "",
@@ -240,11 +239,11 @@ public class PortalCommand implements CommandExecutor, TabExecutor
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        List<String> completions = new ArrayList<String>();
+    public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
+        final List<String> completions = new ArrayList<String>();
 
         if (args.length == 1) {
-            List<String> commands = Arrays.asList("apraksts", "pievienot", "nonemt");
+            final List<String> commands = Arrays.asList("apraksts", "pievienot", "nonemt");
             return commands
             .stream()
             .filter(c -> c.startsWith(args[0]))

@@ -5,17 +5,14 @@ import org.bukkit.entity.Player;
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
 import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.Land;
-import me.angeschossen.lands.api.player.LandPlayer;
 import me.angeschossen.lands.api.role.enums.ManagementSetting;
 
 public class PermissionManager
 {
     private SideSurvivalPortals plugin;
-    private static LandsIntegration landsAPI;
 
     public PermissionManager(SideSurvivalPortals plugin) {
         this.plugin = plugin;
-        landsAPI = this.plugin.getLandsAPI();
     }
 
     public boolean canCreatePortal(Player player, Land land) {

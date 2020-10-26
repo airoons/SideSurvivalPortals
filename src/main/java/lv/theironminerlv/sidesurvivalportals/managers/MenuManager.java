@@ -2,7 +2,6 @@ package lv.theironminerlv.sidesurvivalportals.managers;
 
 import org.bukkit.entity.Player;
 
-import fr.minuskube.inv.SmartInventory;
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.data.PortalData;
 import lv.theironminerlv.sidesurvivalportals.gui.EditPortalAccess;

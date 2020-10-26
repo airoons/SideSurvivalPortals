@@ -1,27 +1,15 @@
 package lv.theironminerlv.sidesurvivalportals.gui;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Bukkit;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World.Environment;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import dev.dbassett.skullcreator.SkullCreator;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.InventoryManager;
 import fr.minuskube.inv.SmartInventory;
@@ -31,7 +19,6 @@ import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.data.PortalData;
-import lv.theironminerlv.sidesurvivalportals.managers.DataManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
@@ -42,7 +29,6 @@ public class PrivatePortalsMenu implements InventoryProvider {
     private static SideSurvivalPortals plugin = SideSurvivalPortals.getInstance();
     private InventoryManager invManager = plugin.getInvManager();
     private PortalManager portalManager = plugin.getPortalManager();
-    private DataManager dataManager = plugin.getDataManager();
     private LandsIntegration landsAPI = plugin.getLandsAPI();
     private SmartInventory inventory;
 
@@ -85,7 +71,6 @@ public class PrivatePortalsMenu implements InventoryProvider {
         portals.putAll(PortalData.getAccessablePortalsByPlayer(player.getUniqueId()));
 
         int portalAmount = portals.size();
-        String posReadable;
         String desc;
         List<String> descLines = new ArrayList<>();
         int index;
@@ -97,7 +82,6 @@ public class PrivatePortalsMenu implements InventoryProvider {
             item = portal.getIcon().clone();
             itemMeta = item.getItemMeta();
             itemMeta.setDisplayName(ConvertUtils.color("&d&l" + portal.getLand().getName() +  " &5portāls"));
-            posReadable = ConvertUtils.readableLoc(portal.getPos1());
             descLines.clear();
 
             desc = portal.getDescription();

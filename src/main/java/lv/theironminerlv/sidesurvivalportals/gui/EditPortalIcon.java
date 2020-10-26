@@ -1,21 +1,12 @@
 package lv.theironminerlv.sidesurvivalportals.gui;
 
 import java.util.Arrays;
-import java.util.List;
-
-import org.bukkit.Bukkit;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World.Environment;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import dev.dbassett.skullcreator.SkullCreator;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.InventoryManager;
 import fr.minuskube.inv.SmartInventory;
@@ -24,10 +15,8 @@ import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
-import lv.theironminerlv.sidesurvivalportals.data.PortalData;
 import lv.theironminerlv.sidesurvivalportals.managers.DataManager;
 import lv.theironminerlv.sidesurvivalportals.managers.MenuManager;
-import lv.theironminerlv.sidesurvivalportals.managers.PermissionManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
 
@@ -35,7 +24,6 @@ public class EditPortalIcon implements InventoryProvider
 {
     private static SideSurvivalPortals plugin = SideSurvivalPortals.getInstance();
     private InventoryManager invManager = plugin.getInvManager();
-    private PermissionManager permissionManager = plugin.getPermissionManager();
     private MenuManager menuManager = plugin.getMenuManager();
     private DataManager dataManager = plugin.getDataManager();
     private SmartInventory inventory;
