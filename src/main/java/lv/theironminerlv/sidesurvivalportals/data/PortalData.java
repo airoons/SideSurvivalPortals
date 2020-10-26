@@ -56,10 +56,6 @@ public class PortalData
         .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
     }
 
-    public static boolean portalExists(String id) {
-        return CACHED_PORTALS.containsKey(id);
-    }
-
     public static Location getSpawnLocation() {
         return worldSpawn;
     }
@@ -84,5 +80,13 @@ public class PortalData
 		return CACHED_PORTALS.entrySet().stream()
         .filter(map -> map.getValue().getIsPublic())
         .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
-	}
+    }
+    
+    public static boolean portalExists(Portal portal) {
+        return CACHED_PORTALS.containsKey(portal.getId());
+    }
+
+    public static boolean portalExists(String id) {
+        return CACHED_PORTALS.containsKey(id);
+    }
 }

@@ -78,7 +78,7 @@ public class MainMenu implements InventoryProvider
 
         item = SkullCreator.itemFromUuid(player.getUniqueId());
         meta = item.getItemMeta();
-        meta.setDisplayName(ConvertUtils.color("&5Privātie portāli"));
+        meta.setDisplayName(ConvertUtils.color("&5&lPrivātie portāli"));
         item.setItemMeta(meta);
         contents.set(1, 3 + offset, ClickableItem.of(item, e -> plugin.getMenuManager().openPrivate(player)));
 

@@ -43,6 +43,9 @@ public class PortalCreateListener implements Listener
         if (event.getEntity() == null)
             return;
 
+        if (portalManager.getPortalAt(event.getBlocks().get(2).getLocation()) != null)
+            return;
+
         boolean isNorthSouth = false;
         Block block;
         BlockVector3 min = null;

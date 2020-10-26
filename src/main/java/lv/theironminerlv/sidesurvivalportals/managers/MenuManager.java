@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 
 import fr.minuskube.inv.SmartInventory;
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
+import lv.theironminerlv.sidesurvivalportals.data.PortalData;
 import lv.theironminerlv.sidesurvivalportals.gui.EditPortalAccess;
 import lv.theironminerlv.sidesurvivalportals.gui.EditPortalIcon;
 import lv.theironminerlv.sidesurvivalportals.gui.EditPortalMenu;
@@ -26,8 +27,10 @@ public class MenuManager
     }
 
     public boolean portalPermCheck(Player player, Portal portal) {
-        if (portal == null || portal.getId() == null) {
+        if (!PortalData.portalExists(portal)) {
             player.sendMessage(ConvertUtils.color("&cPortāls vairs neeksistē!"));
+            plugin.handleClose.remove(player);
+            player.closeInventory();
             return false;
         }
 
@@ -40,8 +43,12 @@ public class MenuManager
     }
 
     public void openMain(Player player, Portal portal) {
-        if (!portalPermCheck(player, portal))
+        if (portal == null || portal.getId() == null) {
+            player.sendMessage(ConvertUtils.color("&cPortāls vairs neeksistē!"));
+            plugin.handleClose.remove(player);
+            player.closeInventory();
             return;
+        }
 
         MainMenu gui = new MainMenu(portal);
         gui.open(player, portal);

@@ -56,27 +56,27 @@ public class MenuItems
         blackPane.setItemMeta(itemMeta);
 
         itemMeta = goSpawn.getItemMeta();
-        itemMeta.setDisplayName(ConvertUtils.color("&eDoties uz spawn"));
+        itemMeta.setDisplayName(ConvertUtils.color("&e&lDoties uz spawn"));
         goSpawn.setItemMeta(itemMeta);
 
         itemMeta = goNetherSpawn.getItemMeta();
-        itemMeta.setDisplayName(ConvertUtils.color("&eDoties uz Nether"));
+        itemMeta.setDisplayName(ConvertUtils.color("&e&lDoties uz Nether"));
         goNetherSpawn.setItemMeta(itemMeta);
 
         itemMeta = pubPortals.getItemMeta();
-        itemMeta.setDisplayName(ConvertUtils.color("&ePubliskie portāli"));
+        itemMeta.setDisplayName(ConvertUtils.color("&e&lPubliskie portāli"));
         pubPortals.setItemMeta(itemMeta);
 
         itemMeta = portalSettings.getItemMeta();
-        itemMeta.setDisplayName(ConvertUtils.color("&fPortāla iestatījumi"));
+        itemMeta.setDisplayName(ConvertUtils.color("&f&lPortāla iestatījumi"));
         portalSettings.setItemMeta(itemMeta);
 
         itemMeta = prevPage.getItemMeta();
-        itemMeta.setDisplayName(ConvertUtils.color("&a&lIepriekšējā lapa"));
+        itemMeta.setDisplayName(ConvertUtils.color("&aIepriekšējā lapa"));
         prevPage.setItemMeta(itemMeta);
 
         itemMeta = nextPage.getItemMeta();
-        itemMeta.setDisplayName(ConvertUtils.color("&a&lNākamā lapa"));
+        itemMeta.setDisplayName(ConvertUtils.color("&aNākamā lapa"));
         nextPage.setItemMeta(itemMeta);
 
         itemMeta = editPortalAccess.getItemMeta();

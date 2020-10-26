@@ -88,14 +88,13 @@ public class PublicPortalsMenu implements InventoryProvider {
         for (Portal portal : portals.values()) {
             item = portal.getIcon().clone();
             itemMeta = item.getItemMeta();
-            itemMeta.setDisplayName(ConvertUtils.color("&5&lPortāls"));
+            itemMeta.setDisplayName(ConvertUtils.color("&d&l" + portal.getLand().getName() +  " &5portāls"));
             posReadable = ConvertUtils.readableLoc(portal.getPos1());
             descLines.clear();
 
             desc = portal.getDescription();
 
             descLines.add("");
-            descLines.add("&7Teritorija: &f" + portal.getLand().getName());
             descLines.add("&7Lokācija: &f" + posReadable);
             descLines.add("&7Apraksts:");
 

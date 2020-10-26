@@ -232,7 +232,7 @@ public class PortalManager
     }
     
     public void removeLandAccess(Portal portal, Land land) {
-        if (portal == null || portal.getId() == null)
+        if (!PortalData.portalExists(portal))
             return;
 
         List<Integer> allowedLands = portal.getAllowedLands();
@@ -243,7 +243,7 @@ public class PortalManager
     }
 
     public void removeLandAccess(Portal portal, int landId) {
-        if (portal == null || portal.getId() == null)
+        if (!PortalData.portalExists(portal))
             return;
 
         List<Integer> allowedLands = portal.getAllowedLands();
@@ -254,7 +254,7 @@ public class PortalManager
     }
 
     public void removePlayerAccess(Portal portal, UUID uuid) {
-        if (portal == null || portal.getId() == null)
+        if (!PortalData.portalExists(portal))
             return;
 
         List<UUID> allowedPlayers = portal.getAllowedPlayers();
@@ -268,7 +268,7 @@ public class PortalManager
         plugin.handleClose.remove(player);
         player.closeInventory();
 
-        if (portal == null || portal.getId() == null)
+        if (!PortalData.portalExists(portal))
             return;
         
         Location loc = portal.getTpLoc().clone();
@@ -302,6 +302,13 @@ public class PortalManager
   
         loc.setPitch(player.getLocation().getPitch());
         loc.setYaw(player.getLocation().getYaw());
+
+        // new BukkitRunnable(){
+        //     public void run() {
+        //         plugin.handleClose.remove(player);
+        //         menuManager.openEditPortalAccess(player, portal);
+        //     }
+        // }.runTaskLater(plugin, 1);
 
         player.teleport(loc);
     }
