@@ -38,7 +38,7 @@ import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
 import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.Land;
 
-public class PrivatePortalsMenu implements InventoryProvider {
+public class PublicPortalsMenu implements InventoryProvider {
     private static SideSurvivalPortals plugin = SideSurvivalPortals.getInstance();
     private InventoryManager invManager = plugin.getInvManager();
     private PortalManager portalManager = plugin.getPortalManager();
@@ -50,9 +50,9 @@ public class PrivatePortalsMenu implements InventoryProvider {
         this.inventory = SmartInventory.builder()
             .manager(invManager)
             .id("portal")
-            .provider(new PrivatePortalsMenu())
+            .provider(new PublicPortalsMenu())
             .size(4, 9)
-            .title("Privātie portāli")
+            .title("Publiskie portāli")
             .build();
     }
 
@@ -74,15 +74,7 @@ public class PrivatePortalsMenu implements InventoryProvider {
         ItemMeta itemMeta;
         Pagination pagination = contents.pagination();
 
-        Set<? extends Land> playerLands = landsAPI.getLandPlayer(player.getUniqueId()).getLands();
-        Map<String, Portal> portals = new ConcurrentHashMap<>();
-
-        for (Land land : playerLands) {
-            portals.putAll(PortalData.getByLand(land));
-            portals.putAll(PortalData.getAccessablePortalsByLand(land));
-        }
-
-        portals.putAll(PortalData.getAccessablePortalsByPlayer(player.getUniqueId()));
+        Map<String, Portal> portals = PortalData.getAllPublic();
 
         int portalAmount = portals.size();
         String posReadable;

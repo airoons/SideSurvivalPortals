@@ -14,10 +14,14 @@ import fr.minuskube.inv.InventoryManager;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.SmartInvsPlugin;
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
+import lv.theironminerlv.sidesurvivalportals.gui.EditPortalAccess;
 import lv.theironminerlv.sidesurvivalportals.gui.EditPortalIcon;
 import lv.theironminerlv.sidesurvivalportals.gui.EditPortalMenu;
 import lv.theironminerlv.sidesurvivalportals.gui.MainMenu;
+import lv.theironminerlv.sidesurvivalportals.gui.PortalAccessLands;
+import lv.theironminerlv.sidesurvivalportals.gui.PortalAccessPlayers;
 import lv.theironminerlv.sidesurvivalportals.gui.PrivatePortalsMenu;
+import lv.theironminerlv.sidesurvivalportals.gui.PublicPortalsMenu;
 import lv.theironminerlv.sidesurvivalportals.managers.MenuManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
@@ -43,7 +47,10 @@ public class InventoryCloseListener implements Listener
         if (invManager.getInventory(player).isPresent()) {
             SmartInventory inv = invManager.getInventory(player).get();
 
-            if (inv.getProvider() instanceof EditPortalMenu && plugin.handleClose.contains(player)) {
+            if ((inv.getProvider() instanceof PrivatePortalsMenu
+            || inv.getProvider() instanceof PublicPortalsMenu
+            || inv.getProvider() instanceof EditPortalMenu)
+            && plugin.handleClose.contains(player)) {
                 Portal portal = portalManager.getPortalAt(player.getLocation());
 
                 if (portal != null) {
@@ -54,7 +61,7 @@ public class InventoryCloseListener implements Listener
                         }
                     }.runTaskLater(plugin, 1);
                 }
-            } else if (inv.getProvider() instanceof EditPortalIcon && plugin.handleClose.contains(player)) {
+            } else if ((inv.getProvider() instanceof EditPortalIcon || inv.getProvider() instanceof EditPortalAccess) && plugin.handleClose.contains(player)) {
                 Portal portal = portalManager.getPortalAt(player.getLocation());
 
                 if (portal != null) {
@@ -65,14 +72,14 @@ public class InventoryCloseListener implements Listener
                         }
                     }.runTaskLater(plugin, 1);
                 }
-            } else if (inv.getProvider() instanceof PrivatePortalsMenu && plugin.handleClose.contains(player)) {
+            } else if ((inv.getProvider() instanceof PortalAccessLands || inv.getProvider() instanceof PortalAccessPlayers) && plugin.handleClose.contains(player)) {
                 Portal portal = portalManager.getPortalAt(player.getLocation());
 
                 if (portal != null) {
                     new BukkitRunnable(){
                         public void run() {
                             plugin.handleClose.remove(player);
-                            menuManager.openMain(player, portal);
+                            menuManager.openEditPortalAccess(player, portal);
                         }
                     }.runTaskLater(plugin, 1);
                 }

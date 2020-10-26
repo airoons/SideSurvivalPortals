@@ -11,6 +11,7 @@ import lv.theironminerlv.sidesurvivalportals.gui.MainMenu;
 import lv.theironminerlv.sidesurvivalportals.gui.PortalAccessLands;
 import lv.theironminerlv.sidesurvivalportals.gui.PortalAccessPlayers;
 import lv.theironminerlv.sidesurvivalportals.gui.PrivatePortalsMenu;
+import lv.theironminerlv.sidesurvivalportals.gui.PublicPortalsMenu;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
 
@@ -48,6 +49,11 @@ public class MenuManager
 
     public void openPrivate(Player player) {
         PrivatePortalsMenu gui = new PrivatePortalsMenu();
+        gui.open(player);
+    }
+
+    public void openPublic(Player player) {
+        PublicPortalsMenu gui = new PublicPortalsMenu();
         gui.open(player);
     }
 

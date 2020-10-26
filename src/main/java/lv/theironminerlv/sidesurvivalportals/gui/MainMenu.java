@@ -82,7 +82,7 @@ public class MainMenu implements InventoryProvider
         item.setItemMeta(meta);
         contents.set(1, 3 + offset, ClickableItem.of(item, e -> plugin.getMenuManager().openPrivate(player)));
 
-        contents.set(1, 5 + offset, ClickableItem.of(MenuItems.pubPortals, e -> player.sendMessage(ChatColor.BOLD + "Dodas uz spawn")));
+        contents.set(1, 5 + offset, ClickableItem.of(MenuItems.pubPortals, e -> plugin.getMenuManager().openPublic(player)));;
 
         if (offset == 0) {    
             contents.set(1, 7, ClickableItem.of(MenuItems.portalSettings, e -> plugin.getMenuManager().openEditPortal(player, portal)));
@@ -93,20 +93,6 @@ public class MainMenu implements InventoryProvider
     public void update(Player player, InventoryContents contents) {
 
     }
-
-    // @Override
-    // public void update(Player player, InventoryContents contents) {
-    // int state = contents.property("state", 0);
-    // contents.setProperty("state", state + 1);
-
-    // ItemStack glass = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
-
-    // if (state % 5 != 0) {
-    // glass = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
-    // }
-
-    // contents.fillBorders(ClickableItem.empty(glass));
-    // }
 
     public void teleportToSpawn(Player player) {
         Location loc = PortalData.getSpawnLocation();

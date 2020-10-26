@@ -79,4 +79,10 @@ public class PortalData
         .filter(map -> map.getValue().getAllowedPlayers().contains(uuid))
         .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
 	}
+
+	public static Map<String, Portal> getAllPublic() {
+		return CACHED_PORTALS.entrySet().stream()
+        .filter(map -> map.getValue().getIsPublic())
+        .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+	}
 }

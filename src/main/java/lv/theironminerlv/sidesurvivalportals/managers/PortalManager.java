@@ -23,6 +23,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.GlassPane;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
@@ -261,5 +262,47 @@ public class PortalManager
         allowedPlayers.remove(uuid);
         portal.setAllowedPlayers(allowedPlayers);
         dataManager.save(portal);
+    }
+
+    public void teleportTo(Player player, Portal portal) {
+        plugin.handleClose.remove(player);
+        player.closeInventory();
+
+        if (portal == null || portal.getId() == null)
+            return;
+        
+        Location loc = portal.getTpLoc().clone();
+
+        if (!loc.getBlock().isEmpty() || !loc.getBlock().getRelative(BlockFace.UP).isEmpty()) {
+            loc = null;
+        }
+
+        Block checkBlock = portal.getTpLoc().getBlock().getRelative(BlockFace.DOWN);
+        if (checkBlock.isEmpty() || checkBlock.isLiquid() || checkBlock.isPassable()) {
+
+            if (checkBlock.isEmpty()) {
+                checkBlock = checkBlock.getRelative(BlockFace.DOWN);
+                if (checkBlock.isEmpty() || checkBlock.isLiquid() || checkBlock.isPassable())
+                    loc = null;
+            } else
+                loc = null;
+        }
+
+        if (loc == null) {
+            loc = getSafeTeleportLoc(portal);
+            
+            if (loc == null) {
+                player.sendMessage(ConvertUtils.color("&cTeleportācijas galamērķis nav drošs!"));
+                return;
+            }
+            
+            portal.setTpLoc(loc);
+            dataManager.save(portal);
+        }
+  
+        loc.setPitch(player.getLocation().getPitch());
+        loc.setYaw(player.getLocation().getYaw());
+
+        player.teleport(loc);
     }
 }
