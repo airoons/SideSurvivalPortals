@@ -26,6 +26,14 @@ public class ConvertUtils
         return input;
     }
 
+    public static String[] color(String[] input) {
+        for (int i = 0; i < input.length; i++) {
+            input[i] = color(input[i]);
+        }
+
+        return input;
+    }
+
     public static String color(String input) {
         Matcher m = HEX_PATTERN.matcher(input);
         try {

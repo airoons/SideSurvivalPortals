@@ -35,8 +35,13 @@ public class MainMenu implements InventoryProvider
     }
 
     private void load(Portal portal) {
-        this.inventory = SmartInventory.builder().manager(invManager).id("portal").provider(new MainMenu(portal))
-                .size(3, 9).title("Portāls").build();
+        this.inventory = SmartInventory.builder()
+            .manager(invManager)
+            .id("portal")
+            .provider(new MainMenu(portal))
+            .size(3, 9)
+            .title("Portāls")
+            .build();
     }
 
     public void open(Player player, Portal portal) {

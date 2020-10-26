@@ -48,17 +48,26 @@ public class PrivatePortalsMenu implements InventoryProvider {
     }
 
     private void load() {
-        this.inventory = SmartInventory.builder().manager(invManager).id("portal").provider(new PrivatePortalsMenu())
-                .size(6, 9).title("Privātie portāli").build();
+        this.inventory = SmartInventory.builder()
+            .manager(invManager)
+            .id("portal")
+            .provider(new PrivatePortalsMenu())
+            .size(6, 9)
+            .title("Privātie portāli")
+            .build();
     }
 
-    public void open(Player player) {
+    public void open(Player player, boolean close) {
         this.load();
+        if (close)
+            player.closeInventory();
         this.inventory.open(player);
     }
 
-    public void open(Player player, int page) {
+    public void open(Player player, boolean close, int page) {
         this.load();
+        if (close)
+            player.closeInventory();
         this.inventory.open(player, page);
     }
 
@@ -75,29 +84,50 @@ public class PrivatePortalsMenu implements InventoryProvider {
             portals.addAll(PortalData.getByLand(land).values());
         }
 
-        int portalAmount = portals.size();
+        int portalAmount = portals.size() + 100;
         String posReadable;
+        String desc;
+        List<String> descLines = new ArrayList<>();
+        int index;
 
-        
         ClickableItem[] items = new ClickableItem[portalAmount];
 
         for(int i = 0; i < items.length; i++) {
-            Portal portal = portals.get(i);
-            
-            item = portal.getIcon().clone();
-            itemMeta = item.getItemMeta();
-            itemMeta.setDisplayName(ConvertUtils.color("&5&lPortāls"));
-            posReadable = ConvertUtils.readableLoc(portal.getPos1());
-            itemMeta.setLore(ConvertUtils.color(Arrays.asList(
-                "",
-                "&7Teritorija: &f" + portal.getLand().getName(),
-                "&7Lokācija: &f" + posReadable,
-                "",
-                "&dSpied, lai teleportētos!")));
-            item.setItemMeta(itemMeta);
+            items[i] = ClickableItem.empty(new ItemStack(Material.PAPER));
 
-            items[i] = ClickableItem.of(item, 
-                e -> teleportTo(player, portal));
+            // Portal portal = portals.get(i);
+            
+            // item = portal.getIcon().clone();
+            // itemMeta = item.getItemMeta();
+            // itemMeta.setDisplayName(ConvertUtils.color("&5&lPortāls"));
+            // posReadable = ConvertUtils.readableLoc(portal.getPos1());
+            // descLines.clear();
+
+            // desc = portal.getDescription();
+
+            // descLines.add("");
+            // descLines.add("&7Teritorija: &f" + portal.getLand().getName());
+            // descLines.add("&7Lokācija: &f" + posReadable);
+            // descLines.add("&7Apraksts:");
+
+            // index = 0;
+            // while (index < desc.length()) {
+            //     if (index + 31 < desc.length() && desc.charAt(index + 31) != ' ')
+            //         descLines.add("  &f"+ desc.substring(index, Math.min(index + 30,desc.length())) + "-");
+            //     else
+            //         descLines.add("  &f"+ desc.substring(index, Math.min(index + 30,desc.length())));
+
+            //     index += 30;
+            // }
+
+            // descLines.add("");
+            // descLines.add("&dSpied, lai teleportētos!");
+            
+            // itemMeta.setLore(ConvertUtils.color(descLines));
+            // item.setItemMeta(itemMeta);
+
+            // items[i] = ClickableItem.of(item, 
+            //     e -> teleportTo(player, portal));
         }
 
         pagination.setItems(items);
@@ -105,9 +135,9 @@ public class PrivatePortalsMenu implements InventoryProvider {
         pagination.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 0, 0));
 
         contents.set(5, 2, ClickableItem.of(MenuItems.prevPage,
-            e -> open(player, pagination.previous().getPage())));
+            e -> open(player, false, pagination.previous().getPage())));
         contents.set(5, 6, ClickableItem.of(MenuItems.nextPage,
-            e -> open(player, pagination.next().getPage())));
+            e -> open(player, false, pagination.next().getPage())));
 
     }
 

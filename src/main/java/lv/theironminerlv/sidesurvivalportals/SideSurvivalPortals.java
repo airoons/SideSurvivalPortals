@@ -6,9 +6,10 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import fr.minuskube.inv.InventoryManager;
-import lv.theironminerlv.sidesurvivalportals.commands.test;
+import lv.theironminerlv.sidesurvivalportals.commands.PortalCommand;
 import lv.theironminerlv.sidesurvivalportals.data.PortalData;
 import lv.theironminerlv.sidesurvivalportals.gui.MenuItems;
+import lv.theironminerlv.sidesurvivalportals.listeners.InventoryCloseListener;
 import lv.theironminerlv.sidesurvivalportals.listeners.PortalBreakListener;
 import lv.theironminerlv.sidesurvivalportals.listeners.PortalCreateListener;
 import lv.theironminerlv.sidesurvivalportals.listeners.PortalEnterListener;
@@ -44,7 +45,6 @@ public class SideSurvivalPortals extends JavaPlugin
         config = getConfig();
 
         this.saveDefaultConfig();
-        this.getCommand("test").setExecutor(new test());
 
         landsAPI = new LandsIntegration(this);
 
@@ -57,14 +57,17 @@ public class SideSurvivalPortals extends JavaPlugin
 
         getLogger().info("SideSurvivalPortals starting!");
 
-        getServer().getPluginManager().registerEvents(new PortalCreateListener(this), this);
-        getServer().getPluginManager().registerEvents(new PortalBreakListener(this), this);
-        getServer().getPluginManager().registerEvents(new PortalEnterListener(this), this);
-
         invManager = new InventoryManager(this);
         invManager.init();
 
         dataManager.loadPortals();
+
+        getServer().getPluginManager().registerEvents(new PortalCreateListener(this), this);
+        getServer().getPluginManager().registerEvents(new PortalBreakListener(this), this);
+        getServer().getPluginManager().registerEvents(new PortalEnterListener(this), this);
+        getServer().getPluginManager().registerEvents(new InventoryCloseListener(this), this);
+
+        this.getCommand("p").setExecutor(new PortalCommand());
     }
 
     public InventoryManager getInvManager() {

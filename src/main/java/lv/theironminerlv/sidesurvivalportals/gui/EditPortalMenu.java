@@ -14,6 +14,7 @@ import dev.dbassett.skullcreator.SkullCreator;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.InventoryManager;
 import fr.minuskube.inv.SmartInventory;
+import fr.minuskube.inv.SmartInvsPlugin;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
@@ -42,6 +43,7 @@ public class EditPortalMenu implements InventoryProvider
     public void open(Player player, Portal portal) {
         this.portal = portal;
         this.load(portal);
+        player.closeInventory();
         this.inventory.open(player);
     }
 
@@ -81,6 +83,10 @@ public class EditPortalMenu implements InventoryProvider
 
     public void editPortalDescr(Player player, Portal portal) {
         player.closeInventory();
-        player.sendMessage("Raksti komandu blah blah blah");
+        player.sendMessage(ConvertUtils.color("&7Raksti komandu &f/p apraksts <jaunais apraksts>&7, lai mainītu portāla aprakstu!"));
+    }
+
+    public Portal getPortal() {
+        return portal;
     }
 }

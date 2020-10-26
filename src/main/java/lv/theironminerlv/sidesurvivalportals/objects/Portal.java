@@ -1,5 +1,9 @@
 package lv.theironminerlv.sidesurvivalportals.objects;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -15,10 +19,13 @@ public class Portal
     private Location pos2;
     private Location tpLoc;
     private World world;
-    // private boolean isPublic = false;
+    private boolean isPublic = false;
     private boolean isNorthSouth;
     private Land land;
-    private ItemStack icon;
+    private ItemStack icon = MenuItems.defaultIcon.clone();
+    private String desc = "-";
+    private List<Integer> allowedLands = new ArrayList<Integer>();
+    private List<UUID> allowedPlayers = new ArrayList<UUID>();
 
     // When first creating a portal
     public Portal(Location pos1, Location pos2, World world, boolean isNorthSouth, Land land) {
@@ -28,21 +35,27 @@ public class Portal
         this.world = world;
         this.isNorthSouth = isNorthSouth;
         this.land = land;
-        this.icon = MenuItems.defaultIcon.clone();
     }
 
     // From savefile
-    public Portal(Location pos1, Location pos2, World world, boolean isNorthSouth, Land land, String id, String icon) {
+    public Portal(Location pos1, Location pos2, World world, boolean isNorthSouth, boolean isPublic, Land land, String id, String icon, String desc, List<Integer> allowedLands, List<String> allowedPlayers) {
         this.pos1 = pos1;
         this.pos2 = pos2;
         this.tpLoc = pos1;
         this.world = world;
         this.isNorthSouth = isNorthSouth;
+        this.isPublic = isPublic;
         this.land = land;
         this.id = id;
 
         this.icon = new ItemStack(Material.valueOf(icon));
+        this.desc = desc;
+        this.allowedLands = allowedLands;
         
+        for (String loopPlayer : allowedPlayers) {
+            this.allowedPlayers.add(UUID.fromString(loopPlayer));
+        }
+
         if (this.icon == null)
             this.icon = MenuItems.defaultIcon.clone();;
     }
@@ -67,6 +80,10 @@ public class Portal
         return isNorthSouth;
     }
 
+    public boolean getIsPublic() {
+		return isPublic;
+	}
+
     public World getWorld() {
         return world;
     }
@@ -79,6 +96,18 @@ public class Portal
         return icon;
     }
 
+    public String getDescription() {
+        return desc;
+    }
+
+    public List<Integer> getAllowedLands() {
+        return allowedLands;
+    }
+
+    public List<UUID> getAllowedPlayers() {
+        return allowedPlayers;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -89,5 +118,17 @@ public class Portal
 
     public void setIcon(ItemStack icon) {
         this.icon = icon;
+    }
+
+    public void setDescription(String desc) {
+        this.desc = desc;
+    }
+
+    public void setAllowedlands(List<Integer> allowedLands) {
+        this.allowedLands = allowedLands;
+    }
+
+    public void setAllowedPlayers(List<UUID> allowedPlayers) {
+        this.allowedPlayers = allowedPlayers;
     }
 }

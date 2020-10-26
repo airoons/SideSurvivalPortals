@@ -2,6 +2,7 @@ package lv.theironminerlv.sidesurvivalportals.managers;
 
 import org.bukkit.entity.Player;
 
+import fr.minuskube.inv.SmartInventory;
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.gui.EditPortalIcon;
 import lv.theironminerlv.sidesurvivalportals.gui.EditPortalMenu;
@@ -27,7 +28,7 @@ public class MenuManager
 
     public void openPrivate(Player player) {
         PrivatePortalsMenu gui = new PrivatePortalsMenu();
-        gui.open(player);
+        gui.open(player, true);
     }
 
     public void openEditPortal(Player player, Portal portal) {
