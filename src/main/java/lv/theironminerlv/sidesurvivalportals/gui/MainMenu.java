@@ -15,6 +15,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.data.PortalData;
 import lv.theironminerlv.sidesurvivalportals.managers.PermissionManager;
+import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
 
@@ -23,6 +24,7 @@ public class MainMenu implements InventoryProvider
     private static SideSurvivalPortals plugin = SideSurvivalPortals.getInstance();
     private InventoryManager invManager = plugin.getInvManager();
     private PermissionManager permissionManager = plugin.getPermissionManager();
+    private PortalManager portalManager = plugin.getPortalManager();
     private SmartInventory inventory;
     private Portal portal;
 
@@ -67,9 +69,9 @@ public class MainMenu implements InventoryProvider
         }
 
         if (player.getWorld().getEnvironment().equals(Environment.NETHER))
-            contents.set(1, 1 + offset, ClickableItem.of(MenuItems.goSpawn, e -> teleportToSpawn(player)));
+            contents.set(1, 1 + offset, ClickableItem.of(MenuItems.goSpawn, e -> portalManager.teleportToSpawn(player, false)));
         else
-            contents.set(1, 1 + offset, ClickableItem.of(MenuItems.goNetherSpawn, e -> teleportToNetherSpawn(player)));
+            contents.set(1, 1 + offset, ClickableItem.of(MenuItems.goNetherSpawn, e -> portalManager.teleportToSpawn(player, true)));
         
 
         item = SkullCreator.itemFromUuid(player.getUniqueId());
@@ -88,15 +90,5 @@ public class MainMenu implements InventoryProvider
     @Override
     public void update(Player player, InventoryContents contents) {
 
-    }
-
-    public void teleportToSpawn(Player player) {
-        Location loc = PortalData.getSpawnLocation();
-        player.teleport(loc);
-    }
-
-    public void teleportToNetherSpawn(Player player) {
-        Location loc = PortalData.getNetherSpawnLocation();
-        player.teleport(loc);
     }
 }

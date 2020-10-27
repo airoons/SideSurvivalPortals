@@ -106,7 +106,7 @@ public class PrivatePortalsMenu implements InventoryProvider {
             item.setItemMeta(itemMeta);
 
             items[i] = ClickableItem.of(item, 
-                e -> portalManager.teleportTo(player, portal));
+                e -> portalManager.teleportTo(player, portal, true));
             i++;
         }
 

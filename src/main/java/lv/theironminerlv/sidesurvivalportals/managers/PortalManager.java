@@ -1,6 +1,7 @@
 package lv.theironminerlv.sidesurvivalportals.managers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -15,15 +16,22 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 
+import org.bukkit.Axis;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Orientable;
 import org.bukkit.block.data.type.GlassPane;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.data.PortalData;
@@ -38,6 +46,7 @@ public class PortalManager
     private SideSurvivalPortals plugin;
     private static LandsIntegration landsAPI;
     private static DataManager dataManager;
+    public Map<UUID, BukkitTask> tasks = new HashMap<>();
 
     public PortalManager(SideSurvivalPortals plugin) {
         this.plugin = plugin;
@@ -262,13 +271,34 @@ public class PortalManager
         dataManager.save(portal);
     }
 
-    public void teleportTo(Player player, Portal portal) {
+    public void fakePortalBlocks(Player player, Portal portal, boolean enable) {
+        if (!PortalData.portalExists(portal))
+            return;
+        
+        ArrayList<Location> portalBlocks = BlockUtils.getBlocksBetween(portal.getPos1(), portal.getPos2());
+        Orientable fakePortal = (Orientable) Material.NETHER_PORTAL.createBlockData();
+
+        if (portal.getNorthSouth())
+            fakePortal.setAxis(Axis.Z);
+        
+        if (enable) {
+            for (Location loc : portalBlocks) {
+                player.sendBlockChange(loc, fakePortal);
+            }
+        } else {
+            for (Location loc : portalBlocks) {
+                player.sendBlockChange(loc, loc.getBlock().getBlockData());
+            }
+        }
+    }
+    
+    public void teleportTo(Player player, Portal portal, boolean cooldown) {
         plugin.handleClose.remove(player);
         player.closeInventory();
 
         if (!PortalData.portalExists(portal))
             return;
-        
+
         Location loc = portal.getTpLoc().clone();
 
         if (!loc.getBlock().isEmpty() || !loc.getBlock().getRelative(BlockFace.UP).isEmpty()) {
@@ -301,13 +331,116 @@ public class PortalManager
         loc.setPitch(player.getLocation().getPitch());
         loc.setYaw(player.getLocation().getYaw());
 
-        // new BukkitRunnable(){
-        //     public void run() {
-        //         plugin.handleClose.remove(player);
-        //         menuManager.openEditPortalAccess(player, portal);
-        //     }
-        // }.runTaskLater(plugin, 1);
+        if (cooldown) {
+            if (player.hasPermission("sidesurvivalportals.tp.bypass")) {
+                player.teleport(loc);
+                return;
+            }
+        
+            if (!tasks.containsKey(player.getUniqueId())) {
+                // player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 150, 0, true, false, false));
+                player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, SoundCategory.BLOCKS, 1.0f, 1.0f);
+                if (isPortalAt(player.getLocation()))
+                    fakePortalBlocks(player, getPortalAt(player.getLocation()), true);
+
+                tasks.put(player.getUniqueId(), new BukkitRunnable() {
+                    int n = 0;
+                    String dots;
+                    
+                    @Override
+                    public void run() {
+                        if (n >= 5) {
+                            if (isPortalAt(player.getLocation()))
+                                fakePortalBlocks(player, portal, false);
+                            teleportTo(player, portal, false);
+                            tasks.remove(player.getUniqueId());
+                            this.cancel();
+                            return;
+                        }
+
+                        dots = "";
+                        for (int i = 0; i < n; i++) {
+                            if (i > 0)
+                                dots += " ●";
+                            else
+                                dots += "&d&l●";
+                        }
+                        dots += "&5&l";
+        
+                        for (int i = n; i < 5; i++) {
+                            if (i > 0)
+                                dots += " ●";
+                            else
+                                dots += "●";
+                        }
+                        player.sendTitle(ConvertUtils.color("&5Teleportē..."), ConvertUtils.color(dots), 0, 20, 5);
+
+                        n++;
+                    }
+                }.runTaskTimer(plugin, 0, 15));
+            }
+            return;
+        }
 
         player.teleport(loc);
+    }
+
+    public void teleportToSpawn(Player player, boolean isNether) {
+        player.closeInventory();
+
+        if (player.hasPermission("sidesurvivalportals.tp.bypass")) {
+            if (isNether)
+                player.teleport(PortalData.getNetherSpawnLocation());
+            else
+                player.teleport(PortalData.getSpawnLocation());
+            return;
+        }
+    
+        if (!tasks.containsKey(player.getUniqueId())) {
+            // player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 150, 0, true, false, false));
+            player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            if (isPortalAt(player.getLocation()))
+                fakePortalBlocks(player, getPortalAt(player.getLocation()), true);
+
+            tasks.put(player.getUniqueId(), new BukkitRunnable() {
+                int n = 0;
+                String dots;
+                
+                @Override
+                public void run() {
+                    if (n >= 5) {
+                        if (isPortalAt(player.getLocation()))
+                            fakePortalBlocks(player, getPortalAt(player.getLocation()), false);
+
+                        if (isNether)
+                            player.teleport(PortalData.getNetherSpawnLocation());
+                        else
+                            player.teleport(PortalData.getSpawnLocation());
+                        tasks.remove(player.getUniqueId());
+                        this.cancel();
+                        return;
+                    }
+
+                    dots = "";
+                    for (int i = 0; i < n; i++) {
+                        if (i > 0)
+                            dots += " ●";
+                        else
+                            dots += "&d&l●";
+                    }
+                    dots += "&5&l";
+    
+                    for (int i = n; i < 5; i++) {
+                        if (i > 0)
+                            dots += " ●";
+                        else
+                            dots += "●";
+                    }
+                    player.sendTitle(ConvertUtils.color("&5Teleportē..."), ConvertUtils.color(dots), 0, 20, 5);
+
+                    n++;
+                }
+            }.runTaskTimer(plugin, 0, 15));
+        }
     }
 }
