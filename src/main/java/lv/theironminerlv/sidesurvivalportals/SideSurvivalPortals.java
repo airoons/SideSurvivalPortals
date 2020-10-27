@@ -20,6 +20,7 @@ import lv.theironminerlv.sidesurvivalportals.managers.DataManager;
 import lv.theironminerlv.sidesurvivalportals.managers.MenuManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PermissionManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
+import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 import me.angeschossen.lands.api.integration.LandsIntegration;
 
 public class SideSurvivalPortals extends JavaPlugin
@@ -72,6 +73,9 @@ public class SideSurvivalPortals extends JavaPlugin
         getServer().getPluginManager().registerEvents(new InventoryCloseListener(this), this);
 
         this.getCommand("p").setExecutor(new PortalCommand());
+
+        Messages messages = new Messages();
+        messages.load(config.getConfigurationSection("messages"));
     }
 
     public InventoryManager getInvManager() {

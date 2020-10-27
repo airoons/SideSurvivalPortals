@@ -3,14 +3,106 @@
 teleportLocs:
   spawn: world;0.5;113;-0.5;0;0
   netherspawn: world_nether;0.5;93;-1.5;-125;0
+
 availableIcons:
-  - PAPER
-  - DIRT
-  - STONE
-  - OBSIDIAN
-  - SAND
-  - GRAVEL
-  - PISTON
+  - ENCHANTING_TABLE
+  - CHEST
+  - END_PORTAL_FRAME
+  - FURNACE
+  - CRAFTING_TABLE
+  - SPAWNER
+  - ANVIL
+  - BEACON
   - MINECART
-  - BREAD
-  - APPLE
+  - COMPASS 
+  - CLOCK
+  - ELYTRA
+  - TOTEM_OF_UNDYING
+  - SHEARS
+  - TRIDENT
+  - CROSSBOW
+  - FISHING_ROD
+  - SHIELD
+  - GRASS_BLOCK
+  - MYCELIUM
+  - GRAVEL
+  - SAND
+  - ICE
+  - SNOW
+  - WHITE_TERRACOTTA
+  - OAK_LOG
+  - NETHER_BRICKS
+  - DARK_PRISMARINE
+  - TNT
+  - SLIME_BLOCK
+  - OBSIDIAN
+  - IRON_ORE
+  - NETHERITE_BLOCK
+  - WHEAT
+  - POTATO
+  - CARROT
+  - SWEET_BERRIES
+  - BEETROOT
+  - HONEY_BOTTLE
+  - CARVED_PUMPKIN
+  - MELON
+  - CACTUS
+  - OAK_SAPLING
+  - EMERALD
+  - ENDER_PEARL
+  - TUBE_CORAL
+  - GUNPOWDER
+  - SOUL_LANTERN
+  - PAPER
+  - FIREWORK_ROCKET
+  - LAVA_BUCKET
+  - BOOK
+  - NAME_TAG
+  - BARRIER
+
+messages:
+  chat:
+    not-in-portal: "&cTev ir jāatrodas portālā, lai izmantotu šo komandu!"
+    no-edit-permission: "&cTev nav atļauts labot šo portālu!"
+    commands:
+      description:
+        no-description: "&cNeesi norādījis aprakstu!"
+        too-long: "&cApraksts nedrīkst būt garāks par 90 rakstzīmēm!"
+        change-success: "&7Portāla apraksts veiksmīgi mainīts uz &f{1}&7!"
+      add-remove:
+        no-add-type: "&cNorādi, vai pievienosi teritoriju (t) vai speletaju (s)!"
+        no-remove-type: "&cNorādi, vai noņemsi teritoriju (t) vai speletaju (s)!"
+        no-land: "&cNorādi, kuru teritoriju pievienosi!"
+        no-player: "&cNorādi, kuru spēlētāju pievienosi!"
+        error-land-doesnt-exist: "&cKļūda: tāda teritorija neeksistē!"
+        error-not-online: "&cKļūda: tāds spēlētājs nav tiešsaistē!"
+        error-hasnt-joined: "&cKļūda: tāds spēlētājs nav iepriekš pievienojies serverim!"
+        error-already-added-land: "&cKļūda: tādai teritorijai jau ir atļauts izmantot šo portālu!"
+        error-already-added-player: "&cKļūda: tam spēlētājam jau ir atļauts izmantot šo portālu!"
+        error-already-added-playerland: "&cKļūda: tas spēlētājs jau pieder teritorijai, kurā atrodas šis portāls!"
+        error-not-added-land: "&cKļūda: tādai teritorija nav pievienota šī portāla atļautajā sarakstā!"
+        error-not-added-player: "&cKļūda: tas spēlētājs nav pievienots šī portāla atļautajā sarakstā!"
+        error-same-land: "&cKļūda: nevar pievienot teritoriju, kurai tas pieder!"
+        error-same-player: "&cKļūda: nevari pats sevi pievienot šim portālam!"
+        add-success-land: "&7Veiksmīgi atļāvi teritorijai &f{1} &7izmantot šo portālu!"
+        add-success-player: "&7Veiksmīgi atļāvi spēlētājam &f{1} &7izmantot šo portālu!"
+        remove-success-land: "&7Veiksmīgi noņēmi teritorijai &f{1} &7atļauju izmantot šo portālu!"
+        remove-success-player: "&7Veiksmīgi noņēmi spēlētājam &f{1} &7atļauju izmantot šo portālu!"
+      help: |-
+          &f
+          &5&lPortālu komandas
+          &f
+          &f/p apraksts <apraksts> &7&omaina aprakstu portālam, kurā pašlaik atrodies
+          &f/p pievienot t <teritorija> &7&oatļauj norādītajai teritorijai izmantot portālu
+          &f/p pievienot s <speletajs> &7&oatļauj norādītajam spēlētājam izmantot portālu
+          &f
+          &f/p nonemt t <teritorija> &7&onoņem teritorijai atļauju izmantot portālu
+          &f/p nonemt s <speletajs> &7&onoņem spēlētājam atļauju izmantot portālu
+          &f
+  command-arguments:
+    description: "apraksts" # /p apraksts
+    add: "pievienot" # /p pievienot
+    remove: "nonemt" # /p nonemt
+    add-remove:
+      land: "t" # /p pievienot t <land>
+      player: "s" # /p pievienot s <player>

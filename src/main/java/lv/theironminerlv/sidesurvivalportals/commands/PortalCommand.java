@@ -21,6 +21,7 @@ import lv.theironminerlv.sidesurvivalportals.managers.PermissionManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
+import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.Land;
 
@@ -35,32 +36,38 @@ public class PortalCommand implements CommandExecutor, TabExecutor
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         if (sender instanceof Player) {
+            final String argAdd = Messages.get("command-arguments.add");
+            final String argRemove = Messages.get("command-arguments.remove");
+            final String argLand = Messages.get("command-arguments.add-remove.land");
+            final String argPlayer = Messages.get("command-arguments.add-remove.player");
+
             final Player player = (Player) sender;
 
             if (args.length >= 1) {
                 final Portal portal = portalManager.getPortalAt(player.getLocation());
+                final String argDesc = Messages.get("command-arguments.description");
                 
                 if (portal == null) {
-                    player.sendMessage(ConvertUtils.color("&cTev ir jāatrodas portālā, lai izmantotu šo komandu!"));
+                    player.sendMessage(Messages.get("chat.not-in-portal"));
                     return true;
                 }
                 if (!permissionManager.canEditPortal(player, portal.getLand())) {
-                    player.sendMessage(ConvertUtils.color("&cTev nav atļauts labot šo portālu!"));
+                    player.sendMessage(Messages.get("chat.no-edit-permission"));
                     return true;
                 }
 
                 if (args.length == 1) {
-                    if (args[0].equalsIgnoreCase("apraksts"))
-                        player.sendMessage(ConvertUtils.color("&cNeesi norādījis aprakstu!"));
-                    else if (args[0].equalsIgnoreCase("pievienot"))
-                        player.sendMessage(ConvertUtils.color("&cNoradi, vai pievienosi teritoriju vai komandu!"));
-                    else if (args[0].equalsIgnoreCase("nonemt"))
-                        player.sendMessage(ConvertUtils.color("&cNoradi, vai nonemsi teritoriju vai komandu!"));
+                    if (args[0].equalsIgnoreCase(argDesc))
+                        player.sendMessage(Messages.get("chat.commands.description.no-description"));
+                    else if (args[0].equalsIgnoreCase(argAdd))
+                        player.sendMessage(Messages.get("chat.commands.add-remove.no-add-type"));
+                    else if (args[0].equalsIgnoreCase(argRemove))
+                        player.sendMessage(Messages.get("chat.commands.add-remove.no-remove-type"));
 
                     return true;
                 }
 
-                if (args[0].equalsIgnoreCase("apraksts")) {
+                if (args[0].equalsIgnoreCase(argDesc)) {
                     final StringBuilder builder = new StringBuilder();
                     for (int i = 1; i < args.length; i++) {
                         builder.append(args[i]);
@@ -71,28 +78,28 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                     final String desc = builder.toString();
     
                     if (desc.length() > 90) {
-                        player.sendMessage(ConvertUtils.color("&cApraksts nedrīkst būt garāks par 90 rakstzīmēm!"));
+                        player.sendMessage(Messages.get("chat.commands.too-long"));
                         return true;
                     }
     
                     portal.setDescription(desc);
                     dataManager.save(portal);
-                    player.sendMessage(ConvertUtils.color("&7Portāla apraksts veiksmīgi mainīts uz &f" + desc + "&7!"));
+                    player.sendMessage(Messages.getParam("chat.commands.description.change-success", "{1}", desc));
     
                     return true;
                 }
 
                 if (args.length == 2) {
-                    if (args[1].equalsIgnoreCase("t"))
-                        player.sendMessage(ConvertUtils.color("&cNoradi, kuru teritoriju pievienosi!"));
-                    else if (args[1].equalsIgnoreCase("s"))
-                        player.sendMessage(ConvertUtils.color("&cNoradi, kuru speletaju pievienosi!"));
+                    if (args[1].equalsIgnoreCase(argLand))
+                        player.sendMessage(Messages.get("chat.commands.add-remove.no-land"));
+                    else if (args[1].equalsIgnoreCase(argPlayer))
+                        player.sendMessage(Messages.get("chat.commands.add-remove.no-player"));
 
                     return true;
                 } else {
-                    if (args[0].equalsIgnoreCase("pievienot")) {
-                        if (!args[1].equalsIgnoreCase("t") && !args[1].equalsIgnoreCase("s")) {
-                            player.sendMessage(ConvertUtils.color("&cNoradi, vai pievienosi teritoriju (t) vai speletaju (s)! " + args[1]));
+                    if (args[0].equalsIgnoreCase(argAdd)) {
+                        if (!args[1].equalsIgnoreCase(argLand) && !args[1].equalsIgnoreCase(argPlayer)) {
+                            player.sendMessage(Messages.get("chat.commands.add-remove.no-add-type"));
                             return true;
                         }
 
@@ -102,23 +109,23 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                         }
                         final String input = builder.toString();
 
-                        if (args[1].equalsIgnoreCase("t")) {
+                        if (args[1].equalsIgnoreCase(argLand)) {
                             final Land land = landsAPI.getLand(input);
 
                             if (land == null) {
-                                player.sendMessage(ConvertUtils.color("&cKļūda: tāda teritorija neeksistē!"));
+                                player.sendMessage(Messages.get("chat.commands.add-remove.error-land-doesnt-exist"));
                                 return true;
                             }
 
                             final List<Integer> allowedLands = portal.getAllowedLands();
                             
                             if (allowedLands.contains(land.getId())) {
-                                player.sendMessage(ConvertUtils.color("&cKļūda: tādai teritorijai jau ir atļauts izmantot šo portālu!"));
+                                player.sendMessage(Messages.get("chat.commands.add-remove.error-already-added-land"));
                                 return true;
                             }
 
                             if (portal.getLand().getId() == land.getId()) {
-                                player.sendMessage(ConvertUtils.color("&cKļūda: nevar portālam teritoriju, kurā tas atrodas!"));
+                                player.sendMessage(Messages.get("chat.commands.add-remove.error-same-land"));
                                 return true;
                             }
                             
@@ -126,31 +133,31 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                             portal.setAllowedlands(allowedLands);
                             dataManager.save(portal);
 
-                            player.sendMessage(ConvertUtils.color("&7Veiksmīgi atļāvi teritorijai &f" + land.getName() + " &7izmantot šo portālu!"));
+                            player.sendMessage(Messages.getParam("chat.commands.add-remove.add-success-land", "{1}", land.getName()));
 
                             return true;
                         } else {
                             final Player addPlayer = Bukkit.getPlayer(input);
 
                             if (addPlayer == null) {
-                                player.sendMessage(ConvertUtils.color("&cKļūda: tāds spēlētājs nav tiešsaistē!"));
+                                player.sendMessage(Messages.get("chat.commands.add-remove.error-not-online"));
                                 return true;
                             }
 
                             final List<UUID> allowedPlayers = portal.getAllowedPlayers();
                             
                             if (allowedPlayers.contains(addPlayer.getUniqueId())) {
-                                player.sendMessage(ConvertUtils.color("&cKļūda: tam spēlētājam jau ir atļauts izmantot šo portālu!"));
+                                player.sendMessage(Messages.get("chat.commands.add-remove.error-already-added-player"));
                                 return true;
                             }
 
                             if (player.equals(addPlayer)) {
-                                player.sendMessage(ConvertUtils.color("&cKļūda: nevari pats sevi pievienot šim portālam!"));
+                                player.sendMessage(Messages.get("chat.commands.add-remove.error-same-player"));
                                 return true;
                             }
 
                             if (portal.getLand().isTrusted(addPlayer.getUniqueId())) {
-                                player.sendMessage(ConvertUtils.color("&cKļūda: tas spēlētājs jau pieder teritorijai, kurā atrodas šis portāls!"));
+                                player.sendMessage(Messages.get("chat.commands.add-remove.error-already-added-playerland"));
                                 return true;
                             }
                             
@@ -158,13 +165,13 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                             portal.setAllowedPlayers(allowedPlayers);
                             dataManager.save(portal);
 
-                            player.sendMessage(ConvertUtils.color("&7Veiksmīgi atļāvi spēlētājam &f" + addPlayer.getName() + " &7izmantot šo portālu!"));
+                            player.sendMessage(Messages.getParam("chat.commands.add-remove.add-success-player", "{1}", addPlayer.getName()));
 
                             return true;
                         }
-                    } else if (args[0].equalsIgnoreCase("nonemt")) {
-                        if (!args[1].equalsIgnoreCase("t") && !args[1].equalsIgnoreCase("s")) {
-                            player.sendMessage(ConvertUtils.color("&cNoradi, vai nonemsi teritoriju (t) vai speletaju (s)! " + args[1]));
+                    } else if (args[0].equalsIgnoreCase(argRemove)) {
+                        if (!args[1].equalsIgnoreCase(argLand) && !args[1].equalsIgnoreCase(argPlayer)) {
+                            player.sendMessage(Messages.get("chat.commands.add-remove.no-remove-type"));
                             return true;
                         }
 
@@ -174,42 +181,42 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                         }
                         final String input = builder.toString();
 
-                        if (args[1].equalsIgnoreCase("t")) {
+                        if (args[1].equalsIgnoreCase(argLand)) {
                             final Land land = landsAPI.getLand(input);
 
                             if (land == null) {
-                                player.sendMessage(ConvertUtils.color("&cKļūda: tāda teritorija neeksistē!"));
+                                player.sendMessage(Messages.get("chat.commands.add-remove.error-land-doesnt-exist"));
                                 return true;
                             }
 
                             
                             if (!portal.getAllowedLands().contains(land.getId())) {
-                                player.sendMessage(ConvertUtils.color("&cKļūda: tādai teritorija nav pievienota šī portāla atļautajā sarakstā!"));
+                                player.sendMessage(Messages.get("chat.commands.add-remove.error-not-added-land"));
                                 return true;
                             }
                             
                             portalManager.removeLandAccess(portal, land);
 
-                            player.sendMessage(ConvertUtils.color("&7Veiksmīgi noņēmi teritoriju &f" + land.getName() + " &7atļauju izmantot šo portālu!"));
+                            player.sendMessage(Messages.getParam("chat.commands.add-remove.remove-success-land", "{1}", land.getName()));
 
                             return true;
                         } else {
                             final OfflinePlayer remPlayer = Bukkit.getOfflinePlayer(input);
 
                             if (!remPlayer.hasPlayedBefore()) {
-                                player.sendMessage(ConvertUtils.color("&cKļūda: tāds spēlētājs nav iepriekš pievienojies serverim!"));
+                                player.sendMessage(Messages.get("chat.commands.add-remove.error-hasnt-joined"));
                                 return true;
                             }
                             
                             if (!portal.getAllowedPlayers().contains(remPlayer.getUniqueId())) {
-                                player.sendMessage(ConvertUtils.color("&cKļūda: tas spēlētājs nav pievienots šī portāla atļautajā sarakstā!"));
+                                player.sendMessage(Messages.get("chat.commands.add-remove.error-not-added-player"));
                                 return true;
                             }
                             
                             portalManager.removePlayerAccess(portal, remPlayer.getUniqueId());
 
-                            player.sendMessage(ConvertUtils.color("&7Veiksmīgi noņēmi spēlētājam &f" + remPlayer.getName() + " &7atļauju izmantot šo portālu!"));
-
+                            player.sendMessage(Messages.getParam("chat.commands.add-remove.remove-success-player", "{1}", remPlayer.getName()));
+    
                             return true;
                         }
                     }
@@ -218,20 +225,7 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                 return true;
             }
 
-            final String[] messages = {
-                "",
-                "  &5&lPortālu komandas",
-                "",
-                "&f/p apraksts <apraksts> &7&omaina aprakstu portālam, kurā pašlaik atrodies",
-                "&f/p pievienot t <teritorija> &7&oatļauj norādītajai teritorijai izmantot portālu",
-                "&f/p pievienot s <speletajs> &7&oatļauj norādītajam spēlētājam izmantot portālu",
-                "",
-                "&f/p nonemt t <teritorija> &7&onoņem teritorijai atļauju izmantot portālu",
-                "&f/p nonemt s <speletajs> &7&onoņem spēlētājam atļauju izmantot portālu",
-                ""
-            };
-
-            player.sendMessage(ConvertUtils.color(messages));
+            player.sendMessage(Messages.get("chat.commands.help"));
             return true;
         }
 
@@ -242,20 +236,26 @@ public class PortalCommand implements CommandExecutor, TabExecutor
     public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
         final List<String> completions = new ArrayList<String>();
 
+        final String argDesc = Messages.get("command-arguments.description");
+        final String argAdd = Messages.get("command-arguments.add");
+        final String argRemove = Messages.get("command-arguments.remove");
+        final String argLand = Messages.get("command-arguments.add-remove.land");
+        final String argPlayer = Messages.get("command-arguments.add-remove.player");
+
         if (args.length == 1) {
-            final List<String> commands = Arrays.asList("apraksts", "pievienot", "nonemt");
+            final List<String> commands = Arrays.asList(argDesc, argAdd, argRemove);
             return commands
             .stream()
             .filter(c -> c.startsWith(args[0]))
             .collect(Collectors.toList());
         } else if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("pievienot") || args[0].equalsIgnoreCase("nonemt")) {
-                completions.add("s");
-                completions.add("t");
+            if (args[0].equalsIgnoreCase(argAdd) || args[0].equalsIgnoreCase(argRemove)) {
+                completions.add(argLand);
+                completions.add(argPlayer);
             }
         } else if (args.length == 3) {
-            if ((args[0].equalsIgnoreCase("pievienot") || args[0].equalsIgnoreCase("nonemt")) && 
-            (args[1].equalsIgnoreCase("t") || args[1].equalsIgnoreCase("s"))) {
+            if ((args[0].equalsIgnoreCase(argAdd) || args[0].equalsIgnoreCase(argRemove)) && 
+            (args[1].equalsIgnoreCase(argLand) || args[1].equalsIgnoreCase(argPlayer))) {
                 return null;
             }
         }
