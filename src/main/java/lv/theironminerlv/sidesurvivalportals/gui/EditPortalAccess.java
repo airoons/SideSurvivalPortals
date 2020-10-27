@@ -11,6 +11,7 @@ import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.managers.DataManager;
 import lv.theironminerlv.sidesurvivalportals.managers.MenuManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
+import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
 public class EditPortalAccess implements InventoryProvider
 {
@@ -27,11 +28,10 @@ public class EditPortalAccess implements InventoryProvider
 
     private void load(Portal portal) {
         this.inventory = SmartInventory.builder()
-            .manager(invManager).
-            id("portal")
+            .manager(invManager)
             .provider(new EditPortalAccess(portal))
             .size(3, 9)
-            .title("Portāla piekļuves atļaujas")
+            .title(Messages.get("gui.portal-settings.access-menu.gui-title"))
             .build();
     }
 

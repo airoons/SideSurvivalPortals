@@ -54,6 +54,5 @@ public class PortalEnterListener implements Listener
             return;
 
         menuManager.openMain(event.getPlayer(), portalManager.getPortalAt(to));
-        //Bukkit.broadcastMessage("[debug yes] " + event.getPlayer().getName() + " entered region " + toRegion.getId());
     }
 }

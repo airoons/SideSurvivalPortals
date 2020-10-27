@@ -14,6 +14,7 @@ import lv.theironminerlv.sidesurvivalportals.gui.PrivatePortalsMenu;
 import lv.theironminerlv.sidesurvivalportals.gui.PublicPortalsMenu;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
+import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
 public class MenuManager
 {
@@ -27,14 +28,14 @@ public class MenuManager
 
     public boolean portalPermCheck(Player player, Portal portal) {
         if (!PortalData.portalExists(portal)) {
-            player.sendMessage(ConvertUtils.color("&cPortāls vairs neeksistē!"));
+            player.sendMessage(Messages.get("chat.portal-doesnt-exist-anymore"));
             plugin.handleClose.remove(player);
             player.closeInventory();
             return false;
         }
 
         if (!permissionManager.canEditPortal(player, portal.getLand())) {
-            player.sendMessage(ConvertUtils.color("&cTev nav atļauts labot portālu!"));
+            player.sendMessage(Messages.get("chat.no-edit-permission"));
             return false;
         }
         
@@ -43,7 +44,7 @@ public class MenuManager
 
     public void openMain(Player player, Portal portal) {
         if (portal == null || portal.getId() == null) {
-            player.sendMessage(ConvertUtils.color("&cPortāls vairs neeksistē!"));
+            player.sendMessage(Messages.get("chat.portal-doesnt-exist-anymore"));
             plugin.handleClose.remove(player);
             player.closeInventory();
             return;

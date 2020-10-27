@@ -38,6 +38,7 @@ import lv.theironminerlv.sidesurvivalportals.data.PortalData;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.BlockUtils;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
+import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.Land;
 
@@ -193,6 +194,7 @@ public class PortalManager
         regionManager.removeRegion(id);
     }
 
+    // Removes any portals that are outside of Land's claims
     public void recheckPortals(Land land) {
         Map<String, Portal> portals = PortalData.getByLand(land);
 
@@ -320,7 +322,7 @@ public class PortalManager
             loc = getSafeTeleportLoc(portal);
             
             if (loc == null) {
-                player.sendMessage(ConvertUtils.color("&cTeleportācijas galamērķis nav drošs!"));
+                player.sendMessage(Messages.get("chat.teleport-not-safe"));
                 return;
             }
             
@@ -342,6 +344,8 @@ public class PortalManager
                 player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, SoundCategory.BLOCKS, 1.0f, 1.0f);
                 if (isPortalAt(player.getLocation()))
                     fakePortalBlocks(player, getPortalAt(player.getLocation()), true);
+
+                final String tpTitle = Messages.get("chat.teleport-title");
 
                 tasks.put(player.getUniqueId(), new BukkitRunnable() {
                     int n = 0;
@@ -373,7 +377,7 @@ public class PortalManager
                             else
                                 dots += "●";
                         }
-                        player.sendTitle(ConvertUtils.color("&5Teleportē..."), ConvertUtils.color(dots), 0, 20, 5);
+                        player.sendTitle(tpTitle, ConvertUtils.color(dots), 0, 20, 5);
 
                         n++;
                     }
@@ -401,6 +405,8 @@ public class PortalManager
             player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, SoundCategory.BLOCKS, 1.0f, 1.0f);
             if (isPortalAt(player.getLocation()))
                 fakePortalBlocks(player, getPortalAt(player.getLocation()), true);
+
+            final String tpTitle = Messages.get("chat.teleport-title");
 
             tasks.put(player.getUniqueId(), new BukkitRunnable() {
                 int n = 0;
@@ -436,7 +442,7 @@ public class PortalManager
                         else
                             dots += "●";
                     }
-                    player.sendTitle(ConvertUtils.color("&5Teleportē..."), ConvertUtils.color(dots), 0, 20, 5);
+                    player.sendTitle(tpTitle, ConvertUtils.color(dots), 0, 20, 5);
 
                     n++;
                 }

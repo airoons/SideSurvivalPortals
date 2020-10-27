@@ -49,6 +49,9 @@ public class SideSurvivalPortals extends JavaPlugin
         instance = this;
         config = getConfig();
 
+        Messages messages = new Messages();
+        messages.load(config.getConfigurationSection("messages"));
+
         this.saveDefaultConfig();
 
         landsAPI = new LandsIntegration(this);
@@ -60,7 +63,7 @@ public class SideSurvivalPortals extends JavaPlugin
         menuManager = new MenuManager(this);
         new MenuItems();
 
-        getLogger().info("SideSurvivalPortals starting!");
+        getLogger().info("Starting!");
 
         invManager = new InventoryManager(this);
         invManager.init();
@@ -74,8 +77,7 @@ public class SideSurvivalPortals extends JavaPlugin
 
         this.getCommand("p").setExecutor(new PortalCommand());
 
-        Messages messages = new Messages();
-        messages.load(config.getConfigurationSection("messages"));
+        getLogger().info("Startup successful!");
     }
 
     public InventoryManager getInvManager() {
@@ -116,6 +118,6 @@ public class SideSurvivalPortals extends JavaPlugin
 
     @Override
     public void onDisable() {
-        getLogger().info("SideSurvivalPortals stopped!");
+        getLogger().info("Stopped!");
     }
 }

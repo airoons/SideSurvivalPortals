@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -11,6 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import dev.dbassett.skullcreator.SkullCreator;
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
+import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
 public class MenuItems
 {
@@ -55,40 +57,41 @@ public class MenuItems
         blackPane.setItemMeta(itemMeta);
 
         itemMeta = goSpawn.getItemMeta();
-        itemMeta.setDisplayName(ConvertUtils.color("&e&lDoties uz spawn"));
+        itemMeta.setDisplayName(Messages.get("gui.main-menu.item-names.to-spawn"));
+        itemMeta.setLore(Messages.getList("gui.main-menu.item-lores.to-spawn"));
         goSpawn.setItemMeta(itemMeta);
 
         itemMeta = goNetherSpawn.getItemMeta();
-        itemMeta.setDisplayName(ConvertUtils.color("&e&lDoties uz Nether"));
+        itemMeta.setDisplayName(Messages.get("gui.main-menu.item-names.to-nether"));
+        itemMeta.setLore(Messages.getList("gui.main-menu.item-lores.to-nether"));
         goNetherSpawn.setItemMeta(itemMeta);
 
         itemMeta = pubPortals.getItemMeta();
-        itemMeta.setDisplayName(ConvertUtils.color("&e&lPubliskie portāli"));
+        itemMeta.setDisplayName(Messages.get("gui.main-menu.item-names.public-portals"));
+        itemMeta.setLore(Messages.getList("gui.main-menu.item-lores.public-portals"));
         pubPortals.setItemMeta(itemMeta);
 
         itemMeta = portalSettings.getItemMeta();
-        itemMeta.setDisplayName(ConvertUtils.color("&f&lPortāla iestatījumi"));
+        itemMeta.setDisplayName(Messages.get("gui.main-menu.item-names.portal-settings"));
+        itemMeta.setLore(Messages.getList("gui.main-menu.item-lores.portal-settings"));
         portalSettings.setItemMeta(itemMeta);
 
         itemMeta = prevPage.getItemMeta();
-        itemMeta.setDisplayName(ConvertUtils.color("&aIepriekšējā lapa"));
+        itemMeta.setDisplayName(Messages.get("gui.previous-page"));
         prevPage.setItemMeta(itemMeta);
 
         itemMeta = nextPage.getItemMeta();
-        itemMeta.setDisplayName(ConvertUtils.color("&aNākamā lapa"));
+        itemMeta.setDisplayName(Messages.get("gui.next-page"));
         nextPage.setItemMeta(itemMeta);
 
         itemMeta = editPortalAccess.getItemMeta();
-        itemMeta.setDisplayName(ConvertUtils.color("&e&lPiekļuves atļaujas"));
-        itemMeta.setLore(ConvertUtils.color(Arrays.asList(
-            "",
-            "&7Maini, kam ir atļauts izmantot portālu.",
-            "",
-            "&6Spied, lai atvērtu!")));
+        itemMeta.setDisplayName(Messages.get("gui.portal-settings.item-names.change-access"));
+        itemMeta.setLore(Messages.getList("gui.portal-settings.item-lores.change-access"));
         editPortalAccess.setItemMeta(itemMeta);
 
         itemMeta = editPortalDescr.getItemMeta();
-        itemMeta.setDisplayName(ConvertUtils.color("&3&lMainīt aprakstu"));
+        itemMeta.setDisplayName(Messages.get("gui.portal-settings.item-names.change-description"));
+        itemMeta.setLore(Messages.getList("gui.portal-settings.item-lores.change-description"));
         editPortalDescr.setItemMeta(itemMeta);
 
         List<String> configIcons = plugin.getConfiguration().getStringList("availableIcons");
@@ -97,52 +100,30 @@ public class MenuItems
             item = new ItemStack(Material.valueOf(configIcon));
 
             itemMeta = item.getItemMeta();
-            itemMeta.setLore(ConvertUtils.color(Arrays.asList(
-                "&7Spied, lai izvēlētos šo ikonu!")));
+            itemMeta.setLore(Messages.getList("gui.portal-settings.change-icon.item-lores.icon"));
             item.setItemMeta(itemMeta);
 
             availableIcons.add(item);
         }
         
         itemMeta = accessPublic.getItemMeta();
-        itemMeta.setDisplayName(ConvertUtils.color("&7Portāls ir: &a&lPUBLISKS"));
-        itemMeta.setLore(ConvertUtils.color(Arrays.asList(
-            "",
-            "&7Portālu pašlaik var izmantot visi.",
-            "",
-            "&eSpied, lai mainītu!")));
+        itemMeta.setDisplayName(Messages.get("gui.portal-settings.access-menu.item-names.is-public"));
+        itemMeta.setLore(Messages.getList("gui.portal-settings.access-menu.item-lores.is-public"));
         accessPublic.setItemMeta(itemMeta);
 
         itemMeta = accessPrivate.getItemMeta();
-        itemMeta.setDisplayName(ConvertUtils.color("&7Portāls ir: &c&lPRIVĀTS"));
-        itemMeta.setLore(ConvertUtils.color(Arrays.asList(
-            "",
-            "&7Portālu pašlaik var izmantot tikai",
-            "&7šīs teritorijas biedri.",
-            "",
-            "&eSpied, lai mainītu!")));
+        itemMeta.setDisplayName(Messages.get("gui.portal-settings.access-menu.item-names.is-private"));
+        itemMeta.setLore(Messages.getList("gui.portal-settings.access-menu.item-lores.is-private"));
         accessPrivate.setItemMeta(itemMeta);
 
         itemMeta = accessLands.getItemMeta();
-        itemMeta.setDisplayName(ConvertUtils.color("&a&lCitu teritoriju piekļuve"));
-        itemMeta.setLore(ConvertUtils.color(Arrays.asList(
-            "",
-            "&7Atļauj citām teritorijām lietot",
-            "&7šo portālu (pat ja ir privāts) ar komandu:",
-            "&f/p pievienot t <teritorijas nosaukums>",
-            "",
-            "&eSpied, lai apskatītu atļautās teritorijas!")));
+        itemMeta.setDisplayName(Messages.get("gui.portal-settings.access-menu.item-names.land-access"));
+        itemMeta.setLore(Messages.getList("gui.portal-settings.access-menu.item-lores.land-access"));
         accessLands.setItemMeta(itemMeta);
 
         itemMeta = accessPlayers.getItemMeta();
-        itemMeta.setDisplayName(ConvertUtils.color("&6&lCitu spēlētāju piekļuve"));
-        itemMeta.setLore(ConvertUtils.color(Arrays.asList(
-            "",
-            "&7Atļauj citiem spēlētājiem lietot",
-            "&7šo portālu (pat ja ir privāts) ar komandu:",
-            "&f/p pievienot s <spēlētājs>",
-            "",
-            "&eSpied, lai apskatītu atļautos spēlētājus!")));
+        itemMeta.setDisplayName(Messages.get("gui.portal-settings.access-menu.item-names.player-access"));
+        itemMeta.setLore(Messages.getList("gui.portal-settings.access-menu.item-lores.player-access"));
         accessPlayers.setItemMeta(itemMeta);
     }
 }

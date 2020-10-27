@@ -3,7 +3,6 @@
 teleportLocs:
   spawn: world;0.5;113;-0.5;0;0
   netherspawn: world_nether;0.5;93;-1.5;-125;0
-
 availableIcons:
   - ENCHANTING_TABLE
   - CHEST
@@ -59,16 +58,21 @@ availableIcons:
   - BOOK
   - NAME_TAG
   - BARRIER
-
 messages:
   chat:
     not-in-portal: "&cTev ir jāatrodas portālā, lai izmantotu šo komandu!"
+    no-create-permission: "&cTev nav atļauts izveidot šeit portālu!"
     no-edit-permission: "&cTev nav atļauts labot šo portālu!"
+    error-creating-outside-land: "&cPortālu var uztaisīt tikai kādā teritorijā! (kāds no portāla blokiem atrodas ārpus teritorijas)"
+    portal-doesnt-exist-anymore: "&cPortāls vairs neeksistē!"
+    teleport-not-safe: "&cTeleportācijas galamērķis nav drošs!"
+    teleport-title: "&5Teleportē..."
     commands:
       description:
         no-description: "&cNeesi norādījis aprakstu!"
         too-long: "&cApraksts nedrīkst būt garāks par 90 rakstzīmēm!"
         change-success: "&7Portāla apraksts veiksmīgi mainīts uz &f{1}&7!"
+        from-gui: "&7Raksti komandu &f/p apraksts <jaunais apraksts>&7, lai mainītu portāla aprakstu!"
       add-remove:
         no-add-type: "&cNorādi, vai pievienosi teritoriju (t) vai speletaju (s)!"
         no-remove-type: "&cNorādi, vai noņemsi teritoriju (t) vai speletaju (s)!"
@@ -106,3 +110,119 @@ messages:
     add-remove:
       land: "t" # /p pievienot t <land>
       player: "s" # /p pievienot s <player>
+  gui:
+    previous-page: "&aIepriekšējā lapa"
+    next-page: "&aNākamā lapa"
+    main-menu:
+      gui-title: "Portāls"
+      item-names:
+        to-spawn: "&e&lDoties uz spawn"
+        to-nether: "&e&lDoties uz Nether"
+        private-portals: "&5&lPrivātie portāli"
+        public-portals: "&e&lPubliskie portāli"
+        portal-settings: "&f&lPortāla iestatījumi"
+      item-lores:
+        to-spawn: ""
+        to-nether: ""
+        private-portals: ""
+        public-portals: ""
+        portal-settings: ""
+    private-portals:
+      gui-title: "Privātie portāli"
+      item-names:
+        portal: "&d&l{1} &5portāls"
+      item-lores:
+        portal-start: |-
+          &f
+          &7Apraksts: 
+        portal-desc-lines: "  &f{1}"
+        portal-end: |-
+          &f
+          &dSpied, lai teleportētos!
+    public-portals:
+      gui-title: "Publiskie portāli"
+      item-names:
+        portal: "&d&l{1} &5portāls"
+      item-lores:
+        portal-start: |-
+          &f
+          &7Lokācija: &f{1}
+          &7Apraksts: 
+        portal-desc-lines: "  &f{1}"
+        portal-end: |-
+          &f
+          &dSpied, lai teleportētos!
+    portal-settings:
+      gui-title: "Portāla iestatījumi"
+      item-names:
+        change-access: "&e&lPiekļuves atļaujas"
+        change-description: "&3&lMainīt aprakstu"
+        change-icon: "&a&lMainīt ikonu"
+      item-lores:
+        change-access: |-
+          &f
+          &7Maini, kam ir atļauts izmantot portālu.
+          &f
+          &5Spied, lai atvērtu!
+        change-description: ""
+        change-icon: ""
+      access-menu:
+        gui-title: "Portāla piekļuves atļaujas"
+        item-names:
+          is-public: "&7Portāls ir: &a&lPUBLISKS"
+          is-private: "&7Portāls ir: &c&lPRIVĀTS"
+          land-access: "&a&lCitu teritoriju piekļuve"
+          player-access: "&6&lCitu spēlētāju piekļuve"
+        item-lores:
+          is-public: |-
+            &f
+            &7Portālu pašlaik var izmantot visi.
+            &f
+            &eSpied, lai mainītu!
+          is-private: |-
+            &f
+            &7Portālu pašlaik var izmantot tikai
+            &7šīs teritorijas biedri.
+            &f
+            &eSpied, lai mainītu!
+          land-access: |-
+            &f
+            &7Atļauj citām teritorijām lietot
+            &7šo portālu (pat ja ir privāts) ar komandu:
+            &f/p pievienot t <teritorijas nosaukums>
+            &f
+            &eSpied, lai apskatītu atļautās teritorijas!
+          player-access: |-
+            &f
+            &7Atļauj citiem spēlētājiem lietot
+            &7šo portālu (pat ja ir privāts) ar komandu:
+            &f/p pievienot s <spēlētājs>
+            &f
+            &eSpied, lai apskatītu atļautos spēlētājus!
+        access-lands:
+          gui-title: "Citu teritoriju piekļuve"
+          item-names:
+            land: "&e{1}"
+          item-lores:
+            land: |-
+              &f
+              &7Šī teritorija drīkst izmantot
+              &7šo portālu.
+              &f
+              &cSpied, lai noņemtu atļauju!
+        access-players:
+          gui-title: "Citu spēlētāju piekļuve"
+          item-names:
+            player: "&e{1}"
+          item-lores:
+            land: |-
+              &f
+              &7Šis spēlētājs drīkst izmantot
+              &7šo portālu.
+              &f
+              &cSpied, lai noņemtu atļauju!
+      change-icon:
+        gui-title: "Mainīt portāla ikonu"
+        item-lores:
+          icon: "&7Spied, lai izvēlētos šo ikonu!"
+          current-icon: "&7Pašreizējā ikona"

@@ -19,6 +19,7 @@ import lv.theironminerlv.sidesurvivalportals.managers.DataManager;
 import lv.theironminerlv.sidesurvivalportals.managers.MenuManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
+import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
 public class EditPortalIcon implements InventoryProvider
 {
@@ -34,8 +35,12 @@ public class EditPortalIcon implements InventoryProvider
     }
 
     private void load(Portal portal) {
-        this.inventory = SmartInventory.builder().manager(invManager).id("portal").provider(new EditPortalIcon(portal))
-                .size(6, 9).title("Mainīt portāla ikonu").build();
+        this.inventory = SmartInventory.builder()
+            .manager(invManager)
+            .provider(new EditPortalIcon(portal))
+            .size(6, 9)
+            .title(Messages.get("gui.portal-settings.change-icon.gui-title"))
+            .build();
     }
 
     public void open(Player player, Portal portal) {
@@ -43,6 +48,7 @@ public class EditPortalIcon implements InventoryProvider
         this.load(portal);
         player.closeInventory();
         this.inventory.open(player);
+        plugin.handleClose.add(player);
     }
 
     @Override
@@ -62,7 +68,7 @@ public class EditPortalIcon implements InventoryProvider
             if (portal.getIcon().getType() == item.getType()) {
                 item.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
                 itemMeta = item.getItemMeta();
-                itemMeta.setLore(ConvertUtils.color(Arrays.asList("&7Pašreizējā ikona")));
+                itemMeta.setLore(Messages.getList("gui.portal-settings.change-icon.item-lores.current-icon"));
                 itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 item.setItemMeta(itemMeta);
                 items[i] = ClickableItem.empty(item);
@@ -90,6 +96,8 @@ public class EditPortalIcon implements InventoryProvider
 
         portal.setIcon(icon);
         dataManager.save(portal);
+
+        plugin.handleClose.remove(player);
         
         menuManager.openEditPortal(player, portal);
     }

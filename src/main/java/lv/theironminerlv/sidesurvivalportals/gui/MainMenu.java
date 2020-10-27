@@ -18,6 +18,7 @@ import lv.theironminerlv.sidesurvivalportals.managers.PermissionManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
+import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
 public class MainMenu implements InventoryProvider
 {
@@ -35,10 +36,9 @@ public class MainMenu implements InventoryProvider
     private void load(Portal portal) {
         this.inventory = SmartInventory.builder()
             .manager(invManager)
-            .id("portal")
             .provider(new MainMenu(portal))
             .size(3, 9)
-            .title("Portāls")
+            .title(Messages.get("gui.main-menu.gui-title"))
             .build();
     }
 
@@ -76,7 +76,8 @@ public class MainMenu implements InventoryProvider
 
         item = SkullCreator.itemFromUuid(player.getUniqueId());
         meta = item.getItemMeta();
-        meta.setDisplayName(ConvertUtils.color("&5&lPrivātie portāli"));
+        meta.setDisplayName(Messages.get("gui.main-menu.item-names.private-portals"));
+        meta.setLore(Messages.getList("gui.main-menu.item-lores.private-portals"));
         item.setItemMeta(meta);
         contents.set(1, 3 + offset, ClickableItem.of(item, e -> plugin.getMenuManager().openPrivate(player)));
 

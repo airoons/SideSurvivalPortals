@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -22,6 +23,7 @@ import lv.theironminerlv.sidesurvivalportals.data.PortalData;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
+import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.Land;
 
@@ -35,10 +37,9 @@ public class PrivatePortalsMenu implements InventoryProvider {
     private void load() {
         this.inventory = SmartInventory.builder()
             .manager(invManager)
-            .id("portal")
             .provider(new PrivatePortalsMenu())
             .size(4, 9)
-            .title("Privātie portāli")
+            .title(Messages.get("gui.private-portals.gui-title"))
             .build();
     }
 
@@ -72,6 +73,7 @@ public class PrivatePortalsMenu implements InventoryProvider {
 
         int portalAmount = portals.size();
         String desc;
+        String temp;
         List<String> descLines = new ArrayList<>();
         int index;
 
@@ -81,26 +83,26 @@ public class PrivatePortalsMenu implements InventoryProvider {
         for (Portal portal : portals.values()) {
             item = portal.getIcon().clone();
             itemMeta = item.getItemMeta();
-            itemMeta.setDisplayName(ConvertUtils.color("&d&l" + portal.getLand().getName() +  " &5portāls"));
+            itemMeta.setDisplayName(Messages.getParam("gui.private-portals.item-names.portal", "{1}", portal.getLand().getName()));
             descLines.clear();
 
             desc = portal.getDescription();
 
-            descLines.add("");
-            descLines.add("&7Apraksts:");
+            descLines.addAll(Messages.getList("gui.private-portals.item-lores.portal-start"));
 
             index = 0;
             while (index < desc.length()) {
+                temp = Messages.getParam("gui.private-portals.item-lores.portal-desc-lines", "{1}", desc.substring(index, Math.min(index + 30,desc.length())));
+
                 if (index + 31 < desc.length() && desc.charAt(index + 31) != ' ')
-                    descLines.add("  &f"+ desc.substring(index, Math.min(index + 30,desc.length())) + "-");
+                    descLines.add(temp + "-");
                 else
-                    descLines.add("  &f"+ desc.substring(index, Math.min(index + 30,desc.length())));
+                    descLines.add(temp);
 
                 index += 30;
             }
 
-            descLines.add("");
-            descLines.add("&dSpied, lai teleportētos!");
+            descLines.addAll(Messages.getList("gui.private-portals.item-lores.portal-end"));
             
             itemMeta.setLore(ConvertUtils.color(descLines));
             item.setItemMeta(itemMeta);

@@ -17,6 +17,7 @@ import lv.theironminerlv.sidesurvivalportals.managers.PermissionManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
+import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.Land;
 
@@ -57,7 +58,7 @@ public class PortalCreateListener implements Listener
             block = portalBlock.getBlock();
 
             if (!landsAPI.isClaimed(block.getLocation())) {
-                player.sendMessage(ConvertUtils.color("&cPortālu var uztaisīt tikai kādā teritorijā! (kāds no portāla blokiem atrodas ārpus teritorijas)"));
+                player.sendMessage(Messages.get("chat.error-creating-outside-land"));
                 return;
             }
 
@@ -100,7 +101,7 @@ public class PortalCreateListener implements Listener
         }
 
         if (!permissionManager.canCreatePortal(player, land)) {
-            player.sendMessage(ConvertUtils.color("&cTev nav atļauts izveidot šeit portālu!"));
+            player.sendMessage(Messages.get("chat.no-create-permission"));
             return;
         }
 

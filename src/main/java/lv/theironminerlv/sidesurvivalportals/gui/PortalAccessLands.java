@@ -19,6 +19,7 @@ import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
+import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.Land;
 
@@ -37,10 +38,9 @@ public class PortalAccessLands implements InventoryProvider {
     private void load() {
         this.inventory = SmartInventory.builder()
             .manager(invManager)
-            .id("portal")
             .provider(new PortalAccessLands(portal))
             .size(4, 9)
-            .title("Citu teritoriju piekļuve")
+            .title(Messages.get("gui.portal-settings.access-menu.access-lands.gui-title"))
             .build();
     }
 
@@ -75,7 +75,6 @@ public class PortalAccessLands implements InventoryProvider {
         }
 
         int landAmount = lands.size();
-        List<String> descLines = new ArrayList<>();
 
         ClickableItem[] items = new ClickableItem[landAmount];
 
@@ -84,16 +83,8 @@ public class PortalAccessLands implements InventoryProvider {
             
             item = new ItemStack(Material.BOOK);
             itemMeta = item.getItemMeta();
-            itemMeta.setDisplayName(ConvertUtils.color("&e" + land.getName()));
-            descLines.clear();
-
-            descLines.add("");
-            descLines.add("&7Šī teritorija drīkst izmantot");
-            descLines.add("&7šo portālu.");
-            descLines.add("");
-            descLines.add("&cSpied, lai noņemtu atļauju!");
-            
-            itemMeta.setLore(ConvertUtils.color(descLines));
+            itemMeta.setDisplayName(Messages.getParam("gui.portal-settings.access-menu.access-lands.item-names.land", "{1}", land.getName()));
+            itemMeta.setLore(Messages.getList("gui.portal-settings.access-menu.access-lands.item-lores.land"));
             item.setItemMeta(itemMeta);
 
             items[i] = ClickableItem.of(item, 

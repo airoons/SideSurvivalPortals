@@ -13,6 +13,7 @@ import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.managers.MenuManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
+import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
 public class EditPortalMenu implements InventoryProvider
 {
@@ -28,11 +29,10 @@ public class EditPortalMenu implements InventoryProvider
 
     private void load(Portal portal) {
         this.inventory = SmartInventory.builder()
-            .manager(invManager).
-            id("portal")
+            .manager(invManager)
             .provider(new EditPortalMenu(portal))
             .size(3, 9)
-            .title("Portāla iestatījumi")
+            .title(Messages.get("gui.portal-settings.gui-title"))
             .build();
     }
 
@@ -64,7 +64,8 @@ public class EditPortalMenu implements InventoryProvider
 
         item = portal.getIcon().clone();
         meta = item.getItemMeta();
-        meta.setDisplayName(ConvertUtils.color("&a&lMainīt ikonu"));
+        meta.setDisplayName(Messages.get("gui.portal-settings.item-names.change-icon"));
+        meta.setLore(Messages.getList("gui.portal-settings.item-lores.change-icon"));
         item.setItemMeta(meta);
         contents.set(1, 6, ClickableItem.of(item, e -> menuManager.openEditPortalIcon(player, portal)));
     }
@@ -77,6 +78,6 @@ public class EditPortalMenu implements InventoryProvider
     public void editPortalDescr(Player player, Portal portal) {
         plugin.handleClose.remove(player);
         player.closeInventory();
-        player.sendMessage(ConvertUtils.color("&7Raksti komandu &f/p apraksts <jaunais apraksts>&7, lai mainītu portāla aprakstu!"));
+        player.sendMessage(Messages.get("chat.commands.description.from-gui"));
     }
 }

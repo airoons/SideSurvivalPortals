@@ -20,6 +20,7 @@ import lv.theironminerlv.sidesurvivalportals.data.PortalData;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
+import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
 public class PublicPortalsMenu implements InventoryProvider {
     private static SideSurvivalPortals plugin = SideSurvivalPortals.getInstance();
@@ -30,10 +31,9 @@ public class PublicPortalsMenu implements InventoryProvider {
     private void load() {
         this.inventory = SmartInventory.builder()
             .manager(invManager)
-            .id("portal")
             .provider(new PublicPortalsMenu())
             .size(4, 9)
-            .title("Publiskie portāli")
+            .title(Messages.get("gui.public-portals.gui-title"))
             .build();
     }
 
@@ -60,6 +60,7 @@ public class PublicPortalsMenu implements InventoryProvider {
         int portalAmount = portals.size();
         String posReadable;
         String desc;
+        String temp;
         List<String> descLines = new ArrayList<>();
         int index;
 
@@ -69,28 +70,27 @@ public class PublicPortalsMenu implements InventoryProvider {
         for (Portal portal : portals.values()) {
             item = portal.getIcon().clone();
             itemMeta = item.getItemMeta();
-            itemMeta.setDisplayName(ConvertUtils.color("&d&l" + portal.getLand().getName() +  " &5portāls"));
+            itemMeta.setDisplayName(Messages.getParam("gui.public-portals.item-names.portal", "{1}", portal.getLand().getName()));
             posReadable = ConvertUtils.readableLoc(portal.getPos1());
             descLines.clear();
 
             desc = portal.getDescription();
 
-            descLines.add("");
-            descLines.add("&7Lokācija: &f" + posReadable);
-            descLines.add("&7Apraksts:");
+            descLines.addAll(Messages.getListParam("gui.public-portals.item-lores.portal-start", "{1}", posReadable));
 
             index = 0;
             while (index < desc.length()) {
+                temp = Messages.getParam("gui.public-portals.item-lores.portal-desc-lines", "{1}", desc.substring(index, Math.min(index + 30,desc.length())));
+
                 if (index + 31 < desc.length() && desc.charAt(index + 31) != ' ')
-                    descLines.add("  &f"+ desc.substring(index, Math.min(index + 30,desc.length())) + "-");
+                    descLines.add(temp + "-");
                 else
-                    descLines.add("  &f"+ desc.substring(index, Math.min(index + 30,desc.length())));
+                    descLines.add(temp);
 
                 index += 30;
             }
 
-            descLines.add("");
-            descLines.add("&dSpied, lai teleportētos!");
+            descLines.addAll(Messages.getList("gui.public-portals.item-lores.portal-end"));
             
             itemMeta.setLore(ConvertUtils.color(descLines));
             item.setItemMeta(itemMeta);

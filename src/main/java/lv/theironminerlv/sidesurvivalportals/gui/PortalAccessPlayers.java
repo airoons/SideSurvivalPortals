@@ -23,6 +23,7 @@ import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
+import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 public class PortalAccessPlayers implements InventoryProvider {
     private static SideSurvivalPortals plugin = SideSurvivalPortals.getInstance();
     private InventoryManager invManager = plugin.getInvManager();
@@ -37,10 +38,9 @@ public class PortalAccessPlayers implements InventoryProvider {
     private void load() {
         this.inventory = SmartInventory.builder()
             .manager(invManager)
-            .id("portal")
             .provider(new PortalAccessPlayers(portal))
             .size(4, 9)
-            .title("Citu spēlētāju piekļuve")
+            .title(Messages.get("gui.portal-settings.access-menu.access-players.gui-title"))
             .build();
     }
 
@@ -70,7 +70,6 @@ public class PortalAccessPlayers implements InventoryProvider {
         }
 
         int landAmount = players.size();
-        List<String> descLines = new ArrayList<>();
 
         ClickableItem[] items = new ClickableItem[landAmount];
 
@@ -79,16 +78,8 @@ public class PortalAccessPlayers implements InventoryProvider {
             
             item = SkullCreator.itemFromUuid(loopPlayer.getUniqueId());
             itemMeta = item.getItemMeta();
-            itemMeta.setDisplayName(ConvertUtils.color("&e" + loopPlayer.getName()));
-            descLines.clear();
-
-            descLines.add("");
-            descLines.add("&7Šis spēlētājs drīkst izmantot");
-            descLines.add("&7šo portālu.");
-            descLines.add("");
-            descLines.add("&cSpied, lai noņemtu atļauju!");
-            
-            itemMeta.setLore(ConvertUtils.color(descLines));
+            itemMeta.setDisplayName(Messages.getParam("gui.portal-settings.access-menu.access-players.item-names.player", "{1}", loopPlayer.getName()));
+            itemMeta.setLore(Messages.getList("gui.portal-settings.access-menu.access-players.item-lores.player"));
             item.setItemMeta(itemMeta);
 
             items[i] = ClickableItem.of(item, 
