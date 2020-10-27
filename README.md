@@ -56,14 +56,14 @@ As default, portals show up as "papers" in Private and Public portal lists. This
 
 This menu option opens another GUI where player can change the icon.
 
-## Private portals
+### Private portals
 In the Private portals GUI player has option to teleport to all portals he has access to. This includes:
 
 - All portals from lands he is part of;
 - All portals where any of the lands he is part of has access of;
 - All portals where other lands has given access to the player.
 
-## Public portals
+### Public portals
 As the name suggest, every portal that is marked as "public" (every portal is private as default) can be found here.
 
 ![Public portals](https://i.imgur.com/lrIzkKX.jpeg)
