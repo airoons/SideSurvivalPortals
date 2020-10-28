@@ -49,10 +49,10 @@ public class SideSurvivalPortals extends JavaPlugin
         instance = this;
         config = getConfig();
 
+        this.saveDefaultConfig();
+
         Messages messages = new Messages();
         messages.load(config.getConfigurationSection("messages"));
-
-        this.saveDefaultConfig();
 
         landsAPI = new LandsIntegration(this);
 

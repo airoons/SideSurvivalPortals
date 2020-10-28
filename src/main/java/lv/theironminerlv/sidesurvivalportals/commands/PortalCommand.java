@@ -34,18 +34,18 @@ public class PortalCommand implements CommandExecutor, TabExecutor
     private static LandsIntegration landsAPI = plugin.getLandsAPI();
 
     @Override
-    public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
-            final String argAdd = Messages.get("command-arguments.add");
-            final String argRemove = Messages.get("command-arguments.remove");
-            final String argLand = Messages.get("command-arguments.add-remove.land");
-            final String argPlayer = Messages.get("command-arguments.add-remove.player");
+            String argAdd = Messages.get("command-arguments.add");
+            String argRemove = Messages.get("command-arguments.remove");
+            String argLand = Messages.get("command-arguments.add-remove.land");
+            String argPlayer = Messages.get("command-arguments.add-remove.player");
 
-            final Player player = (Player) sender;
+            Player player = (Player) sender;
 
             if (args.length >= 1) {
-                final Portal portal = portalManager.getPortalAt(player.getLocation());
-                final String argDesc = Messages.get("command-arguments.description");
+                Portal portal = portalManager.getPortalAt(player.getLocation());
+                String argDesc = Messages.get("command-arguments.description");
                 
                 if (portal == null) {
                     player.sendMessage(Messages.get("chat.not-in-portal"));
@@ -68,14 +68,14 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                 }
 
                 if (args[0].equalsIgnoreCase(argDesc)) {
-                    final StringBuilder builder = new StringBuilder();
+                    StringBuilder builder = new StringBuilder();
                     for (int i = 1; i < args.length; i++) {
                         builder.append(args[i]);
 
                         if (i < args.length - 1)
                             builder.append(" ");
                     }
-                    final String desc = builder.toString();
+                    String desc = builder.toString();
     
                     if (desc.length() > 90) {
                         player.sendMessage(Messages.get("chat.commands.too-long"));
@@ -103,21 +103,21 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                             return true;
                         }
 
-                        final StringBuilder builder = new StringBuilder();
+                        StringBuilder builder = new StringBuilder();
                         for (int i = 2; i < args.length; i++) {
                             builder.append(args[i]);
                         }
-                        final String input = builder.toString();
+                        String input = builder.toString();
 
                         if (args[1].equalsIgnoreCase(argLand)) {
-                            final Land land = landsAPI.getLand(input);
+                            Land land = landsAPI.getLand(input);
 
                             if (land == null) {
                                 player.sendMessage(Messages.get("chat.commands.add-remove.error-land-doesnt-exist"));
                                 return true;
                             }
 
-                            final List<Integer> allowedLands = portal.getAllowedLands();
+                            List<Integer> allowedLands = portal.getAllowedLands();
                             
                             if (allowedLands.contains(land.getId())) {
                                 player.sendMessage(Messages.get("chat.commands.add-remove.error-already-added-land"));
@@ -137,14 +137,14 @@ public class PortalCommand implements CommandExecutor, TabExecutor
 
                             return true;
                         } else {
-                            final Player addPlayer = Bukkit.getPlayer(input);
+                            Player addPlayer = Bukkit.getPlayer(input);
 
                             if (addPlayer == null) {
                                 player.sendMessage(Messages.get("chat.commands.add-remove.error-not-online"));
                                 return true;
                             }
 
-                            final List<UUID> allowedPlayers = portal.getAllowedPlayers();
+                            List<UUID> allowedPlayers = portal.getAllowedPlayers();
                             
                             if (allowedPlayers.contains(addPlayer.getUniqueId())) {
                                 player.sendMessage(Messages.get("chat.commands.add-remove.error-already-added-player"));
@@ -175,14 +175,14 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                             return true;
                         }
 
-                        final StringBuilder builder = new StringBuilder();
+                        StringBuilder builder = new StringBuilder();
                         for (int i = 2; i < args.length; i++) {
                             builder.append(args[i]);
                         }
-                        final String input = builder.toString();
+                        String input = builder.toString();
 
                         if (args[1].equalsIgnoreCase(argLand)) {
-                            final Land land = landsAPI.getLand(input);
+                            Land land = landsAPI.getLand(input);
 
                             if (land == null) {
                                 player.sendMessage(Messages.get("chat.commands.add-remove.error-land-doesnt-exist"));
@@ -201,7 +201,7 @@ public class PortalCommand implements CommandExecutor, TabExecutor
 
                             return true;
                         } else {
-                            final OfflinePlayer remPlayer = Bukkit.getOfflinePlayer(input);
+                            OfflinePlayer remPlayer = Bukkit.getOfflinePlayer(input);
 
                             if (!remPlayer.hasPlayedBefore()) {
                                 player.sendMessage(Messages.get("chat.commands.add-remove.error-hasnt-joined"));
@@ -233,17 +233,17 @@ public class PortalCommand implements CommandExecutor, TabExecutor
     }
 
     @Override
-    public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
-        final List<String> completions = new ArrayList<String>();
+    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        List<String> completions = new ArrayList<String>();
 
-        final String argDesc = Messages.get("command-arguments.description");
-        final String argAdd = Messages.get("command-arguments.add");
-        final String argRemove = Messages.get("command-arguments.remove");
-        final String argLand = Messages.get("command-arguments.add-remove.land");
-        final String argPlayer = Messages.get("command-arguments.add-remove.player");
+        String argDesc = Messages.get("command-arguments.description");
+        String argAdd = Messages.get("command-arguments.add");
+        String argRemove = Messages.get("command-arguments.remove");
+        String argLand = Messages.get("command-arguments.add-remove.land");
+        String argPlayer = Messages.get("command-arguments.add-remove.player");
 
         if (args.length == 1) {
-            final List<String> commands = Arrays.asList(argDesc, argAdd, argRemove);
+            List<String> commands = Arrays.asList(argDesc, argAdd, argRemove);
             return commands
             .stream()
             .filter(c -> c.startsWith(args[0]))
