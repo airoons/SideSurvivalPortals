@@ -1,17 +1,14 @@
 package lv.theironminerlv.sidesurvivalportals.gui;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import dev.dbassett.skullcreator.SkullCreator;
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
-import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
 import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
 public class MenuItems

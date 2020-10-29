@@ -12,4 +12,4 @@ depend: [WorldGuard, Lands]
 commands:
   portal:
     aliases: [portals, p]
-    description: Galvenā portālu komanda
+    description: Main portal command

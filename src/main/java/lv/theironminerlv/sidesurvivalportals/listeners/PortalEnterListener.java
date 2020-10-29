@@ -3,18 +3,14 @@ package lv.theironminerlv.sidesurvivalportals.listeners;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
 
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.managers.MenuManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
-import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
 
 public class PortalEnterListener implements Listener
 {

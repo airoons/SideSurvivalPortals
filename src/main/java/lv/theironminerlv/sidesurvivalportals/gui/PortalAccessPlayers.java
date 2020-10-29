@@ -22,7 +22,6 @@ import fr.minuskube.inv.content.SlotIterator;
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
-import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
 import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 public class PortalAccessPlayers implements InventoryProvider {
     private static SideSurvivalPortals plugin = SideSurvivalPortals.getInstance();

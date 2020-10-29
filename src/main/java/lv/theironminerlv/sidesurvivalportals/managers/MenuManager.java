@@ -13,7 +13,6 @@ import lv.theironminerlv.sidesurvivalportals.gui.PortalAccessPlayers;
 import lv.theironminerlv.sidesurvivalportals.gui.PrivatePortalsMenu;
 import lv.theironminerlv.sidesurvivalportals.gui.PublicPortalsMenu;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
-import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
 import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
 public class MenuManager

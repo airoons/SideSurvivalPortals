@@ -3,7 +3,6 @@ package lv.theironminerlv.sidesurvivalportals.managers;
 import org.bukkit.entity.Player;
 
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
-import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.Land;
 import me.angeschossen.lands.api.role.enums.ManagementSetting;
 

@@ -1,6 +1,5 @@
 package lv.theironminerlv.sidesurvivalportals.gui;
 
-import org.bukkit.Location;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -13,11 +12,9 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
-import lv.theironminerlv.sidesurvivalportals.data.PortalData;
 import lv.theironminerlv.sidesurvivalportals.managers.PermissionManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
-import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
 import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
 public class MainMenu implements InventoryProvider
