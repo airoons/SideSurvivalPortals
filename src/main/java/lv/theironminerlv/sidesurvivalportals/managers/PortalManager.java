@@ -17,6 +17,8 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 
 import org.bukkit.Axis;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -77,6 +79,7 @@ public class PortalManager
         ProtectedRegion region = new ProtectedCuboidRegion(id, ConvertUtils.toBlockVector3(pos1),
                 ConvertUtils.toBlockVector3(pos2));
         region.setFlag(Flags.BUILD, StateFlag.State.DENY);
+        region.setFlag(Flags.DENY_MESSAGE, "");
         regionManager.addRegion(region);
 
         setPortalGlass(pos1, pos2, isNorthSouth);
@@ -198,7 +201,7 @@ public class PortalManager
 
         if (portals.size() > 0) {
             for (Portal portal : portals.values()) {
-                if (landsAPI.getLand(portal.getPos1()) == null) {
+                if (!landsAPI.isClaimed(portal.getPos1())) {
                     remove(portal);
                 }
             }
@@ -221,12 +224,12 @@ public class PortalManager
         for (Location loc : portalBlocks) {
             if (loc.getBlock().isEmpty() && loc.getBlock().getRelative(BlockFace.UP).isEmpty()) {
                 checkBlock = loc.getBlock().getRelative(BlockFace.DOWN);
-                if (!checkBlock.isEmpty() && !checkBlock.isLiquid() && !checkBlock.isPassable()) {
+                if ((!checkBlock.isEmpty() && !checkBlock.isLiquid() && !checkBlock.isPassable()) || checkBlock.getType() == Material.SNOW) {
                     loc.add(0.5, 0, 0.5);
                     return loc;
                 } else if (checkBlock.isEmpty()) {
                     checkBlock = checkBlock.getRelative(BlockFace.DOWN);
-                    if (!checkBlock.isEmpty() && !checkBlock.isLiquid() && !checkBlock.isPassable()) {
+                    if ((!checkBlock.isEmpty() && !checkBlock.isLiquid() && !checkBlock.isPassable()) || checkBlock.getType() == Material.SNOW) {
                         loc.add(0.5, 0, 0.5);
                         return loc;
                     }

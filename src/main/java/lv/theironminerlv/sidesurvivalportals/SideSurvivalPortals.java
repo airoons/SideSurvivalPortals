@@ -26,7 +26,7 @@ import me.angeschossen.lands.api.integration.LandsIntegration;
 public class SideSurvivalPortals extends JavaPlugin
 {
     private static SideSurvivalPortals instance;
-    private InventoryManager invManager; // shouldn't be static in the end... (rework needed)
+    private InventoryManager invManager;
     private DataManager dataManager;
     private PortalManager portalManager;
     private PermissionManager permissionManager;
