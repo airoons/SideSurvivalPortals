@@ -11,17 +11,22 @@ import dev.dbassett.skullcreator.SkullCreator;
 import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
-public class MenuItems
-{
+public class MenuItems {
     public static SideSurvivalPortals plugin = SideSurvivalPortals.getInstance();
 
     public static ItemStack lightGrayPane = new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE);
     public static ItemStack grayPane = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
     public static ItemStack blackPane = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
 
-    public static ItemStack goSpawn = SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk1ZDM3OTkzZTU5NDA4MjY3ODQ3MmJmOWQ4NjgyMzQxM2MyNTBkNDMzMmEyYzdkOGM1MmRlNDk3NmIzNjIifX19");
-    public static ItemStack goNetherSpawn = SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTliOTRlNWFkOTNkYzdhZGY1OTAwNTZkNGExZTAzNDA5MjUzZGZlY2ZjODhlODMxNTQxYzhkZjU0ZmYwNWNhNiJ9fX0=");
-    public static ItemStack pubPortals = SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjFkZDRmZTRhNDI5YWJkNjY1ZGZkYjNlMjEzMjFkNmVmYTZhNmI1ZTdiOTU2ZGI5YzVkNTljOWVmYWIyNSJ9fX0");
+    public static ItemStack goSpawn = SkullCreator.itemFromBase64(
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODdhN2I1ZGM0ZGMzNmYzY2YxMWFjMTg1NWJlNDNmMzdmYzU0YjhhYWRjM2U5NGFlYjY5OWM5NzE4YTNlM2Q0MSJ9fX0=");
+    public static ItemStack goSpawnBedrock = SkullCreator.itemFromBase64(
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk1ZDM3OTkzZTU5NDA4MjY3ODQ3MmJmOWQ4NjgyMzQxM2MyNTBkNDMzMmEyYzdkOGM1MmRlNDk3NmIzNjIifX19");
+    public static ItemStack goNetherBedrock = SkullCreator.itemFromBase64(
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTliOTRlNWFkOTNkYzdhZGY1OTAwNTZkNGExZTAzNDA5MjUzZGZlY2ZjODhlODMxNTQxYzhkZjU0ZmYwNWNhNiJ9fX0=");
+
+    public static ItemStack pubPortals = SkullCreator.itemFromBase64(
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjFkZDRmZTRhNDI5YWJkNjY1ZGZkYjNlMjEzMjFkNmVmYTZhNmI1ZTdiOTU2ZGI5YzVkNTljOWVmYWIyNSJ9fX0");
     public static ItemStack portalSettings = new ItemStack(Material.WRITABLE_BOOK);
 
     public static ItemStack prevPage = new ItemStack(Material.ARROW);
@@ -35,7 +40,7 @@ public class MenuItems
 
     public static ItemStack accessPublic = new ItemStack(Material.OBSIDIAN);
     public static ItemStack accessPrivate = new ItemStack(Material.CRYING_OBSIDIAN);
-    
+
     public static ItemStack accessLands = goSpawn.clone();
     public static ItemStack accessPlayers = new ItemStack(Material.PLAYER_HEAD);
 
@@ -58,10 +63,15 @@ public class MenuItems
         itemMeta.setLore(Messages.getList("gui.main-menu.item-lores.to-spawn"));
         goSpawn.setItemMeta(itemMeta);
 
-        itemMeta = goNetherSpawn.getItemMeta();
-        itemMeta.setDisplayName(Messages.get("gui.main-menu.item-names.to-nether"));
-        itemMeta.setLore(Messages.getList("gui.main-menu.item-lores.to-nether"));
-        goNetherSpawn.setItemMeta(itemMeta);
+        itemMeta = goSpawnBedrock.getItemMeta();
+        itemMeta.setDisplayName(Messages.get("gui.main-menu.item-names.to-spawn-bedrock"));
+        itemMeta.setLore(Messages.getList("gui.main-menu.item-lores.to-spawn-bedrock"));
+        goSpawnBedrock.setItemMeta(itemMeta);
+
+        itemMeta = goNetherBedrock.getItemMeta();
+        itemMeta.setDisplayName(Messages.get("gui.main-menu.item-names.to-nether-bedrock"));
+        itemMeta.setLore(Messages.getList("gui.main-menu.item-lores.to-nether-bedrock"));
+        goNetherBedrock.setItemMeta(itemMeta);
 
         itemMeta = pubPortals.getItemMeta();
         itemMeta.setDisplayName(Messages.get("gui.main-menu.item-names.public-portals"));
@@ -102,7 +112,7 @@ public class MenuItems
 
             availableIcons.add(item);
         }
-        
+
         itemMeta = accessPublic.getItemMeta();
         itemMeta.setDisplayName(Messages.get("gui.portal-settings.access-menu.item-names.is-public"));
         itemMeta.setLore(Messages.getList("gui.portal-settings.access-menu.item-lores.is-public"));

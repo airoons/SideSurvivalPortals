@@ -21,7 +21,7 @@ availableIcons:
   - ANVIL
   - BEACON
   - MINECART
-  - COMPASS 
+  - COMPASS
   - CLOCK
   - ELYTRA
   - TOTEM_OF_UNDYING
@@ -66,7 +66,11 @@ availableIcons:
   - BOOK
   - NAME_TAG
   - BARRIER
-messages:
+
+safeBlocks:
+  - SNOW
+
+  messages:
   chat:
     not-in-portal: "&cTev ir jāatrodas portālā, lai izmantotu šo komandu!"
     no-create-permission: "&cTev nav atļauts izveidot šeit portālu!"
@@ -101,16 +105,16 @@ messages:
         remove-success-land: "&7Veiksmīgi noņēmi teritorijai &f{1} &7atļauju izmantot šo portālu!"
         remove-success-player: "&7Veiksmīgi noņēmi spēlētājam &f{1} &7atļauju izmantot šo portālu!"
       help: |-
-          &f
-          &5&lPortālu komandas
-          &f
-          &f/p apraksts <apraksts> &7&omaina aprakstu portālam, kurā pašlaik atrodies
-          &f/p pievienot t <teritorija> &7&oatļauj norādītajai teritorijai izmantot portālu
-          &f/p pievienot s <speletajs> &7&oatļauj norādītajam spēlētājam izmantot portālu
-          &f
-          &f/p nonemt t <teritorija> &7&onoņem teritorijai atļauju izmantot portālu
-          &f/p nonemt s <speletajs> &7&onoņem spēlētājam atļauju izmantot portālu
-          &f
+        &f
+        &5&lPortālu komandas
+        &f
+        &f/p apraksts <apraksts> &7&omaina aprakstu portālam, kurā pašlaik atrodies
+        &f/p pievienot t <teritorija> &7&oatļauj norādītajai teritorijai izmantot portālu
+        &f/p pievienot s <speletajs> &7&oatļauj norādītajam spēlētājam izmantot portālu
+        &f
+        &f/p nonemt t <teritorija> &7&onoņem teritorijai atļauju izmantot portālu
+        &f/p nonemt s <speletajs> &7&onoņem spēlētājam atļauju izmantot portālu
+        &f
   command-arguments:
     description: "apraksts" # /p apraksts
     add: "pievienot" # /p pievienot
@@ -124,14 +128,18 @@ messages:
     main-menu:
       gui-title: "Portāls"
       item-names:
-        to-spawn: "&e&lDoties uz spawn"
-        to-nether: "&e&lDoties uz Nether"
+        to-spawn: "&e&lDoties uz Spawn VAI Nether"
+        to-spawn-bedrock: "&e&lDoties uz Spawn"
+        to-nether-bedrock: "&e&lDoties uz Nether"
         private-portals: "&5&lPrivātie portāli"
         public-portals: "&e&lPubliskie portāli"
         portal-settings: "&f&lPortāla iestatījumi"
       item-lores:
-        to-spawn: ""
-        to-nether: ""
+        to-spawn: |-
+          &fKr-klikšķis&7, lai dotos uz Spawn salu
+          &fL-klikšķis&7, lai dotos uz Nether
+        to-spawn-bedrock: "&fSpied&7, lai dotos uz Spawn salu"
+        to-nether-bedrock: "&fSpied&7, lai dotos uz Nether"
         private-portals: ""
         public-portals: ""
         portal-settings: ""
@@ -142,7 +150,8 @@ messages:
       item-lores:
         portal-start: |-
           &f
-          &7Apraksts: 
+          &7Lokācija: &f{1}
+          &7Apraksts:
         portal-desc-lines: "  &f{1}"
         portal-end: |-
           &f
@@ -155,7 +164,7 @@ messages:
         portal-start: |-
           &f
           &7Lokācija: &f{1}
-          &7Apraksts: 
+          &7Apraksts:
         portal-desc-lines: "  &f{1}"
         portal-end: |-
           &f

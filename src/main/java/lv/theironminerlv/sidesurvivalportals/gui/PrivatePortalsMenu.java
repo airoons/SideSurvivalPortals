@@ -34,12 +34,8 @@ public class PrivatePortalsMenu implements InventoryProvider {
     private SmartInventory inventory;
 
     private void load() {
-        this.inventory = SmartInventory.builder()
-            .manager(invManager)
-            .provider(new PrivatePortalsMenu())
-            .size(4, 9)
-            .title(Messages.get("gui.private-portals.gui-title"))
-            .build();
+        this.inventory = SmartInventory.builder().manager(invManager).provider(new PrivatePortalsMenu()).size(4, 9)
+                .title(Messages.get("gui.private-portals.gui-title")).build();
     }
 
     public void open(Player player) {
@@ -71,6 +67,7 @@ public class PrivatePortalsMenu implements InventoryProvider {
         portals.putAll(PortalData.getAccessablePortalsByPlayer(player.getUniqueId()));
 
         int portalAmount = portals.size();
+        String posReadable;
         String desc;
         String temp;
         List<String> descLines = new ArrayList<>();
@@ -82,16 +79,22 @@ public class PrivatePortalsMenu implements InventoryProvider {
         for (Portal portal : portals.values()) {
             item = portal.getIcon().clone();
             itemMeta = item.getItemMeta();
-            itemMeta.setDisplayName(Messages.getParam("gui.private-portals.item-names.portal", "{1}", portal.getLand().getName()));
+            itemMeta.setDisplayName(
+                    Messages.getParam("gui.private-portals.item-names.portal", "{1}", portal.getLand().getName()));
+            if (player.hasPermission("sidesurvivalportals.hidden.locs"))
+                posReadable = "-";
+            else
+                posReadable = ConvertUtils.readableLoc(portal.getPos1());
             descLines.clear();
 
             desc = portal.getDescription();
 
-            descLines.addAll(Messages.getList("gui.private-portals.item-lores.portal-start"));
+            descLines.addAll(Messages.getListParam("gui.private-portals.item-lores.portal-start", "{1}", posReadable));
 
             index = 0;
             while (index < desc.length()) {
-                temp = Messages.getParam("gui.private-portals.item-lores.portal-desc-lines", "{1}", desc.substring(index, Math.min(index + 30,desc.length())));
+                temp = Messages.getParam("gui.private-portals.item-lores.portal-desc-lines", "{1}",
+                        desc.substring(index, Math.min(index + 30, desc.length())));
 
                 if (index + 31 < desc.length() && desc.charAt(index + 31) != ' ')
                     descLines.add(temp + "-");
@@ -102,12 +105,11 @@ public class PrivatePortalsMenu implements InventoryProvider {
             }
 
             descLines.addAll(Messages.getList("gui.private-portals.item-lores.portal-end"));
-            
+
             itemMeta.setLore(ConvertUtils.color(descLines));
             item.setItemMeta(itemMeta);
 
-            items[i] = ClickableItem.of(item, 
-                e -> portalManager.teleportTo(player, portal, true));
+            items[i] = ClickableItem.of(item, e -> portalManager.teleportTo(player, portal, true));
             i++;
         }
 
@@ -115,10 +117,8 @@ public class PrivatePortalsMenu implements InventoryProvider {
         pagination.setItemsPerPage(27);
         pagination.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 0, 0));
 
-        contents.set(3, 2, ClickableItem.of(MenuItems.prevPage,
-            e -> open(player, pagination.previous().getPage())));
-        contents.set(3, 6, ClickableItem.of(MenuItems.nextPage,
-            e -> open(player, pagination.next().getPage())));
+        contents.set(3, 2, ClickableItem.of(MenuItems.prevPage, e -> open(player, pagination.previous().getPage())));
+        contents.set(3, 6, ClickableItem.of(MenuItems.nextPage, e -> open(player, pagination.next().getPage())));
 
     }
 

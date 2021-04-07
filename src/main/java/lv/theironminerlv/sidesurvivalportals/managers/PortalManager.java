@@ -42,17 +42,25 @@ import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.Land;
 
-public class PortalManager
-{
+public class PortalManager {
     private SideSurvivalPortals plugin;
     private static LandsIntegration landsAPI;
     private static DataManager dataManager;
+
     public Map<UUID, BukkitTask> tasks = new HashMap<>();
+    public List<Material> safeBlocks = new ArrayList<>();
 
     public PortalManager(SideSurvivalPortals plugin) {
         this.plugin = plugin;
         landsAPI = this.plugin.getLandsAPI();
         dataManager = this.plugin.getDataManager();
+
+        if (plugin.getConfig().isList("safeBlocks")) {
+            for (String material : plugin.getConfig().getStringList("safeBlocks")) {
+                if (Material.valueOf(material) != null)
+                    safeBlocks.add(Material.valueOf(material));
+            }
+        }
     }
 
     // Fully creates portal (region + blocks), but saving has to be done after
@@ -67,7 +75,7 @@ public class PortalManager
 
         if ((pos1 == null) || (pos2 == null) || (world == null))
             return false;
-        
+
         String id = generatePortalName(pos1, world);
         portal.setId(id);
 
@@ -99,10 +107,10 @@ public class PortalManager
     public void remove(Portal portal) {
         if (portal == null)
             return;
-    
+
         ArrayList<Location> portalBlocks = BlockUtils.getBlocksBetween(portal.getPos1(), portal.getPos2());
 
-        new BukkitRunnable(){
+        new BukkitRunnable() {
             public void run() {
                 for (Location blockLoc : portalBlocks) {
                     blockLoc.getBlock().breakNaturally();
@@ -174,7 +182,7 @@ public class PortalManager
         RegionManager regionManager = container.get(BukkitAdapter.adapt(loc.getWorld()));
         if (regionManager == null)
             return null;
-            
+
         ApplicableRegionSet applicable = regionManager.getApplicableRegions(BukkitAdapter.asBlockVector(loc));
         if ((applicable == null) || (applicable.size() < 1))
             return null;
@@ -215,7 +223,7 @@ public class PortalManager
         ArrayList<Location> portalBlocks;
 
         pos2.setY(pos1.getY());
-        if (portal.getNorthSouth()){
+        if (portal.getNorthSouth()) {
             portalBlocks = BlockUtils.getBlocksBetween(pos1.add(1.0, 0.0, 0.0), pos2.add(-1.0, 0.0, 0.0));
         } else {
             portalBlocks = BlockUtils.getBlocksBetween(pos1.add(0.0, 0.0, 1.0), pos2.add(0.0, 0.0, -1.0));
@@ -224,12 +232,12 @@ public class PortalManager
         for (Location loc : portalBlocks) {
             if (loc.getBlock().isEmpty() && loc.getBlock().getRelative(BlockFace.UP).isEmpty()) {
                 checkBlock = loc.getBlock().getRelative(BlockFace.DOWN);
-                if ((!checkBlock.isEmpty() && !checkBlock.isLiquid() && !checkBlock.isPassable()) || checkBlock.getType() == Material.SNOW) {
+                if (isSolidBlock(checkBlock)) {
                     loc.add(0.5, 0, 0.5);
                     return loc;
                 } else if (checkBlock.isEmpty()) {
                     checkBlock = checkBlock.getRelative(BlockFace.DOWN);
-                    if ((!checkBlock.isEmpty() && !checkBlock.isLiquid() && !checkBlock.isPassable()) || checkBlock.getType() == Material.SNOW) {
+                    if (isSolidBlock(checkBlock)) {
                         loc.add(0.5, 0, 0.5);
                         return loc;
                     }
@@ -240,14 +248,21 @@ public class PortalManager
 
         return null;
     }
-    
+
+    public boolean isSolidBlock(Block block) {
+        if (!block.isEmpty() && !block.isLiquid() && !block.isPassable())
+            return true;
+
+        return (safeBlocks.contains(block.getType()));
+    }
+
     public void removeLandAccess(Portal portal, Land land) {
         if (!PortalData.portalExists(portal))
             return;
 
         List<Integer> allowedLands = portal.getAllowedLands();
-        
-        allowedLands.remove((Object)land.getId());
+
+        allowedLands.remove((Object) land.getId());
         portal.setAllowedlands(allowedLands);
         dataManager.save(portal);
     }
@@ -257,8 +272,8 @@ public class PortalManager
             return;
 
         List<Integer> allowedLands = portal.getAllowedLands();
-        
-        allowedLands.remove((Object)landId);
+
+        allowedLands.remove((Object) landId);
         portal.setAllowedlands(allowedLands);
         dataManager.save(portal);
     }
@@ -268,7 +283,7 @@ public class PortalManager
             return;
 
         List<UUID> allowedPlayers = portal.getAllowedPlayers();
-        
+
         allowedPlayers.remove(uuid);
         portal.setAllowedPlayers(allowedPlayers);
         dataManager.save(portal);
@@ -277,13 +292,13 @@ public class PortalManager
     public void fakePortalBlocks(Player player, Portal portal, boolean enable) {
         if (!PortalData.portalExists(portal))
             return;
-        
+
         ArrayList<Location> portalBlocks = BlockUtils.getBlocksBetween(portal.getPos1(), portal.getPos2());
         Orientable fakePortal = (Orientable) Material.NETHER_PORTAL.createBlockData();
 
         if (portal.getNorthSouth())
             fakePortal.setAxis(Axis.Z);
-        
+
         if (enable) {
             for (Location loc : portalBlocks) {
                 player.sendBlockChange(loc, fakePortal);
@@ -294,7 +309,7 @@ public class PortalManager
             }
         }
     }
-    
+
     public void teleportTo(Player player, Portal portal, boolean cooldown) {
         plugin.handleClose.remove(player);
         player.closeInventory();
@@ -321,16 +336,16 @@ public class PortalManager
 
         if (loc == null) {
             loc = getSafeTeleportLoc(portal);
-            
+
             if (loc == null) {
                 player.sendMessage(Messages.get("chat.teleport-not-safe"));
                 return;
             }
-            
+
             portal.setTpLoc(loc);
             dataManager.save(portal);
         }
-  
+
         loc.setPitch(player.getLocation().getPitch());
         loc.setYaw(player.getLocation().getYaw());
 
@@ -339,9 +354,10 @@ public class PortalManager
                 player.teleport(loc);
                 return;
             }
-        
+
             if (!tasks.containsKey(player.getUniqueId())) {
-                // player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 150, 0, true, false, false));
+                // player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 150, 0,
+                // true, false, false));
                 player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, SoundCategory.BLOCKS, 1.0f, 1.0f);
                 if (isPortalAt(player.getLocation()))
                     fakePortalBlocks(player, getPortalAt(player.getLocation()), true);
@@ -351,7 +367,7 @@ public class PortalManager
                 tasks.put(player.getUniqueId(), new BukkitRunnable() {
                     int n = 0;
                     String dots;
-                    
+
                     @Override
                     public void run() {
                         if (n >= 5) {
@@ -371,7 +387,7 @@ public class PortalManager
                                 dots += "&d&l●";
                         }
                         dots += "&5&l";
-        
+
                         for (int i = n; i < 5; i++) {
                             if (i > 0)
                                 dots += " ●";
@@ -400,9 +416,10 @@ public class PortalManager
                 player.teleport(PortalData.getSpawnLocation());
             return;
         }
-    
+
         if (!tasks.containsKey(player.getUniqueId())) {
-            // player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 150, 0, true, false, false));
+            // player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 150, 0,
+            // true, false, false));
             player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, SoundCategory.BLOCKS, 1.0f, 1.0f);
             if (isPortalAt(player.getLocation()))
                 fakePortalBlocks(player, getPortalAt(player.getLocation()), true);
@@ -412,7 +429,7 @@ public class PortalManager
             tasks.put(player.getUniqueId(), new BukkitRunnable() {
                 int n = 0;
                 String dots;
-                
+
                 @Override
                 public void run() {
                     if (n >= 5) {
@@ -436,7 +453,7 @@ public class PortalManager
                             dots += "&d&l●";
                     }
                     dots += "&5&l";
-    
+
                     for (int i = n; i < 5; i++) {
                         if (i > 0)
                             dots += " ●";
