@@ -1,11 +1,15 @@
 package lv.theironminerlv.sidesurvivalportals.commands;
 
+import lv.sidesurvival.managers.ClaimManager;
+import lv.sidesurvival.managers.GroupManager;
+import lv.sidesurvival.objects.ClaimOwner;
+import lv.sidesurvival.objects.Group;
+import lv.sidesurvival.utils.Config;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -15,34 +19,38 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 
-import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
+import lv.theironminerlv.sidesurvivalportals.SurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.managers.DataManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PermissionManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.Messages;
-import me.angeschossen.lands.api.integration.LandsIntegration;
-import me.angeschossen.lands.api.land.Land;
 
-public class PortalCommand implements CommandExecutor, TabExecutor
-{
-    private static SideSurvivalPortals plugin = SideSurvivalPortals.getInstance();
+public class PortalCommand implements CommandExecutor, TabExecutor {
+
+    private static SurvivalPortals plugin = SurvivalPortals.getInstance();
     private static PortalManager portalManager = plugin.getPortalManager();
     private static PermissionManager permissionManager = plugin.getPermissionManager();
     private static DataManager dataManager = plugin.getDataManager();
-    private static LandsIntegration landsAPI = plugin.getLandsAPI();
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             String argAdd = Messages.get("command-arguments.add");
             String argRemove = Messages.get("command-arguments.remove");
-            String argLand = Messages.get("command-arguments.add-remove.land");
+            String argGroup = Messages.get("command-arguments.add-remove.group");
             String argPlayer = Messages.get("command-arguments.add-remove.player");
 
             Player player = (Player) sender;
 
             if (args.length >= 1) {
+                if (player.hasPermission("portali.admin") && args[0].equalsIgnoreCase("reload")) {
+                    plugin.reloadConfig();
+                    lv.sidesurvival.utils.Messages.load(plugin.getConfig().getConfigurationSection("messages"));
+                    Config.reloadFromConfig(plugin.getConfig());
+                    sender.sendMessage("Plugin successfully reloaded!");
+                }
+
                 Portal portal = portalManager.getPortalAt(player.getLocation());
                 String argDesc = Messages.get("command-arguments.description");
                 
@@ -50,7 +58,8 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                     player.sendMessage(Messages.get("chat.not-in-portal"));
                     return true;
                 }
-                if (!permissionManager.canEditPortal(player, portal.getLand())) {
+                ClaimOwner owner = ClaimManager.get().getOwnerById(portal.getOwner());
+                if (!permissionManager.canEditPortal(player, owner, player.getLocation())) {
                     player.sendMessage(Messages.get("chat.no-edit-permission"));
                     return true;
                 }
@@ -89,15 +98,15 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                 }
 
                 if (args.length == 2) {
-                    if (args[1].equalsIgnoreCase(argLand))
-                        player.sendMessage(Messages.get("chat.commands.add-remove.no-land"));
+                    if (args[1].equalsIgnoreCase(argGroup))
+                        player.sendMessage(Messages.get("chat.commands.add-remove.no-group"));
                     else if (args[1].equalsIgnoreCase(argPlayer))
                         player.sendMessage(Messages.get("chat.commands.add-remove.no-player"));
 
                     return true;
                 } else {
                     if (args[0].equalsIgnoreCase(argAdd)) {
-                        if (!args[1].equalsIgnoreCase(argLand) && !args[1].equalsIgnoreCase(argPlayer)) {
+                        if (!args[1].equalsIgnoreCase(argGroup) && !args[1].equalsIgnoreCase(argPlayer)) {
                             player.sendMessage(Messages.get("chat.commands.add-remove.no-add-type"));
                             return true;
                         }
@@ -108,31 +117,31 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                         }
                         String input = builder.toString();
 
-                        if (args[1].equalsIgnoreCase(argLand)) {
-                            Land land = landsAPI.getLand(input);
+                        if (args[1].equalsIgnoreCase(argGroup)) {
+                            Group group = GroupManager.get().getByName(input);
 
-                            if (land == null) {
-                                player.sendMessage(Messages.get("chat.commands.add-remove.error-land-doesnt-exist"));
+                            if (group == null) {
+                                player.sendMessage(Messages.get("chat.commands.add-remove.error-group-doesnt-exist"));
                                 return true;
                             }
 
-                            List<Integer> allowedLands = portal.getAllowedLands();
+                            List<String> allowedGroups = portal.getAllowedGroups();
                             
-                            if (allowedLands.contains(land.getId())) {
-                                player.sendMessage(Messages.get("chat.commands.add-remove.error-already-added-land"));
+                            if (allowedGroups.contains(group.getId())) {
+                                player.sendMessage(Messages.get("chat.commands.add-remove.error-already-added-group"));
                                 return true;
                             }
 
-                            if (portal.getLand().getId() == land.getId()) {
-                                player.sendMessage(Messages.get("chat.commands.add-remove.error-same-land"));
+                            if (portal.getOwner().equalsIgnoreCase(owner.getId())) {
+                                player.sendMessage(Messages.get("chat.commands.add-remove.error-same-group"));
                                 return true;
                             }
                             
-                            allowedLands.add(land.getId());
-                            portal.setAllowedlands(allowedLands);
+                            allowedGroups.add(group.getId());
+                            portal.setAllowedGroups(allowedGroups);
                             dataManager.save(portal);
 
-                            player.sendMessage(Messages.getParam("chat.commands.add-remove.add-success-land", "{1}", land.getName()));
+                            player.sendMessage(Messages.getParam("chat.commands.add-remove.add-success-group", "{1}", group.getName()));
 
                             return true;
                         } else {
@@ -143,9 +152,9 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                                 return true;
                             }
 
-                            List<UUID> allowedPlayers = portal.getAllowedPlayers();
+                            List<String> allowedPlayers = portal.getAllowedPlayers();
                             
-                            if (allowedPlayers.contains(addPlayer.getUniqueId())) {
+                            if (allowedPlayers.contains(addPlayer.getUniqueId().toString())) {
                                 player.sendMessage(Messages.get("chat.commands.add-remove.error-already-added-player"));
                                 return true;
                             }
@@ -154,13 +163,8 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                                 player.sendMessage(Messages.get("chat.commands.add-remove.error-same-player"));
                                 return true;
                             }
-
-                            if (portal.getLand().isTrusted(addPlayer.getUniqueId())) {
-                                player.sendMessage(Messages.get("chat.commands.add-remove.error-already-added-playerland"));
-                                return true;
-                            }
                             
-                            allowedPlayers.add(addPlayer.getUniqueId());
+                            allowedPlayers.add(addPlayer.getUniqueId().toString());
                             portal.setAllowedPlayers(allowedPlayers);
                             dataManager.save(portal);
 
@@ -169,7 +173,7 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                             return true;
                         }
                     } else if (args[0].equalsIgnoreCase(argRemove)) {
-                        if (!args[1].equalsIgnoreCase(argLand) && !args[1].equalsIgnoreCase(argPlayer)) {
+                        if (!args[1].equalsIgnoreCase(argGroup) && !args[1].equalsIgnoreCase(argPlayer)) {
                             player.sendMessage(Messages.get("chat.commands.add-remove.no-remove-type"));
                             return true;
                         }
@@ -180,23 +184,22 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                         }
                         String input = builder.toString();
 
-                        if (args[1].equalsIgnoreCase(argLand)) {
-                            Land land = landsAPI.getLand(input);
+                        if (args[1].equalsIgnoreCase(argGroup)) {
+                            Group group = GroupManager.get().getByName(input);
 
-                            if (land == null) {
-                                player.sendMessage(Messages.get("chat.commands.add-remove.error-land-doesnt-exist"));
+                            if (group == null) {
+                                player.sendMessage(Messages.get("chat.commands.add-remove.error-group-doesnt-exist"));
                                 return true;
                             }
 
-                            
-                            if (!portal.getAllowedLands().contains(land.getId())) {
-                                player.sendMessage(Messages.get("chat.commands.add-remove.error-not-added-land"));
+                            if (!portal.getAllowedGroups().contains(group.getId())) {
+                                player.sendMessage(Messages.get("chat.commands.add-remove.error-not-added-group"));
                                 return true;
                             }
                             
-                            portalManager.removeLandAccess(portal, land);
+                            portalManager.removeGroupAccess(portal, group.getId());
 
-                            player.sendMessage(Messages.getParam("chat.commands.add-remove.remove-success-land", "{1}", land.getName()));
+                            player.sendMessage(Messages.getParam("chat.commands.add-remove.remove-success-group", "{1}", group.getName()));
 
                             return true;
                         } else {
@@ -212,7 +215,7 @@ public class PortalCommand implements CommandExecutor, TabExecutor
                                 return true;
                             }
                             
-                            portalManager.removePlayerAccess(portal, remPlayer.getUniqueId());
+                            portalManager.removePlayerAccess(portal, remPlayer.getUniqueId().toString());
 
                             player.sendMessage(Messages.getParam("chat.commands.add-remove.remove-success-player", "{1}", remPlayer.getName()));
     
@@ -238,7 +241,7 @@ public class PortalCommand implements CommandExecutor, TabExecutor
         String argDesc = Messages.get("command-arguments.description");
         String argAdd = Messages.get("command-arguments.add");
         String argRemove = Messages.get("command-arguments.remove");
-        String argLand = Messages.get("command-arguments.add-remove.land");
+        String argGroup = Messages.get("command-arguments.add-remove.group");
         String argPlayer = Messages.get("command-arguments.add-remove.player");
 
         if (args.length == 1) {
@@ -249,12 +252,12 @@ public class PortalCommand implements CommandExecutor, TabExecutor
             .collect(Collectors.toList());
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase(argAdd) || args[0].equalsIgnoreCase(argRemove)) {
-                completions.add(argLand);
+                completions.add(argGroup);
                 completions.add(argPlayer);
             }
         } else if (args.length == 3) {
             if ((args[0].equalsIgnoreCase(argAdd) || args[0].equalsIgnoreCase(argRemove)) && 
-            (args[1].equalsIgnoreCase(argLand) || args[1].equalsIgnoreCase(argPlayer))) {
+            (args[1].equalsIgnoreCase(argGroup) || args[1].equalsIgnoreCase(argPlayer))) {
                 return null;
             }
         }

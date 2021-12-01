@@ -1,39 +1,40 @@
 package lv.theironminerlv.sidesurvivalportals.listeners;
 
+import lv.sidesurvival.events.ClaimOwner.ClaimOwnerUnclaimEvent;
+import lv.sidesurvival.events.GroupDisbandEvent;
+import lv.sidesurvival.managers.ClaimManager;
+import lv.sidesurvival.objects.Claim;
+import lv.sidesurvival.objects.ClaimOwner;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
-import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
+import lv.theironminerlv.sidesurvivalportals.SurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.managers.PermissionManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
-import me.angeschossen.lands.api.events.ChunkDeleteEvent;
-import me.angeschossen.lands.api.integration.LandsIntegration;
 
-public class PortalBreakListener implements Listener
-{
-    private SideSurvivalPortals plugin;
+public class PortalBreakListener implements Listener {
+
+    private SurvivalPortals plugin;
     private static PortalManager portalManager;
     private static PermissionManager permissionManager;
-    private static LandsIntegration landsAPI;
 
-    public PortalBreakListener(SideSurvivalPortals plugin) {
+    public PortalBreakListener(SurvivalPortals plugin) {
         this.plugin = plugin;
         portalManager = this.plugin.getPortalManager();
         permissionManager = this.plugin.getPermissionManager();
-        landsAPI = this.plugin.getLandsAPI();
     }
 
     @EventHandler
-    public void onPortalBlockBreak(BlockBreakEvent event)
-    {
+    public void onPortalBlockBreak(BlockBreakEvent event) {
         if (event.getBlock().getType() == Material.PURPLE_STAINED_GLASS_PANE) {
             if (portalManager.isPortalAt(event.getBlock().getLocation())) {
                 event.setCancelled(true);
-                
-                if (!permissionManager.canEditPortal(event.getPlayer(), landsAPI.getLand(event.getBlock().getLocation())))
+
+                ClaimOwner owner = ClaimManager.get().getOwnerAt(new Claim(event.getBlock()));
+                if (!permissionManager.canEditPortal(event.getPlayer(), owner, event.getBlock().getLocation()))
                     return;
 
                 Portal portal = portalManager.getPortalAt(event.getBlock().getLocation());
@@ -43,8 +44,12 @@ public class PortalBreakListener implements Listener
     }
 
     @EventHandler
-    public void onChunkDelete(ChunkDeleteEvent event)
-    {
-        portalManager.recheckPortals(event.getLand());
+    public void onChunkDelete(ClaimOwnerUnclaimEvent event) {
+        portalManager.recheckPortals(event.getOwner());
+    }
+
+    @EventHandler
+    public void onGroupDisband(GroupDisbandEvent event) {
+        portalManager.recheckPortals(event.getGroup());
     }
 }

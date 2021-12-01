@@ -1,5 +1,7 @@
 package lv.theironminerlv.sidesurvivalportals.gui;
 
+import lv.sidesurvival.managers.ClaimManager;
+import lv.sidesurvival.objects.ClaimOwner;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -10,14 +12,15 @@ import fr.minuskube.inv.InventoryManager;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
-import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
+import lv.theironminerlv.sidesurvivalportals.SurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.managers.PermissionManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
 public class MainMenu implements InventoryProvider {
-    private static SideSurvivalPortals plugin = SideSurvivalPortals.getInstance();
+
+    private static SurvivalPortals plugin = SurvivalPortals.getInstance();
     private InventoryManager invManager = plugin.getInvManager();
     private PermissionManager permissionManager = plugin.getPermissionManager();
     private PortalManager portalManager = plugin.getPortalManager();
@@ -56,7 +59,8 @@ public class MainMenu implements InventoryProvider {
         contents.set(2, 4, ClickableItem.empty(MenuItems.lightGrayPane));
         contents.set(2, 7, ClickableItem.empty(MenuItems.blackPane));
 
-        if (!permissionManager.canEditPortal(player, portal.getLand())) {
+        ClaimOwner owner = ClaimManager.get().getOwnerById(portal.getOwner());
+        if (owner == null || !permissionManager.canEditPortal(player, owner, portal.getPos1())) {
             offset = 1;
         }
         if (!player.hasPermission("group.bedrock")) {

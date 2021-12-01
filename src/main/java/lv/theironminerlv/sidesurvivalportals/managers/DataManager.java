@@ -1,106 +1,151 @@
 package lv.theironminerlv.sidesurvivalportals.managers;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.UpdateOptions;
+import lv.sidesurvival.SurvivalCoreBukkit;
+import lv.sidesurvival.managers.ClaimManager;
+import lv.sidesurvival.objects.ClaimOwner;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 
-import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
+import lv.theironminerlv.sidesurvivalportals.SurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.data.PortalData;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
-import lv.theironminerlv.sidesurvivalportals.objects.SaveFile;
 import lv.theironminerlv.sidesurvivalportals.utils.LocationSerialization;
-import me.angeschossen.lands.api.integration.LandsIntegration;
-import me.angeschossen.lands.api.land.Land;
+import org.bukkit.scheduler.BukkitRunnable;
 
-public class DataManager
-{
-    private SideSurvivalPortals plugin;
-    private static LandsIntegration landsAPI;
+public class DataManager {
 
-    public DataManager(SideSurvivalPortals plugin) {
+    private SurvivalPortals plugin;
+
+    public DataManager(SurvivalPortals plugin) {
         this.plugin = plugin;
-        landsAPI = this.plugin.getLandsAPI();
     }
 
     public void save(Portal portal) {
-        SaveFile save = new SaveFile(plugin, plugin.getPortalFolder(), portal.getId(), true, false);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                MongoCollection<Document> col = MongoManager.get().getPortalCollection();
+                Document doc = new Document("_id", portal.getId());
+                Document found = col.find(doc).first();
 
-        save.getConfig().set("id", portal.getId());
-        save.getConfig().set("world", portal.getWorld().getName());
-        save.getConfig().set("pos1", LocationSerialization.getStringFromLocation(portal.getPos1(), false));
-        save.getConfig().set("pos2", LocationSerialization.getStringFromLocation(portal.getPos2(), false));
-        save.getConfig().set("tploc", LocationSerialization.getStringFromLocation(portal.getTpLoc(), true));
-        save.getConfig().set("isNorthSouth", portal.getNorthSouth());
-        save.getConfig().set("isPublic", portal.getIsPublic());
-        save.getConfig().set("landId", portal.getLand().getId());
-        save.getConfig().set("settings.icon", portal.getIcon().getType().toString());
-        save.getConfig().set("settings.desc", portal.getDescription());
-        save.getConfig().set("settings.allowedLands", portal.getAllowedLands());
+                doc.put("world", portal.getWorld().getName());
+                doc.put("pos1", LocationSerialization.getStringFromLocation(portal.getPos1(), false));
+                doc.put("pos2", LocationSerialization.getStringFromLocation(portal.getPos2(), false));
+                doc.put("tploc", LocationSerialization.getStringFromLocation(portal.getTpLoc(), true));
+                doc.put("isNorthSouth", portal.getNorthSouth());
+                doc.put("isPublic", portal.getIsPublic());
+                doc.put("ownerId", portal.getOwner());
+                doc.put("settings-icon", portal.getIcon().getType().toString());
+                doc.put("settings-desc", portal.getDescription());
+                doc.put("settings-allowedGroups", portal.getAllowedGroups());
+                doc.put("settings-allowedPlayers", portal.getAllowedPlayers());
 
-        List<UUID> allowedPlayers = portal.getAllowedPlayers();
-        List<String> allowedPlayersStr = new ArrayList<String>();
-        
-        for (UUID uuid : allowedPlayers) {
-            allowedPlayersStr.add(uuid.toString());
-        }
-        save.getConfig().set("settings.allowedPlayers", allowedPlayersStr);
-        
-        save.save();
+                if (found != null) {
+                    doc.remove("_id");
+                    Document update = new Document("$set", doc);
+                    col.updateOne(found, update, new UpdateOptions().upsert(true));
+                } else {
+                    col.insertOne(doc);
+                }
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        SurvivalCoreBukkit.getInstance().getProtonManager().broadcast("survivalportals", "portalUpdated", portal.getId());
+                    }
+                }.runTask(plugin);
+            }
+        }.runTaskAsynchronously(plugin);
     }
 
     public void delete(Portal portal) {
-        SaveFile save = new SaveFile(plugin, plugin.getPortalFolder(), portal.getId(), true, false);
-        save.delete();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                MongoManager.get().getPortalCollection().deleteOne(Filters.eq("_id", portal.getId()));
+            }
+        }.runTaskAsynchronously(plugin);
     }
 
     public void loadPortals() {
-        File[] portalFiles = plugin.getPortalFolder().listFiles();
-        FileConfiguration save;
         Portal portal;
         Location pos1;
         Location pos2;
         boolean isNorthSouth;
         boolean isPublic;
+        String worldStr;
         World world;
-        Land land;
+        String owner;
         String icon;
         String desc;
-        List<Integer> allowedLands;
+        List<String> allowedGroups;
         List<String> allowedPlayers;
 
-        if (portalFiles.length > 0) {
-            for (File file : portalFiles) {
-                portal =  null;
+        try (MongoCursor<Document> cursor = MongoManager.get().getPortalCollection().find().iterator()) {
+            while (cursor.hasNext()) {
+                Document doc = cursor.next();
 
-                save = YamlConfiguration.loadConfiguration(file);
-                if (!save.contains("landId") || !save.contains("pos1") || !save.contains("pos2") || !save.contains("id") || !save.contains("isNorthSouth") || !save.contains("isPublic") || !save.contains("settings.icon")|| !save.contains("settings.desc") || !save.contains("settings.allowedLands") || !save.contains("settings.allowedPlayers"))
-                    continue;
+                owner = doc.getString("ownerId");
 
-                land = landsAPI.getLand((int)save.getInt("landId"));
+                pos1 = LocationSerialization.getLocationFromString(doc.getString("pos1"));
+                pos2 = LocationSerialization.getLocationFromString(doc.getString("pos2"));
+                worldStr = doc.getString("world");
+                world = Bukkit.getWorld(worldStr);
+                isNorthSouth = doc.getBoolean("isNorthSouth");
+                isPublic = doc.getBoolean("isPublic");
+                icon = doc.getString("settings-icon");
+                desc = doc.getString("settings-desc");
 
-                pos1 = LocationSerialization.getLocationFromString(save.getString("pos1"));
-                pos2 = LocationSerialization.getLocationFromString(save.getString("pos2"));
-                world = Bukkit.getWorld(save.getString("world"));
-                isNorthSouth = save.getBoolean("isNorthSouth");
-                isPublic = save.getBoolean("isPublic");
-                icon = save.getString("settings.icon");
-                desc = save.getString("settings.desc");
+                allowedGroups = doc.getList("settings-allowedGroups", String.class, new ArrayList<>());
+                allowedPlayers = doc.getList("settings-allowedPlayers", String.class, new ArrayList<>());
 
-                allowedLands = save.getIntegerList("settings.allowedLands");
-                allowedPlayers = save.getStringList("settings.allowedPlayers");
+                portal = new Portal(pos1, pos2, world, worldStr, isNorthSouth, isPublic, owner, doc.getString("_id"), icon, desc, allowedGroups, allowedPlayers);
+                ClaimOwner claimOwner = ClaimManager.get().getOwnerById(owner);
 
-                portal = new Portal(pos1, pos2, world, isNorthSouth, isPublic, land, save.getString("id"), icon, desc, allowedLands, allowedPlayers);
-
-                if (portal != null && land != null)
+                if (claimOwner != null)
                     PortalData.addPortal(portal, false);
             }
         }
+    }
+
+    public void updateOne(String portalId) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Document doc = MongoManager.get().getPortalCollection().find(Filters.eq("_id", portalId)).first();
+                if (doc == null)
+                    return;
+
+                String owner = doc.getString("ownerId");
+
+                Location pos1 = LocationSerialization.getLocationFromString(doc.getString("pos1"));
+                Location pos2 = LocationSerialization.getLocationFromString(doc.getString("pos2"));
+                String worldStr = doc.getString("world");
+                World world = Bukkit.getWorld(worldStr);
+                boolean isNorthSouth = doc.getBoolean("isNorthSouth");
+                boolean isPublic = doc.getBoolean("isPublic");
+                String icon = doc.getString("settings-icon");
+                String desc = doc.getString("settings-desc");
+
+                List<String> allowedGroups = doc.getList("settings-allowedGroups", String.class, new ArrayList<>());
+                List<String> allowedPlayers = doc.getList("settings-allowedPlayers", String.class, new ArrayList<>());
+
+                Portal portal = new Portal(pos1, pos2, world, worldStr, isNorthSouth, isPublic, owner, doc.getString("_id"), icon, desc, allowedGroups, allowedPlayers);
+                ClaimOwner claimOwner = ClaimManager.get().getOwnerById(owner);
+                if (claimOwner == null)
+                    return;
+
+                PortalData.updatePortal(portal);
+            }
+        }.runTaskAsynchronously(plugin);
     }
 }

@@ -8,25 +8,24 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.scheduler.BukkitTask;
 
-import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
+import lv.theironminerlv.sidesurvivalportals.SurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.managers.MenuManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 
-public class PortalEnterListener implements Listener
-{
-    private SideSurvivalPortals plugin;
+public class PortalEnterListener implements Listener {
+
+    private SurvivalPortals plugin;
     private static PortalManager portalManager;
     private static MenuManager menuManager;
 
-    public PortalEnterListener(SideSurvivalPortals plugin) {
+    public PortalEnterListener(SurvivalPortals plugin) {
         this.plugin = plugin;
         portalManager = this.plugin.getPortalManager();
         menuManager = this.plugin.getMenuManager();
     }
 
     @EventHandler
-    public void onPortalEvent(PlayerMoveEvent event)
-    {
+    public void onPortalEvent(PlayerMoveEvent event) {
         Location to = event.getTo(), from = event.getFrom();
         if (to != null && to.equals(from))
             return;

@@ -9,11 +9,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import fr.minuskube.inv.InventoryManager;
 import fr.minuskube.inv.SmartInventory;
-import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
+import lv.theironminerlv.sidesurvivalportals.SurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.gui.EditPortalAccess;
 import lv.theironminerlv.sidesurvivalportals.gui.EditPortalIcon;
 import lv.theironminerlv.sidesurvivalportals.gui.EditPortalMenu;
-import lv.theironminerlv.sidesurvivalportals.gui.PortalAccessLands;
+import lv.theironminerlv.sidesurvivalportals.gui.PortalAccessGroups;
 import lv.theironminerlv.sidesurvivalportals.gui.PortalAccessPlayers;
 import lv.theironminerlv.sidesurvivalportals.gui.PrivatePortalsMenu;
 import lv.theironminerlv.sidesurvivalportals.gui.PublicPortalsMenu;
@@ -21,14 +21,14 @@ import lv.theironminerlv.sidesurvivalportals.managers.MenuManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 
-public class InventoryCloseListener implements Listener
-{
-    private SideSurvivalPortals plugin;
+public class InventoryCloseListener implements Listener {
+
+    private SurvivalPortals plugin;
     private static PortalManager portalManager;
     private static InventoryManager invManager;
     private static MenuManager menuManager;
 
-    public InventoryCloseListener(SideSurvivalPortals plugin) {
+    public InventoryCloseListener(SurvivalPortals plugin) {
         this.plugin = plugin;
         portalManager = this.plugin.getPortalManager();
         invManager = this.plugin.getInvManager();
@@ -36,8 +36,7 @@ public class InventoryCloseListener implements Listener
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onPortalBlockBreak(InventoryCloseEvent event)
-    {
+    public void onPortalBlockBreak(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
         if (invManager.getInventory(player).isPresent()) {
             SmartInventory inv = invManager.getInventory(player).get();
@@ -67,7 +66,7 @@ public class InventoryCloseListener implements Listener
                         }
                     }.runTaskLater(plugin, 1);
                 }
-            } else if ((inv.getProvider() instanceof PortalAccessLands || inv.getProvider() instanceof PortalAccessPlayers) && plugin.handleClose.contains(player)) {
+            } else if ((inv.getProvider() instanceof PortalAccessGroups || inv.getProvider() instanceof PortalAccessPlayers) && plugin.handleClose.contains(player)) {
                 Portal portal = portalManager.getPortalAt(player.getLocation());
 
                 if (portal != null) {

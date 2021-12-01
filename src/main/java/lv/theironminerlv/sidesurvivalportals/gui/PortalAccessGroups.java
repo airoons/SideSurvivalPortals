@@ -3,6 +3,8 @@ package lv.theironminerlv.sidesurvivalportals.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import lv.sidesurvival.managers.GroupManager;
+import lv.sidesurvival.objects.Group;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -15,31 +17,29 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
-import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
+import lv.theironminerlv.sidesurvivalportals.SurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.Messages;
-import me.angeschossen.lands.api.integration.LandsIntegration;
-import me.angeschossen.lands.api.land.Land;
 
-public class PortalAccessLands implements InventoryProvider {
-    private static SideSurvivalPortals plugin = SideSurvivalPortals.getInstance();
+public class PortalAccessGroups implements InventoryProvider {
+
+    private static SurvivalPortals plugin = SurvivalPortals.getInstance();
     private InventoryManager invManager = plugin.getInvManager();
     private PortalManager portalManager = plugin.getPortalManager();
-    private LandsIntegration landsAPI = plugin.getLandsAPI();
     private SmartInventory inventory;
     private Portal portal;
 
-    public PortalAccessLands(Portal portal) {
+    public PortalAccessGroups(Portal portal) {
         this.portal = portal;
     }
 
     private void load() {
         this.inventory = SmartInventory.builder()
             .manager(invManager)
-            .provider(new PortalAccessLands(portal))
+            .provider(new PortalAccessGroups(portal))
             .size(4, 9)
-            .title(Messages.get("gui.portal-settings.access-menu.access-lands.gui-title"))
+            .title(Messages.get("gui.portal-settings.access-menu.access-groups.gui-title"))
             .build();
     }
 
@@ -61,33 +61,32 @@ public class PortalAccessLands implements InventoryProvider {
         ItemMeta itemMeta;
         Pagination pagination = contents.pagination();
 
-        List<Integer> allowedLands = portal.getAllowedLands();
-        List<Land> lands = new ArrayList<Land>();
+        List<String> allowedGroups = portal.getAllowedGroups();
+        List<Group> groups = new ArrayList<>();
 
-        for (int landId : allowedLands) {
-            if (landsAPI.getLand(landId) == null) {
-                portalManager.removeLandAccess(portal, landId);
+        for (String groupId : allowedGroups) {
+            Group group = GroupManager.get().getById(groupId, true);
+            if (group == null) {
+                portalManager.removeGroupAccess(portal, groupId);
                 continue;
             }
 
-            lands.add(landsAPI.getLand(landId));
+            groups.add(group);
         }
 
-        int landAmount = lands.size();
+        ClickableItem[] items = new ClickableItem[groups.size()];
 
-        ClickableItem[] items = new ClickableItem[landAmount];
-
-        for(int i = 0; i < items.length; i++) {
-            Land land = lands.get(i);
+        for (int i = 0; i < items.length; i++) {
+            Group group = groups.get(i);
             
             item = new ItemStack(Material.BOOK);
             itemMeta = item.getItemMeta();
-            itemMeta.setDisplayName(Messages.getParam("gui.portal-settings.access-menu.access-lands.item-names.land", "{1}", land.getName()));
-            itemMeta.setLore(Messages.getList("gui.portal-settings.access-menu.access-lands.item-lores.land"));
+            itemMeta.setDisplayName(Messages.getParam("gui.portal-settings.access-menu.access-groups.item-names.group", "{1}", group.getName()));
+            itemMeta.setLore(Messages.getList("gui.portal-settings.access-menu.access-groups.item-lores.group"));
             item.setItemMeta(itemMeta);
 
             items[i] = ClickableItem.of(item, 
-                e -> removeLandAccess(player, portal, pagination.getPage(), land));
+                e -> removeGroupAccess(player, portal, pagination.getPage(), group.getId()));
         }
 
         pagination.setItems(items);
@@ -106,11 +105,9 @@ public class PortalAccessLands implements InventoryProvider {
 
     }
 
-    public void removeLandAccess(Player player, Portal portal, int page, Land land) {
+    public void removeGroupAccess(Player player, Portal portal, int page, String groupId) {
         plugin.handleClose.remove(player);
-
-        portalManager.removeLandAccess(portal, land);
-        
+        portalManager.removeGroupAccess(portal, groupId);
         open(player, portal, page);
     }
 }

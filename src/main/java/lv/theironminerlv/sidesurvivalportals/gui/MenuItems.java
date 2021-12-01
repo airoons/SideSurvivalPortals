@@ -8,11 +8,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import dev.dbassett.skullcreator.SkullCreator;
-import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
+import lv.theironminerlv.sidesurvivalportals.SurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
 public class MenuItems {
-    public static SideSurvivalPortals plugin = SideSurvivalPortals.getInstance();
+
+    public static SurvivalPortals plugin = SurvivalPortals.getInstance();
 
     public static ItemStack lightGrayPane = new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE);
     public static ItemStack grayPane = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
@@ -41,7 +42,7 @@ public class MenuItems {
     public static ItemStack accessPublic = new ItemStack(Material.OBSIDIAN);
     public static ItemStack accessPrivate = new ItemStack(Material.CRYING_OBSIDIAN);
 
-    public static ItemStack accessLands = goSpawn.clone();
+    public static ItemStack accessGroups = goSpawn.clone();
     public static ItemStack accessPlayers = new ItemStack(Material.PLAYER_HEAD);
 
     public MenuItems() {
@@ -123,10 +124,10 @@ public class MenuItems {
         itemMeta.setLore(Messages.getList("gui.portal-settings.access-menu.item-lores.is-private"));
         accessPrivate.setItemMeta(itemMeta);
 
-        itemMeta = accessLands.getItemMeta();
-        itemMeta.setDisplayName(Messages.get("gui.portal-settings.access-menu.item-names.land-access"));
-        itemMeta.setLore(Messages.getList("gui.portal-settings.access-menu.item-lores.land-access"));
-        accessLands.setItemMeta(itemMeta);
+        itemMeta = accessGroups.getItemMeta();
+        itemMeta.setDisplayName(Messages.get("gui.portal-settings.access-menu.item-names.group-access"));
+        itemMeta.setLore(Messages.getList("gui.portal-settings.access-menu.item-lores.group-access"));
+        accessGroups.setItemMeta(itemMeta);
 
         itemMeta = accessPlayers.getItemMeta();
         itemMeta.setDisplayName(Messages.get("gui.portal-settings.access-menu.item-names.player-access"));

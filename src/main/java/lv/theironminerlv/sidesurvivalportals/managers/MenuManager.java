@@ -1,26 +1,28 @@
 package lv.theironminerlv.sidesurvivalportals.managers;
 
+import lv.sidesurvival.managers.ClaimManager;
+import lv.sidesurvival.objects.ClaimOwner;
 import org.bukkit.entity.Player;
 
-import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
+import lv.theironminerlv.sidesurvivalportals.SurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.data.PortalData;
 import lv.theironminerlv.sidesurvivalportals.gui.EditPortalAccess;
 import lv.theironminerlv.sidesurvivalportals.gui.EditPortalIcon;
 import lv.theironminerlv.sidesurvivalportals.gui.EditPortalMenu;
 import lv.theironminerlv.sidesurvivalportals.gui.MainMenu;
-import lv.theironminerlv.sidesurvivalportals.gui.PortalAccessLands;
+import lv.theironminerlv.sidesurvivalportals.gui.PortalAccessGroups;
 import lv.theironminerlv.sidesurvivalportals.gui.PortalAccessPlayers;
 import lv.theironminerlv.sidesurvivalportals.gui.PrivatePortalsMenu;
 import lv.theironminerlv.sidesurvivalportals.gui.PublicPortalsMenu;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
-public class MenuManager
-{
-    private SideSurvivalPortals plugin;
+public class MenuManager {
+
+    private SurvivalPortals plugin;
     private PermissionManager permissionManager;
 
-    public MenuManager(SideSurvivalPortals plugin) {
+    public MenuManager(SurvivalPortals plugin) {
         this.plugin = plugin;
         permissionManager = this.plugin.getPermissionManager();
     }
@@ -33,7 +35,8 @@ public class MenuManager
             return false;
         }
 
-        if (!permissionManager.canEditPortal(player, portal.getLand())) {
+        ClaimOwner owner = ClaimManager.get().getOwnerById(portal.getOwner());
+        if (owner == null || !permissionManager.canEditPortal(player, owner, portal.getPos1())) {
             player.sendMessage(Messages.get("chat.no-edit-permission"));
             return false;
         }
@@ -91,13 +94,13 @@ public class MenuManager
         gui.open(player, portal);
     }
 
-    public void openPortalLandAccess(Player player, Portal portal) {
+    public void openPortalGroupAccess(Player player, Portal portal) {
         if (!portalPermCheck(player, portal))
             return;
         
         plugin.handleClose.remove(player);
 
-        PortalAccessLands gui = new PortalAccessLands(portal);
+        PortalAccessGroups gui = new PortalAccessGroups(portal);
         gui.open(player, portal);
     }
 

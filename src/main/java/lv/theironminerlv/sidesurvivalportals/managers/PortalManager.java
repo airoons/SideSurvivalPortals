@@ -1,10 +1,6 @@
 package lv.theironminerlv.sidesurvivalportals.managers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
@@ -16,14 +12,16 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 
-import org.bukkit.Axis;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
-import org.bukkit.World;
+import lv.sidesurvival.SurvivalCoreBukkit;
+import lv.sidesurvival.api.SurvivalCoreAPI;
+import lv.sidesurvival.managers.ClaimManager;
+import lv.sidesurvival.managers.RedisManager;
+import lv.sidesurvival.objects.Claim;
+import lv.sidesurvival.objects.ClaimOwner;
+import lv.theironminerlv.sidesurvivalportals.listeners.CrossServerHandler;
+import lv.theironminerlv.sidesurvivalportals.objects.PortalRequest;
+import lv.theironminerlv.sidesurvivalportals.utils.LocationSerialization;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -33,26 +31,24 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
+import lv.theironminerlv.sidesurvivalportals.SurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.data.PortalData;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.BlockUtils;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
 import lv.theironminerlv.sidesurvivalportals.utils.Messages;
-import me.angeschossen.lands.api.integration.LandsIntegration;
-import me.angeschossen.lands.api.land.Land;
 
 public class PortalManager {
-    private SideSurvivalPortals plugin;
-    private static LandsIntegration landsAPI;
+
+    private SurvivalPortals plugin;
     private static DataManager dataManager;
 
     public Map<UUID, BukkitTask> tasks = new HashMap<>();
     public List<Material> safeBlocks = new ArrayList<>();
+    private static Map<UUID, Portal> requests = new HashMap<>();
 
-    public PortalManager(SideSurvivalPortals plugin) {
+    public PortalManager(SurvivalPortals plugin) {
         this.plugin = plugin;
-        landsAPI = this.plugin.getLandsAPI();
         dataManager = this.plugin.getDataManager();
 
         if (plugin.getConfig().isList("safeBlocks")) {
@@ -118,7 +114,7 @@ public class PortalManager {
             }
         }.runTask(plugin);
 
-        PortalData.removePortal(portal);
+        PortalData.removePortal(portal, true);
         removeRegion(portal.getId(), portal.getWorld());
     }
 
@@ -203,16 +199,16 @@ public class PortalManager {
         regionManager.removeRegion(id);
     }
 
-    // Removes any portals that are outside of Land's claims
-    public void recheckPortals(Land land) {
-        Map<String, Portal> portals = PortalData.getByLand(land);
+    // Removes any portals that are outside of ClaimOwners's claims
+    public void recheckPortals(ClaimOwner owner) {
+        Map<String, Portal> portals = PortalData.getByOwner(owner.getId());
 
-        if (portals.size() > 0) {
-            for (Portal portal : portals.values()) {
-                if (!landsAPI.isClaimed(portal.getPos1())) {
-                    remove(portal);
-                }
-            }
+        for (Portal portal : portals.values()) {
+            if (portal.getPos1() == null)
+                continue;
+
+            if (!Objects.equals(ClaimManager.get().getOwnerAt(new Claim(portal.getPos1())), owner))
+                remove(portal);
         }
     }
 
@@ -242,7 +238,6 @@ public class PortalManager {
                         return loc;
                     }
                 }
-
             }
         }
 
@@ -256,33 +251,22 @@ public class PortalManager {
         return (safeBlocks.contains(block.getType()));
     }
 
-    public void removeLandAccess(Portal portal, Land land) {
+    public void removeGroupAccess(Portal portal, String groupId) {
         if (!PortalData.portalExists(portal))
             return;
 
-        List<Integer> allowedLands = portal.getAllowedLands();
+        List<String> allowedGroups = portal.getAllowedGroups();
 
-        allowedLands.remove((Object) land.getId());
-        portal.setAllowedlands(allowedLands);
+        allowedGroups.remove(groupId);
+        portal.setAllowedGroups(allowedGroups);
         dataManager.save(portal);
     }
 
-    public void removeLandAccess(Portal portal, int landId) {
+    public void removePlayerAccess(Portal portal, String uuid) {
         if (!PortalData.portalExists(portal))
             return;
 
-        List<Integer> allowedLands = portal.getAllowedLands();
-
-        allowedLands.remove((Object) landId);
-        portal.setAllowedlands(allowedLands);
-        dataManager.save(portal);
-    }
-
-    public void removePlayerAccess(Portal portal, UUID uuid) {
-        if (!PortalData.portalExists(portal))
-            return;
-
-        List<UUID> allowedPlayers = portal.getAllowedPlayers();
+        List<String> allowedPlayers = portal.getAllowedPlayers();
 
         allowedPlayers.remove(uuid);
         portal.setAllowedPlayers(allowedPlayers);
@@ -310,54 +294,41 @@ public class PortalManager {
         }
     }
 
-    public void teleportTo(Player player, Portal portal, boolean cooldown) {
+    public void teleportTo(Player player, Portal portal) {
         plugin.handleClose.remove(player);
         player.closeInventory();
 
         if (!PortalData.portalExists(portal))
             return;
 
-        Location loc = portal.getTpLoc().clone();
-
-        if (!loc.getBlock().isEmpty() || !loc.getBlock().getRelative(BlockFace.UP).isEmpty()) {
-            loc = null;
-        }
-
-        Block checkBlock = portal.getTpLoc().getBlock().getRelative(BlockFace.DOWN);
-        if (checkBlock.isEmpty() || checkBlock.isLiquid() || checkBlock.isPassable()) {
-
-            if (checkBlock.isEmpty()) {
-                checkBlock = checkBlock.getRelative(BlockFace.DOWN);
-                if (checkBlock.isEmpty() || checkBlock.isLiquid() || checkBlock.isPassable())
-                    loc = null;
-            } else
-                loc = null;
-        }
-
-        if (loc == null) {
-            loc = getSafeTeleportLoc(portal);
-
-            if (loc == null) {
-                player.sendMessage(Messages.get("chat.teleport-not-safe"));
+        if (portal.getPos1() != null) { // Portal is in this server
+            if (getFinalSafeLoc(player, portal) == null)
                 return;
-            }
 
-            portal.setTpLoc(loc);
-            dataManager.save(portal);
+            teleportAccept(player, portal, true);
+
+        } else { // If in a different server
+            PortalRequest reply = new PortalRequest(player.getName(), player.getUniqueId().toString(), portal.getId());
+            CrossServerHandler.requests.put(player.getUniqueId().toString(), portal);
+            SurvivalCoreBukkit.getInstance().getProtonManager().broadcast("survivalportals", "locationSafeRequest", reply);
         }
+    }
 
-        loc.setPitch(player.getLocation().getPitch());
-        loc.setYaw(player.getLocation().getYaw());
-
+    public void teleportAccept(Player player, Portal portal, boolean cooldown) {
         if (cooldown) {
             if (player.hasPermission("sidesurvivalportals.tp.bypass")) {
-                player.teleport(loc);
+                if (portal.getPos1() != null) {
+                    forceTeleportToPortal(player, portal);
+                } else {
+                    PortalRequest reply = new PortalRequest(player.getName(), player.getUniqueId().toString(), portal.getId());
+                    CrossServerHandler.requests.put(player.getUniqueId().toString(), portal);
+                    requests.put(player.getUniqueId(), portal);
+                    SurvivalCoreBukkit.getInstance().getProtonManager().broadcast("survivalportals", "locationSafeRequest", reply);
+                }
                 return;
             }
 
             if (!tasks.containsKey(player.getUniqueId())) {
-                // player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 150, 0,
-                // true, false, false));
                 player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, SoundCategory.BLOCKS, 1.0f, 1.0f);
                 if (isPortalAt(player.getLocation()))
                     fakePortalBlocks(player, getPortalAt(player.getLocation()), true);
@@ -372,10 +343,19 @@ public class PortalManager {
                     public void run() {
                         if (n >= 5) {
                             if (isPortalAt(player.getLocation()))
-                                fakePortalBlocks(player, portal, false);
-                            teleportTo(player, portal, false);
+                                fakePortalBlocks(player, getPortalAt(player.getLocation()), false);
                             tasks.remove(player.getUniqueId());
                             this.cancel();
+                            if (portal.getPos1() != null) {
+                                if (getFinalSafeLoc(player, portal) == null)
+                                    return;
+                                teleportAccept(player, portal, false);
+                            } else {
+                                PortalRequest reply = new PortalRequest(player.getName(), player.getUniqueId().toString(), portal.getId());
+                                CrossServerHandler.requests.put(player.getUniqueId().toString(), portal);
+                                requests.put(player.getUniqueId(), portal);
+                                SurvivalCoreBukkit.getInstance().getProtonManager().broadcast("survivalportals", "locationSafeRequest", reply);
+                            }
                             return;
                         }
 
@@ -400,26 +380,79 @@ public class PortalManager {
                     }
                 }.runTaskTimer(plugin, 0, 15));
             }
+        } else {
+            forceTeleportToPortal(player, portal);
+        }
+    }
+
+    public void crossServerPortalSafe(Player player, Portal portal, boolean safe) {
+        if (!safe) {
+            player.sendMessage(Messages.get("chat.teleport-not-safe"));
             return;
         }
 
-        player.teleport(loc);
+        if (!requests.containsKey(player.getUniqueId())) {
+            teleportAccept(player, portal, true);
+        } else {
+            PortalRequest request = new PortalRequest(player.getName(), player.getUniqueId().toString(), portal.getId());
+            SurvivalCoreBukkit.getInstance().getProtonManager().broadcast("survivalportals", "teleportRequest", request);
+        }
+    }
+
+    public void forceTeleportToPortal(Player player, Portal portal) {
+        if (portal.getPos1() != null) {
+            Location loc = portal.getTpLoc().clone();
+            loc.setPitch(player.getLocation().getPitch());
+            loc.setYaw(player.getLocation().getYaw());
+            player.teleport(loc);
+        }
+    }
+
+    public Location getFinalSafeLoc(Player player, Portal portal) {
+        if (portal.getPos1() == null)
+            return null;
+
+        Location loc = portal.getTpLoc().clone();
+
+        if (!loc.getBlock().isEmpty() || !loc.getBlock().getRelative(BlockFace.UP).isEmpty()) {
+            loc = null;
+        }
+
+        Block checkBlock = portal.getTpLoc().getBlock().getRelative(BlockFace.DOWN);
+        if (checkBlock.isEmpty() || checkBlock.isLiquid() || checkBlock.isPassable()) {
+            if (checkBlock.isEmpty()) {
+                checkBlock = checkBlock.getRelative(BlockFace.DOWN);
+                if (checkBlock.isEmpty() || checkBlock.isLiquid() || checkBlock.isPassable())
+                    loc = null;
+            } else
+                loc = null;
+        }
+
+        if (loc == null) {
+            loc = getSafeTeleportLoc(portal);
+
+            if (loc == null) {
+                if (player != null)
+                    player.sendMessage(Messages.get("chat.teleport-not-safe"));
+                return null;
+            }
+
+            portal.setTpLoc(loc);
+            dataManager.save(portal);
+        }
+
+        return loc;
     }
 
     public void teleportToSpawn(Player player, boolean isNether) {
         player.closeInventory();
 
         if (player.hasPermission("sidesurvivalportals.tp.bypass")) {
-            if (isNether)
-                player.teleport(PortalData.getNetherSpawnLocation());
-            else
-                player.teleport(PortalData.getSpawnLocation());
+            forceTeleportToSpawn(player, isNether);
             return;
         }
 
         if (!tasks.containsKey(player.getUniqueId())) {
-            // player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 150, 0,
-            // true, false, false));
             player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, SoundCategory.BLOCKS, 1.0f, 1.0f);
             if (isPortalAt(player.getLocation()))
                 fakePortalBlocks(player, getPortalAt(player.getLocation()), true);
@@ -436,10 +469,7 @@ public class PortalManager {
                         if (isPortalAt(player.getLocation()))
                             fakePortalBlocks(player, getPortalAt(player.getLocation()), false);
 
-                        if (isNether)
-                            player.teleport(PortalData.getNetherSpawnLocation());
-                        else
-                            player.teleport(PortalData.getSpawnLocation());
+                        forceTeleportToSpawn(player, isNether);
                         tasks.remove(player.getUniqueId());
                         this.cancel();
                         return;
@@ -465,6 +495,24 @@ public class PortalManager {
                     n++;
                 }
             }.runTaskTimer(plugin, 0, 15));
+        }
+    }
+
+    public void forceTeleportToSpawn(Player player, boolean isNether) {
+        if (!isNether) {
+            if (PortalData.getSpawnLocation() != null) {
+                player.teleport(PortalData.getSpawnLocation());
+            } else {
+                PortalRequest request = new PortalRequest(player.getName(), player.getUniqueId().toString(), "0");
+                SurvivalCoreBukkit.getInstance().getProtonManager().send("survivalportals", "teleportRequest", request, PortalData.getWorldSpawnServer());
+            }
+        } else {
+            if (PortalData.getNetherSpawnLocation() != null) {
+                player.teleport(PortalData.getNetherSpawnLocation());
+            } else {
+                PortalRequest request = new PortalRequest(player.getName(), player.getUniqueId().toString(), "-1");
+                SurvivalCoreBukkit.getInstance().getProtonManager().send("survivalportals", "teleportRequest", request, PortalData.getNetherSpawnServer());
+            }
         }
     }
 }

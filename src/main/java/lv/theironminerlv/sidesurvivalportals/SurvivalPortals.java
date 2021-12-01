@@ -4,6 +4,10 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import lv.sidesurvival.SurvivalCoreBukkit;
+import lv.sidesurvival.listeners.ProtonListener;
+import lv.theironminerlv.sidesurvivalportals.listeners.*;
+import lv.theironminerlv.sidesurvivalportals.managers.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -12,20 +16,11 @@ import fr.minuskube.inv.InventoryManager;
 import lv.theironminerlv.sidesurvivalportals.commands.PortalCommand;
 import lv.theironminerlv.sidesurvivalportals.data.PortalData;
 import lv.theironminerlv.sidesurvivalportals.gui.MenuItems;
-import lv.theironminerlv.sidesurvivalportals.listeners.InventoryCloseListener;
-import lv.theironminerlv.sidesurvivalportals.listeners.PortalBreakListener;
-import lv.theironminerlv.sidesurvivalportals.listeners.PortalCreateListener;
-import lv.theironminerlv.sidesurvivalportals.listeners.PortalEnterListener;
-import lv.theironminerlv.sidesurvivalportals.managers.DataManager;
-import lv.theironminerlv.sidesurvivalportals.managers.MenuManager;
-import lv.theironminerlv.sidesurvivalportals.managers.PermissionManager;
-import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.utils.Messages;
-import me.angeschossen.lands.api.integration.LandsIntegration;
 
-public class SideSurvivalPortals extends JavaPlugin
-{
-    private static SideSurvivalPortals instance;
+public class SurvivalPortals extends JavaPlugin {
+
+    private static SurvivalPortals instance;
     private InventoryManager invManager;
     private DataManager dataManager;
     private PortalManager portalManager;
@@ -36,11 +31,9 @@ public class SideSurvivalPortals extends JavaPlugin
     private FileConfiguration config;
     private File portalFolder = new File(this.getDataFolder() + "/portals");
 
-    private LandsIntegration landsAPI;
-
     public Set<Player> handleClose = new HashSet<Player>();
 
-    public static SideSurvivalPortals getInstance() {
+    public static SurvivalPortals getInstance() {
         return instance;
     }
 
@@ -54,8 +47,6 @@ public class SideSurvivalPortals extends JavaPlugin
         Messages messages = new Messages();
         messages.load(config.getConfigurationSection("messages"));
 
-        landsAPI = new LandsIntegration(this);
-
         dataManager = new DataManager(this);
         portalData = new PortalData(this);
         portalManager = new PortalManager(this);
@@ -65,6 +56,9 @@ public class SideSurvivalPortals extends JavaPlugin
 
         getLogger().info("Starting!");
 
+        if (!MongoManager.get().connect()) {
+            return;
+        }
         invManager = new InventoryManager(this);
         invManager.init();
 
@@ -74,6 +68,10 @@ public class SideSurvivalPortals extends JavaPlugin
         getServer().getPluginManager().registerEvents(new PortalBreakListener(this), this);
         getServer().getPluginManager().registerEvents(new PortalEnterListener(this), this);
         getServer().getPluginManager().registerEvents(new InventoryCloseListener(this), this);
+
+        CrossServerHandler csHandler = new CrossServerHandler(this);
+        getServer().getPluginManager().registerEvents(csHandler, this);
+        SurvivalCoreBukkit.getInstance().getProtonManager().registerMessageHandlers(csHandler);
 
         this.getCommand("p").setExecutor(new PortalCommand());
 
@@ -110,10 +108,6 @@ public class SideSurvivalPortals extends JavaPlugin
 
     public File getPortalFolder() {
         return portalFolder;
-    }
-
-    public LandsIntegration getLandsAPI() {
-        return landsAPI;
     }
 
     @Override

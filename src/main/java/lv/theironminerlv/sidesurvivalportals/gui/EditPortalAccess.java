@@ -7,15 +7,15 @@ import fr.minuskube.inv.InventoryManager;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
-import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
+import lv.theironminerlv.sidesurvivalportals.SurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.managers.DataManager;
 import lv.theironminerlv.sidesurvivalportals.managers.MenuManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
-public class EditPortalAccess implements InventoryProvider
-{
-    private static SideSurvivalPortals plugin = SideSurvivalPortals.getInstance();
+public class EditPortalAccess implements InventoryProvider {
+
+    private static SurvivalPortals plugin = SurvivalPortals.getInstance();
     private InventoryManager invManager = plugin.getInvManager();
     private MenuManager menuManager = plugin.getMenuManager();
     private DataManager dataManager = plugin.getDataManager();
@@ -60,7 +60,7 @@ public class EditPortalAccess implements InventoryProvider
         else
             contents.set(1, 2, ClickableItem.of(MenuItems.accessPrivate, e -> togglePublic(player, portal, true, contents)));
 
-        contents.set(1, 4, ClickableItem.of(MenuItems.accessLands, e -> menuManager.openPortalLandAccess(player, portal)));
+        contents.set(1, 4, ClickableItem.of(MenuItems.accessGroups, e -> menuManager.openPortalGroupAccess(player, portal)));
         contents.set(1, 6, ClickableItem.of(MenuItems.accessPlayers, e -> menuManager.openPortalPlayerAccess(player, portal)));
     }
 

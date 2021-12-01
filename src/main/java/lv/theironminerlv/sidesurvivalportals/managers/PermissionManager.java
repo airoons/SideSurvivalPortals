@@ -1,42 +1,38 @@
 package lv.theironminerlv.sidesurvivalportals.managers;
 
+import lv.sidesurvival.managers.PlayerManager;
+import lv.sidesurvival.objects.CPlayer;
+import lv.sidesurvival.objects.Claim;
+import lv.sidesurvival.objects.ClaimOwner;
+import lv.sidesurvival.objects.perms.PermissableAction;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
-import me.angeschossen.lands.api.land.Land;
-import me.angeschossen.lands.api.role.enums.ManagementSetting;
+import lv.theironminerlv.sidesurvivalportals.SurvivalPortals;
 
-public class PermissionManager
-{
-    private SideSurvivalPortals plugin;
+public class PermissionManager{
 
-    public PermissionManager(SideSurvivalPortals plugin) {
+    private SurvivalPortals plugin;
+
+    public PermissionManager(SurvivalPortals plugin) {
         this.plugin = plugin;
     }
 
-    public boolean canCreatePortal(Player player, Land land) {
+    public boolean canCreatePortal(Player player, ClaimOwner owner, Location loc) {
         if (player.hasPermission("sidesurvivalportals.admin"))
             return true;
 
-        if (!land.isTrusted(player.getUniqueId()))
-            return false;
-        
-        if (!land.canManagement(player.getUniqueId(), ManagementSetting.AREA_ASSIGN))
-            return false;
-
-        return true;
+        CPlayer cPlayer = PlayerManager.get().getByPlayer(player);
+        Claim claim = new Claim(loc);
+        return owner.hasPlayerPerms(cPlayer, claim, PermissableAction.CREATE_PORTALS);
     }
 
-    public boolean canEditPortal(Player player, Land land) {
+    public boolean canEditPortal(Player player, ClaimOwner owner, Location loc) {
         if (player.hasPermission("sidesurvivalportals.admin"))
             return true;
 
-        if (!land.isTrusted(player.getUniqueId()))
-            return false;
-
-        if (!land.canManagement(player.getUniqueId(), ManagementSetting.WAR_MANAGE))
-            return false;
-
-        return true;
+        CPlayer cPlayer = PlayerManager.get().getByPlayer(player);
+        Claim claim = new Claim(loc);
+        return owner.hasPlayerPerms(cPlayer, claim, PermissableAction.CREATE_PORTALS);
     }
 }

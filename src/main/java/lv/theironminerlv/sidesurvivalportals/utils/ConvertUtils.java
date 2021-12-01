@@ -10,8 +10,8 @@ import org.bukkit.Location;
 
 import net.md_5.bungee.api.ChatColor;
 
-public class ConvertUtils
-{
+public class ConvertUtils {
+
     private static Pattern HEX_PATTERN = Pattern.compile("&(#[a-f0-9]{6})", 2);
 
     public static BlockVector3 toBlockVector3(Location loc) {

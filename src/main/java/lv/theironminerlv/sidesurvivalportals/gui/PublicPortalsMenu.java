@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import lv.sidesurvival.managers.ClaimManager;
+import lv.sidesurvival.objects.ClaimOwner;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -15,7 +17,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
-import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
+import lv.theironminerlv.sidesurvivalportals.SurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.data.PortalData;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
@@ -23,7 +25,8 @@ import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
 import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
 public class PublicPortalsMenu implements InventoryProvider {
-    private static SideSurvivalPortals plugin = SideSurvivalPortals.getInstance();
+
+    private static SurvivalPortals plugin = SurvivalPortals.getInstance();
     private InventoryManager invManager = plugin.getInvManager();
     private PortalManager portalManager = plugin.getPortalManager();
     private SmartInventory inventory;
@@ -64,10 +67,14 @@ public class PublicPortalsMenu implements InventoryProvider {
 
         int i = 0;
         for (Portal portal : portals.values()) {
+            ClaimOwner owner = ClaimManager.get().getOwnerById(portal.getOwner());
+            if (owner == null)
+                continue;
+
             item = portal.getIcon().clone();
             itemMeta = item.getItemMeta();
             itemMeta.setDisplayName(
-                    Messages.getParam("gui.public-portals.item-names.portal", "{1}", portal.getLand().getName()));
+                    Messages.getParam("gui.public-portals.item-names.portal", "{1}", owner.getName()));
             posReadable = ConvertUtils.readableLoc(portal.getPos1());
             descLines.clear();
 
@@ -93,7 +100,7 @@ public class PublicPortalsMenu implements InventoryProvider {
             itemMeta.setLore(ConvertUtils.color(descLines));
             item.setItemMeta(itemMeta);
 
-            items[i] = ClickableItem.of(item, e -> portalManager.teleportTo(player, portal, true));
+            items[i] = ClickableItem.of(item, e -> portalManager.teleportTo(player, portal));
             i++;
         }
 

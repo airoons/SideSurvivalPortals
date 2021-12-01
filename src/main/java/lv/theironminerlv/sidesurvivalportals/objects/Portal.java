@@ -2,7 +2,6 @@ package lv.theironminerlv.sidesurvivalportals.objects;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -10,54 +9,50 @@ import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 
 import lv.theironminerlv.sidesurvivalportals.gui.MenuItems;
-import me.angeschossen.lands.api.land.Land;
 
-public class Portal
-{
+public class Portal {
+
     private String id;
     private Location pos1;
     private Location pos2;
     private Location tpLoc;
+    private String worldStr;
     private World world;
     private boolean isPublic = false;
     private boolean isNorthSouth;
-    private Land land;
+    private String owner;
     private ItemStack icon = MenuItems.defaultIcon.clone();
     private String desc = "-";
-    private List<Integer> allowedLands = new ArrayList<Integer>();
-    private List<UUID> allowedPlayers = new ArrayList<UUID>();
+    private List<String> allowedGroups = new ArrayList<>();
+    private List<String> allowedPlayers = new ArrayList<>();
 
     // When first creating a portal
-    public Portal(Location pos1, Location pos2, World world, boolean isNorthSouth, Land land) {
+    public Portal(Location pos1, Location pos2, World world, boolean isNorthSouth, String owner) {
         this.pos1 = pos1;
         this.pos2 = pos2;
         this.tpLoc = pos1;
+        this.worldStr = world.getName();
         this.world = world;
         this.isNorthSouth = isNorthSouth;
-        this.land = land;
+        this.owner = owner;
     }
 
     // From savefile
-    public Portal(Location pos1, Location pos2, World world, boolean isNorthSouth, boolean isPublic, Land land, String id, String icon, String desc, List<Integer> allowedLands, List<String> allowedPlayers) {
+    public Portal(Location pos1, Location pos2, World world, String worldStr, boolean isNorthSouth, boolean isPublic, String owner, String id, String icon, String desc, List<String> allowedGroups, List<String> allowedPlayers) {
         this.pos1 = pos1;
         this.pos2 = pos2;
         this.tpLoc = pos1;
+        this.worldStr = worldStr;
         this.world = world;
         this.isNorthSouth = isNorthSouth;
         this.isPublic = isPublic;
-        this.land = land;
+        this.owner = owner;
         this.id = id;
 
         this.icon = new ItemStack(Material.valueOf(icon));
         this.desc = desc;
-        this.allowedLands = allowedLands;
-        
-        for (String loopPlayer : allowedPlayers) {
-            this.allowedPlayers.add(UUID.fromString(loopPlayer));
-        }
-
-        if (this.icon == null)
-            this.icon = MenuItems.defaultIcon.clone();;
+        this.allowedGroups = allowedGroups;
+        this.allowedPlayers = allowedPlayers;
     }
 
     public String getId() {
@@ -88,8 +83,12 @@ public class Portal
         return world;
     }
 
-    public Land getLand() {
-        return land;
+    public String getWorldStr() {
+        return worldStr;
+    }
+
+    public String getOwner() {
+        return owner;
     }
 
     public ItemStack getIcon() {
@@ -100,11 +99,11 @@ public class Portal
         return desc;
     }
 
-    public List<Integer> getAllowedLands() {
-        return allowedLands;
+    public List<String> getAllowedGroups() {
+        return allowedGroups;
     }
 
-    public List<UUID> getAllowedPlayers() {
+    public List<String> getAllowedPlayers() {
         return allowedPlayers;
     }
 
@@ -124,11 +123,11 @@ public class Portal
         this.desc = desc;
     }
 
-    public void setAllowedlands(List<Integer> allowedLands) {
-        this.allowedLands = allowedLands;
+    public void setAllowedGroups(List<String> allowedGroups) {
+        this.allowedGroups = allowedGroups;
     }
 
-    public void setAllowedPlayers(List<UUID> allowedPlayers) {
+    public void setAllowedPlayers(List<String> allowedPlayers) {
         this.allowedPlayers = allowedPlayers;
     }
 

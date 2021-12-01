@@ -10,7 +10,8 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.configuration.ConfigurationSection;
 
 public class Messages {
-    private static Map<String, String> messageMap = new HashMap<String, String>();
+
+    private static Map<String, String> messageMap = new HashMap<>();
     private static ConfigurationSection configuration = null;
 
     public void load(ConfigurationSection messages) {
@@ -29,7 +30,7 @@ public class Messages {
         if (messageMap.containsKey(key)) {
             return messageMap.get(key);
         }
-        return "";
+        return "???";
     }
 
     public static List<String> getList(String key) {

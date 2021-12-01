@@ -1,12 +1,10 @@
 package lv.theironminerlv.sidesurvivalportals.gui;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
+import lv.sidesurvival.api.SurvivalCoreAPI;
 
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -19,12 +17,14 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
-import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
+import lv.theironminerlv.sidesurvivalportals.SurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.Messages;
+
 public class PortalAccessPlayers implements InventoryProvider {
-    private static SideSurvivalPortals plugin = SideSurvivalPortals.getInstance();
+
+    private static SurvivalPortals plugin = SurvivalPortals.getInstance();
     private InventoryManager invManager = plugin.getInvManager();
     private PortalManager portalManager = plugin.getPortalManager();
     private SmartInventory inventory;
@@ -61,28 +61,20 @@ public class PortalAccessPlayers implements InventoryProvider {
         ItemMeta itemMeta;
         Pagination pagination = contents.pagination();
 
-        List<UUID> allowedPlayers = portal.getAllowedPlayers();
-        List<OfflinePlayer> players = new ArrayList<OfflinePlayer>();
+        List<String> allowedPlayers = portal.getAllowedPlayers();
 
-        for (UUID uuid : allowedPlayers) {
-            players.add(Bukkit.getOfflinePlayer(uuid));
-        }
-
-        int landAmount = players.size();
-
-        ClickableItem[] items = new ClickableItem[landAmount];
+        ClickableItem[] items = new ClickableItem[allowedPlayers.size()];
 
         for(int i = 0; i < items.length; i++) {
-            OfflinePlayer loopPlayer = players.get(i);
-            
-            item = SkullCreator.itemFromUuid(loopPlayer.getUniqueId());
+            item = SkullCreator.itemFromUuid(UUID.fromString(allowedPlayers.get(i)));
+            String uuid = allowedPlayers.get(i);
             itemMeta = item.getItemMeta();
-            itemMeta.setDisplayName(Messages.getParam("gui.portal-settings.access-menu.access-players.item-names.player", "{1}", loopPlayer.getName()));
+            itemMeta.setDisplayName(Messages.getParam("gui.portal-settings.access-menu.access-players.item-names.player", "{1}", SurvivalCoreAPI.getNickFromUUIDString(uuid)));
             itemMeta.setLore(Messages.getList("gui.portal-settings.access-menu.access-players.item-lores.player"));
             item.setItemMeta(itemMeta);
 
             items[i] = ClickableItem.of(item, 
-                e -> removePlayerAccess(player, portal, pagination.getPage(), loopPlayer.getUniqueId()));
+                e -> removePlayerAccess(player, portal, pagination.getPage(), uuid));
         }
 
         pagination.setItems(items);
@@ -101,7 +93,7 @@ public class PortalAccessPlayers implements InventoryProvider {
 
     }
 
-    public void removePlayerAccess(Player player, Portal portal, int page, UUID uuid) {
+    public void removePlayerAccess(Player player, Portal portal, int page, String uuid) {
         plugin.handleClose.remove(player);
 
         portalManager.removePlayerAccess(portal, uuid);

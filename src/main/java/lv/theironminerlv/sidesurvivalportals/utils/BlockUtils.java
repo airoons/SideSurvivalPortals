@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import org.bukkit.Location;
 
-public class BlockUtils
-{
+public class BlockUtils {
+
     public static ArrayList<Location> getBlocksBetween(Location min, Location max) {
         ArrayList<Location> locs = new ArrayList<>();
 

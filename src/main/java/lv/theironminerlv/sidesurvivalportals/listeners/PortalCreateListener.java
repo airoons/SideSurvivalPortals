@@ -3,6 +3,9 @@ package lv.theironminerlv.sidesurvivalportals.listeners;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 
+import lv.sidesurvival.managers.ClaimManager;
+import lv.sidesurvival.objects.Claim;
+import lv.sidesurvival.objects.ClaimOwner;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -12,31 +15,26 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.PortalCreateEvent;
 
-import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
+import lv.theironminerlv.sidesurvivalportals.SurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.managers.PermissionManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.Messages;
-import me.angeschossen.lands.api.integration.LandsIntegration;
-import me.angeschossen.lands.api.land.Land;
 
-public class PortalCreateListener implements Listener
-{
-    private SideSurvivalPortals plugin;
+public class PortalCreateListener implements Listener {
+
+    private SurvivalPortals plugin;
     private static PortalManager portalManager;
     private static PermissionManager permissionManager;
-    private static LandsIntegration landsAPI;
 
-    public PortalCreateListener(SideSurvivalPortals plugin) {
+    public PortalCreateListener(SurvivalPortals plugin) {
         this.plugin = plugin;
         portalManager = this.plugin.getPortalManager();
         permissionManager = this.plugin.getPermissionManager();
-        landsAPI = this.plugin.getLandsAPI();
     }
 
     @EventHandler
-    public void onPortalCreate(PortalCreateEvent event)
-    {
+    public void onPortalCreate(PortalCreateEvent event) {
         event.setCancelled(true);
 
         if (event.getEntity() == null)
@@ -46,18 +44,18 @@ public class PortalCreateListener implements Listener
             return;
 
         boolean isNorthSouth = false;
-        Block block;
+        Block block = null;
         BlockVector3 min = null;
         BlockVector3 max = null;
-        Land land = null;
+        ClaimOwner owner = null;
         Player player = (Player)(event.getEntity());
 
         // Gets portal facing...
         for (BlockState portalBlock : event.getBlocks()) {
             block = portalBlock.getBlock();
 
-            if (!landsAPI.isClaimed(block.getLocation())) {
-                player.sendMessage(Messages.get("chat.error-creating-outside-land"));
+            if (ClaimManager.get().getOwnerAt(new Claim(block)) == null) {
+                player.sendMessage(Messages.get("chat.error-creating-outside-group"));
                 return;
             }
 
@@ -75,12 +73,12 @@ public class PortalCreateListener implements Listener
             }
         }
 
-        // Gets min and max coords of the portal + land
+        // Gets min and max coords of the portal + owner
         for (BlockState portalBlock : event.getBlocks()) {
             block = portalBlock.getBlock();
 
-            if (land == null)
-                land = landsAPI.getLand(block.getLocation());
+            if (owner == null)
+                owner = ClaimManager.get().getOwnerAt(new Claim(block));
             
             if (block.getType() != Material.OBSIDIAN) {
                 if (isNorthSouth) {
@@ -99,14 +97,14 @@ public class PortalCreateListener implements Listener
             }
         }
 
-        if (!permissionManager.canCreatePortal(player, land)) {
+        if (block != null && !permissionManager.canCreatePortal(player, owner, block.getLocation())) {
             player.sendMessage(Messages.get("chat.no-create-permission"));
             return;
         }
 
-        Portal portal = new Portal(BukkitAdapter.adapt(event.getWorld(), min), BukkitAdapter.adapt(event.getWorld(), max), event.getWorld(), isNorthSouth, land);
-
-        if (!portalManager.create(portal, isNorthSouth))
-            return;
+        if (owner != null) {
+            Portal portal = new Portal(BukkitAdapter.adapt(event.getWorld(), min), BukkitAdapter.adapt(event.getWorld(), max), event.getWorld(), isNorthSouth, owner.getId());
+            portalManager.create(portal, isNorthSouth);
+        }
     }
 }

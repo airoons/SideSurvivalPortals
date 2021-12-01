@@ -3,9 +3,12 @@ package lv.theironminerlv.sidesurvivalportals.gui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
+import lv.sidesurvival.managers.ClaimManager;
+import lv.sidesurvival.managers.GroupManager;
+import lv.sidesurvival.managers.PlayerManager;
+import lv.sidesurvival.objects.ClaimOwner;
+import lv.sidesurvival.objects.Group;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -17,20 +20,18 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
-import lv.theironminerlv.sidesurvivalportals.SideSurvivalPortals;
+import lv.theironminerlv.sidesurvivalportals.SurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.data.PortalData;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
 import lv.theironminerlv.sidesurvivalportals.utils.Messages;
-import me.angeschossen.lands.api.integration.LandsIntegration;
-import me.angeschossen.lands.api.land.Land;
 
 public class PrivatePortalsMenu implements InventoryProvider {
-    private static SideSurvivalPortals plugin = SideSurvivalPortals.getInstance();
+
+    private static SurvivalPortals plugin = SurvivalPortals.getInstance();
     private InventoryManager invManager = plugin.getInvManager();
     private PortalManager portalManager = plugin.getPortalManager();
-    private LandsIntegration landsAPI = plugin.getLandsAPI();
     private SmartInventory inventory;
 
     private void load() {
@@ -56,15 +57,15 @@ public class PrivatePortalsMenu implements InventoryProvider {
         ItemMeta itemMeta;
         Pagination pagination = contents.pagination();
 
-        Set<? extends Land> playerLands = landsAPI.getLandPlayer(player.getUniqueId()).getLands();
-        Map<String, Portal> portals = new ConcurrentHashMap<>();
+        Group playerGroup = GroupManager.get().getByPlayer(PlayerManager.get().getByPlayer(player));
+        Map<String, Portal> portals = PortalData.getByOwner(player.getUniqueId().toString());
 
-        for (Land land : playerLands) {
-            portals.putAll(PortalData.getByLand(land));
-            portals.putAll(PortalData.getAccessablePortalsByLand(land));
+        if (playerGroup != null) {
+            portals.putAll(PortalData.getByOwner(playerGroup.getId()));
+            portals.putAll(PortalData.getAccessablePortalsByGroup(playerGroup.getId()));
         }
 
-        portals.putAll(PortalData.getAccessablePortalsByPlayer(player.getUniqueId()));
+        portals.putAll(PortalData.getAccessablePortalsByPlayer(player.getUniqueId().toString()));
 
         int portalAmount = portals.size();
         String posReadable;
@@ -77,10 +78,14 @@ public class PrivatePortalsMenu implements InventoryProvider {
 
         int i = 0;
         for (Portal portal : portals.values()) {
+            ClaimOwner owner = ClaimManager.get().getOwnerById(portal.getOwner());
+            if (owner == null)
+                continue;
+
             item = portal.getIcon().clone();
             itemMeta = item.getItemMeta();
             itemMeta.setDisplayName(
-                    Messages.getParam("gui.private-portals.item-names.portal", "{1}", portal.getLand().getName()));
+                    Messages.getParam("gui.private-portals.item-names.portal", "{1}", owner.getName()));
             if (player.hasPermission("sidesurvivalportals.hidden.locs"))
                 posReadable = "-";
             else
@@ -109,7 +114,7 @@ public class PrivatePortalsMenu implements InventoryProvider {
             itemMeta.setLore(ConvertUtils.color(descLines));
             item.setItemMeta(itemMeta);
 
-            items[i] = ClickableItem.of(item, e -> portalManager.teleportTo(player, portal, true));
+            items[i] = ClickableItem.of(item, e -> portalManager.teleportTo(player, portal));
             i++;
         }
 
