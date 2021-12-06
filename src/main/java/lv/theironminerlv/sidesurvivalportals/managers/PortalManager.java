@@ -432,7 +432,7 @@ public class PortalManager {
             loc = getSafeTeleportLoc(portal);
 
             if (loc == null) {
-                if (player != null)
+                if (player != null && player.isOnline())
                     player.sendMessage(Messages.get("chat.teleport-not-safe"));
                 return null;
             }
