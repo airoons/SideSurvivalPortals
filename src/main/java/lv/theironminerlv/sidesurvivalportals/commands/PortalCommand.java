@@ -25,6 +25,7 @@ import lv.theironminerlv.sidesurvivalportals.managers.PermissionManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.Messages;
+import org.bukkit.util.StringUtil;
 
 public class PortalCommand implements CommandExecutor, TabExecutor {
 
@@ -236,7 +237,7 @@ public class PortalCommand implements CommandExecutor, TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        List<String> completions = new ArrayList<String>();
+        List<String> completions = new ArrayList<>();
 
         String argDesc = Messages.get("command-arguments.description");
         String argAdd = Messages.get("command-arguments.add");
@@ -262,6 +263,6 @@ public class PortalCommand implements CommandExecutor, TabExecutor {
             }
         }
 
-        return completions;
+        return StringUtil.copyPartialMatches(args[args.length - 1], completions, new ArrayList<>());
     }
 }
