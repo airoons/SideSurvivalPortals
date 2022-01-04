@@ -88,8 +88,12 @@ public class PrivatePortalsMenu implements InventoryProvider {
                     Messages.getParam("gui.private-portals.item-names.portal", "{1}", owner.getName()));
             if (player.hasPermission("sidesurvivalportals.hidden.locs"))
                 posReadable = "-";
-            else
-                posReadable = ConvertUtils.readableLoc(portal.getPos1());
+            else {
+                if (portal.getPos1() != null)
+                    posReadable = ConvertUtils.readableLoc(portal.getPos1());
+                else
+                    posReadable = ConvertUtils.readableLocStr(portal.getLocStr());
+            }
             descLines.clear();
 
             desc = portal.getDescription();

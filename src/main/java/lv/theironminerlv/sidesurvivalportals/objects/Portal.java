@@ -16,6 +16,7 @@ public class Portal {
     private Location pos1;
     private Location pos2;
     private Location tpLoc;
+    private String locStr;
     private String worldStr;
     private World world;
     private boolean isPublic = false;
@@ -38,10 +39,11 @@ public class Portal {
     }
 
     // From savefile
-    public Portal(Location pos1, Location pos2, World world, String worldStr, boolean isNorthSouth, boolean isPublic, String owner, String id, String icon, String desc, List<String> allowedGroups, List<String> allowedPlayers) {
+    public Portal(Location pos1, Location pos2, World world, String locStr, String worldStr, boolean isNorthSouth, boolean isPublic, String owner, String id, String icon, String desc, List<String> allowedGroups, List<String> allowedPlayers) {
         this.pos1 = pos1;
         this.pos2 = pos2;
         this.tpLoc = pos1;
+        this.locStr = locStr;
         this.worldStr = worldStr;
         this.world = world;
         this.isNorthSouth = isNorthSouth;
@@ -81,6 +83,10 @@ public class Portal {
 
     public World getWorld() {
         return world;
+    }
+
+    public String getLocStr() {
+        return locStr;
     }
 
     public String getWorldStr() {

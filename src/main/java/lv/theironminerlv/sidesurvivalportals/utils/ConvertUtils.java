@@ -6,9 +6,11 @@ import java.util.regex.Pattern;
 
 import com.sk89q.worldedit.math.BlockVector3;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.World;
 
 public class ConvertUtils {
 
@@ -49,5 +51,15 @@ public class ConvertUtils {
 
     public static String readableLoc(Location loc) {
         return loc.getWorld().getName() + ", X: " + loc.getBlockX() + ", Y: " + loc.getBlockY() + ", Z: " + loc.getBlockZ();
+    }
+
+    public static String readableLocStr(String locStr) {
+        final String[] parts = locStr.split(";");
+        String w = parts[0];
+        double x = Double.parseDouble(parts[1]);
+        double y = Double.parseDouble(parts[2]);
+        double z = Double.parseDouble(parts[3]);
+
+        return w + ", X: " + x + ", Y: " + y + ", Z: " + z;
     }
 }

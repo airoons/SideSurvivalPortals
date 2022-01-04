@@ -75,7 +75,10 @@ public class PublicPortalsMenu implements InventoryProvider {
             itemMeta = item.getItemMeta();
             itemMeta.setDisplayName(
                     Messages.getParam("gui.public-portals.item-names.portal", "{1}", owner.getName()));
-            posReadable = ConvertUtils.readableLoc(portal.getPos1());
+            if (portal.getPos1() != null)
+                posReadable = ConvertUtils.readableLoc(portal.getPos1());
+            else
+                posReadable = ConvertUtils.readableLocStr(portal.getLocStr());
             descLines.clear();
 
             desc = portal.getDescription();

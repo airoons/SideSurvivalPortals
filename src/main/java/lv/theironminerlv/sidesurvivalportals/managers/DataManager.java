@@ -82,6 +82,7 @@ public class DataManager {
         Location pos2;
         boolean isNorthSouth;
         boolean isPublic;
+        String locStr;
         String worldStr;
         World world;
         String owner;
@@ -96,7 +97,8 @@ public class DataManager {
 
                 owner = doc.getString("ownerId");
 
-                pos1 = LocationSerialization.getLocationFromString(doc.getString("pos1"));
+                locStr = doc.getString("pos1");
+                pos1 = LocationSerialization.getLocationFromString(locStr);
                 pos2 = LocationSerialization.getLocationFromString(doc.getString("pos2"));
                 worldStr = doc.getString("world");
                 world = Bukkit.getWorld(worldStr);
@@ -108,7 +110,7 @@ public class DataManager {
                 allowedGroups = doc.getList("settings-allowedGroups", String.class, new ArrayList<>());
                 allowedPlayers = doc.getList("settings-allowedPlayers", String.class, new ArrayList<>());
 
-                portal = new Portal(pos1, pos2, world, worldStr, isNorthSouth, isPublic, owner, doc.getString("_id"), icon, desc, allowedGroups, allowedPlayers);
+                portal = new Portal(pos1, pos2, world, locStr, worldStr, isNorthSouth, isPublic, owner, doc.getString("_id"), icon, desc, allowedGroups, allowedPlayers);
                 ClaimOwner claimOwner = ClaimManager.get().getOwnerById(owner);
 
                 if (claimOwner != null)
@@ -127,7 +129,8 @@ public class DataManager {
 
                 String owner = doc.getString("ownerId");
 
-                Location pos1 = LocationSerialization.getLocationFromString(doc.getString("pos1"));
+                String locStr = doc.getString("pos1");
+                Location pos1 = LocationSerialization.getLocationFromString(locStr);
                 Location pos2 = LocationSerialization.getLocationFromString(doc.getString("pos2"));
                 String worldStr = doc.getString("world");
                 World world = Bukkit.getWorld(worldStr);
@@ -139,7 +142,7 @@ public class DataManager {
                 List<String> allowedGroups = doc.getList("settings-allowedGroups", String.class, new ArrayList<>());
                 List<String> allowedPlayers = doc.getList("settings-allowedPlayers", String.class, new ArrayList<>());
 
-                Portal portal = new Portal(pos1, pos2, world, worldStr, isNorthSouth, isPublic, owner, doc.getString("_id"), icon, desc, allowedGroups, allowedPlayers);
+                Portal portal = new Portal(pos1, pos2, world, locStr, worldStr, isNorthSouth, isPublic, owner, doc.getString("_id"), icon, desc, allowedGroups, allowedPlayers);
                 ClaimOwner claimOwner = ClaimManager.get().getOwnerById(owner);
                 if (claimOwner == null)
                     return;
