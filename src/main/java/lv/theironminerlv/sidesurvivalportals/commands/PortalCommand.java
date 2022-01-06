@@ -1,5 +1,6 @@
 package lv.theironminerlv.sidesurvivalportals.commands;
 
+import lv.sidesurvival.api.SurvivalCoreAPI;
 import lv.sidesurvival.managers.ClaimManager;
 import lv.sidesurvival.managers.GroupManager;
 import lv.sidesurvival.objects.ClaimOwner;
@@ -147,15 +148,20 @@ public class PortalCommand implements CommandExecutor, TabExecutor {
                             return true;
                         } else {
                             Player addPlayer = Bukkit.getPlayer(input);
+                            String addUUID = addPlayer != null ? addPlayer.getUniqueId().toString() : null;
 
                             if (addPlayer == null) {
-                                player.sendMessage(Messages.get("chat.commands.add-remove.error-not-online"));
-                                return true;
+                                if (SurvivalCoreAPI.getVisiblePlayers().contains(input))
+                                    addUUID = SurvivalCoreAPI.getUUIDStringFromNick(input);
+                                else {
+                                    player.sendMessage(Messages.get("chat.commands.add-remove.error-not-online"));
+                                    return true;
+                                }
                             }
 
                             List<String> allowedPlayers = portal.getAllowedPlayers();
                             
-                            if (allowedPlayers.contains(addPlayer.getUniqueId().toString())) {
+                            if (allowedPlayers.contains(addUUID)) {
                                 player.sendMessage(Messages.get("chat.commands.add-remove.error-already-added-player"));
                                 return true;
                             }
@@ -165,11 +171,11 @@ public class PortalCommand implements CommandExecutor, TabExecutor {
                                 return true;
                             }
                             
-                            allowedPlayers.add(addPlayer.getUniqueId().toString());
+                            allowedPlayers.add(addUUID);
                             portal.setAllowedPlayers(allowedPlayers);
                             dataManager.save(portal);
 
-                            player.sendMessage(Messages.getParam("chat.commands.add-remove.add-success-player", "{1}", addPlayer.getName()));
+                            player.sendMessage(Messages.getParam("chat.commands.add-remove.add-success-player", "{1}", input));
 
                             return true;
                         }
@@ -204,21 +210,21 @@ public class PortalCommand implements CommandExecutor, TabExecutor {
 
                             return true;
                         } else {
-                            OfflinePlayer remPlayer = Bukkit.getOfflinePlayer(input);
+                            String remUUID = SurvivalCoreAPI.getUUIDStringFromNick(input);
 
-                            if (!remPlayer.hasPlayedBefore()) {
+                            if (remUUID == null) {
                                 player.sendMessage(Messages.get("chat.commands.add-remove.error-hasnt-joined"));
                                 return true;
                             }
                             
-                            if (!portal.getAllowedPlayers().contains(remPlayer.getUniqueId())) {
+                            if (!portal.getAllowedPlayers().contains(remUUID)) {
                                 player.sendMessage(Messages.get("chat.commands.add-remove.error-not-added-player"));
                                 return true;
                             }
                             
-                            portalManager.removePlayerAccess(portal, remPlayer.getUniqueId().toString());
+                            portalManager.removePlayerAccess(portal, remUUID);
 
-                            player.sendMessage(Messages.getParam("chat.commands.add-remove.remove-success-player", "{1}", remPlayer.getName()));
+                            player.sendMessage(Messages.getParam("chat.commands.add-remove.remove-success-player", "{1}", input));
     
                             return true;
                         }
