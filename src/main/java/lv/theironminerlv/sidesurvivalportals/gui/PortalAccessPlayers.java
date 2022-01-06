@@ -69,7 +69,7 @@ public class PortalAccessPlayers implements InventoryProvider {
             item = SkullCreator.itemFromUuid(UUID.fromString(allowedPlayers.get(i)));
             String uuid = allowedPlayers.get(i);
             itemMeta = item.getItemMeta();
-            itemMeta.setDisplayName(Messages.getParam("gui.portal-settings.access-menu.access-players.item-names.player", "{1}", SurvivalCoreAPI.getNickFromUUIDString(uuid)));
+            itemMeta.setDisplayName(Messages.getParam("gui.portal-settings.access-menu.access-players.item-names.player", "{1}", SurvivalCoreAPI.getFullNickFromUUIDString(uuid)));
             itemMeta.setLore(Messages.getList("gui.portal-settings.access-menu.access-players.item-lores.player"));
             item.setItemMeta(itemMeta);
 
