@@ -329,7 +329,7 @@ public class PortalManager {
             }
 
             if (!tasks.containsKey(player.getUniqueId())) {
-                player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, SoundCategory.BLOCKS, 1.0f, 1.0f);
+                player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, SoundCategory.BLOCKS, 0.5f, 1.0f);
                 if (isPortalAt(player.getLocation()))
                     fakePortalBlocks(player, getPortalAt(player.getLocation()), true);
 
@@ -453,7 +453,7 @@ public class PortalManager {
         }
 
         if (!tasks.containsKey(player.getUniqueId())) {
-            player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, SoundCategory.BLOCKS, 0.5f, 1.0f);
             if (isPortalAt(player.getLocation()))
                 fakePortalBlocks(player, getPortalAt(player.getLocation()), true);
 

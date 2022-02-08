@@ -62,7 +62,7 @@ public class CrossServerHandler implements Listener {
         requests.remove(request.getUuid());
         Player player = Bukkit.getPlayer(request.getPlayer());
         Portal portal = PortalData.CACHED_PORTALS.get(request.getPortalId());
-        if (player != null && portal != null)
+        if (player != null && player.isOnline() && player.getName().equalsIgnoreCase(request.getPlayer()) && portal != null)
             plugin.getPortalManager().crossServerPortalSafe(player, portal, request.isSafe());
     }
 
@@ -76,6 +76,7 @@ public class CrossServerHandler implements Listener {
 
         tpRequests.put(request.getPlayer(), request);
         SurvivalCoreAPI.movePlayerTo(request.getPlayer(), SurvivalCoreBukkit.getInstance().getProtonManager().getClientName());
+        plugin.getLogger().info(request.getPlayer() + " is being moved to here, portalid " + request.getPortalId());
     }
 
     @EventHandler

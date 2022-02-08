@@ -81,7 +81,7 @@ messages:
     not-in-portal: "&cTev ir jāatrodas portālā, lai izmantotu šo komandu!"
     no-create-permission: "&cTev nav atļauts izveidot šeit portālu!"
     no-edit-permission: "&cTev nav atļauts labot šo portālu!"
-    error-creating-outside-group: "&cPortālu var uztaisīt tikai kādā teritorijā! (kāds no portāla blokiem atrodas ārpus teritorijas)"
+    error-creating-outside-group: "&cPortālu var uztaisīt tikai kādā zemē! (kāds no portāla blokiem atrodas ārpus zemes)"
     portal-doesnt-exist-anymore: "&cPortāls vairs neeksistē!"
     teleport-not-safe: "&cTeleportācijas galamērķis nav drošs!"
     teleport-title: "&5Teleportē..."
@@ -92,33 +92,33 @@ messages:
         change-success: "&7Portāla apraksts veiksmīgi mainīts uz &f{1}&7!"
         from-gui: "&7Raksti komandu &f/p apraksts <jaunais apraksts>&7, lai mainītu portāla aprakstu!"
       add-remove:
-        no-add-type: "&cNorādi, vai pievienosi teritoriju (t) vai speletaju (s)!"
-        no-remove-type: "&cNorādi, vai noņemsi teritoriju (t) vai speletaju (s)!"
-        no-group: "&cNorādi, kuru teritoriju pievienosi!"
+        no-add-type: "&cNorādi, vai pievienosi kopienu (k) vai speletaju (s)!"
+        no-remove-type: "&cNorādi, vai noņemsi kopienu (k) vai speletaju (s)!"
+        no-group: "&cNorādi, kuru kopienu pievienosi!"
         no-player: "&cNorādi, kuru spēlētāju pievienosi!"
-        error-group-doesnt-exist: "&cKļūda: tāda teritorija neeksistē!"
+        error-group-doesnt-exist: "&cKļūda: tāda kopiena neeksistē!"
         error-not-online: "&cKļūda: tāds spēlētājs nav tiešsaistē!"
         error-hasnt-joined: "&cKļūda: tāds spēlētājs nav iepriekš pievienojies serverim!"
-        error-already-added-group: "&cKļūda: tādai teritorijai jau ir atļauts izmantot šo portālu!"
+        error-already-added-group: "&cKļūda: tādai kopienai jau ir atļauts izmantot šo portālu!"
         error-already-added-player: "&cKļūda: tam spēlētājam jau ir atļauts izmantot šo portālu!"
-        error-already-added-playergroup: "&cKļūda: tas spēlētājs jau pieder teritorijai, kurā atrodas šis portāls!"
-        error-not-added-group: "&cKļūda: tādai teritorija nav pievienota šī portāla atļautajā sarakstā!"
+        error-already-added-playergroup: "&cKļūda: tas spēlētājs jau pieder kopienai, kurā atrodas šis portāls!"
+        error-not-added-group: "&cKļūda: tāda kopiena nav pievienota šī portāla atļautajā sarakstā!"
         error-not-added-player: "&cKļūda: tas spēlētājs nav pievienots šī portāla atļautajā sarakstā!"
-        error-same-group: "&cKļūda: nevar pievienot teritoriju, kurai tas pieder!"
+        error-same-group: "&cKļūda: nevar pievienot kopienu, kurai tas pieder!"
         error-same-player: "&cKļūda: nevari pats sevi pievienot šim portālam!"
-        add-success-group: "&7Veiksmīgi atļāvi teritorijai &f{1} &7izmantot šo portālu!"
+        add-success-group: "&7Veiksmīgi atļāvi kopienai &f{1} &7izmantot šo portālu!"
         add-success-player: "&7Veiksmīgi atļāvi spēlētājam &f{1} &7izmantot šo portālu!"
-        remove-success-group: "&7Veiksmīgi noņēmi teritorijai &f{1} &7atļauju izmantot šo portālu!"
+        remove-success-group: "&7Veiksmīgi noņēmi kopienai &f{1} &7atļauju izmantot šo portālu!"
         remove-success-player: "&7Veiksmīgi noņēmi spēlētājam &f{1} &7atļauju izmantot šo portālu!"
       help: |-
         &f
         &5&lPortālu komandas
         &f
         &f/p apraksts <apraksts> &7&omaina aprakstu portālam, kurā pašlaik atrodies
-        &f/p pievienot t <teritorija> &7&oatļauj norādītajai teritorijai izmantot portālu
+        &f/p pievienot k <kopiena> &7&oatļauj norādītajai kopienai izmantot portālu
         &f/p pievienot s <speletajs> &7&oatļauj norādītajam spēlētājam izmantot portālu
         &f
-        &f/p nonemt t <teritorija> &7&onoņem teritorijai atļauju izmantot portālu
+        &f/p nonemt k <kopiena> &7&onoņem kopienai atļauju izmantot portālu
         &f/p nonemt s <speletajs> &7&onoņem spēlētājam atļauju izmantot portālu
         &f
   command-arguments:
@@ -126,7 +126,7 @@ messages:
     add: "pievienot" # /p pievienot
     remove: "nonemt" # /p nonemt
     add-remove:
-      group: "t" # /p pievienot t <kopiena>
+      group: "k" # /p pievienot k <kopiena>
       player: "s" # /p pievienot s <player>
   gui:
     previous-page: "&aIepriekšējā lapa"
@@ -194,7 +194,7 @@ messages:
         item-names:
           is-public: "&7Portāls ir: &a&lPUBLISKS"
           is-private: "&7Portāls ir: &c&lPRIVĀTS"
-          group-access: "&a&lCitu teritoriju piekļuve"
+          group-access: "&a&lCitu kopienu piekļuve"
           player-access: "&6&lCitu spēlētāju piekļuve"
         item-lores:
           is-public: |-
@@ -205,16 +205,16 @@ messages:
           is-private: |-
             &f
             &7Portālu pašlaik var izmantot tikai
-            &7šīs teritorijas biedri.
+            &7šīs kopienas biedri.
             &f
             &eSpied, lai mainītu!
           group-access: |-
             &f
-            &7Atļauj citām teritorijām lietot
+            &7Atļauj citām kopienām lietot
             &7šo portālu (pat ja ir privāts) ar komandu:
-            &f/p pievienot t <teritorijas nosaukums>
+            &f/p pievienot k <kopienas nosaukums>
             &f
-            &eSpied, lai apskatītu atļautās teritorijas!
+            &eSpied, lai apskatītu atļautās kopienas!
           player-access: |-
             &f
             &7Atļauj citiem spēlētājiem lietot
@@ -223,13 +223,13 @@ messages:
             &f
             &eSpied, lai apskatītu atļautos spēlētājus!
         access-groups:
-          gui-title: "Citu teritoriju piekļuve"
+          gui-title: "Citu kopienu piekļuve"
           item-names:
             group: "&e{1}"
           item-lores:
             group: |-
               &f
-              &7Šī teritorija drīkst izmantot
+              &7Šī kopiena drīkst izmantot
               &7šo portālu.
               &f
               &cSpied, lai noņemtu atļauju!

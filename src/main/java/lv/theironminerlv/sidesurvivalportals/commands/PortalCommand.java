@@ -150,7 +150,7 @@ public class PortalCommand implements CommandExecutor, TabExecutor {
                             Player addPlayer = Bukkit.getPlayer(input);
                             String addUUID = addPlayer != null ? addPlayer.getUniqueId().toString() : null;
 
-                            if (addPlayer == null) {
+                            if (addPlayer == null || !addPlayer.isOnline() || !addPlayer.getName().equalsIgnoreCase(input)) {
                                 if (SurvivalCoreAPI.getVisiblePlayers().contains(input))
                                     addUUID = SurvivalCoreAPI.getUUIDStringFromNick(input);
                                 else {
