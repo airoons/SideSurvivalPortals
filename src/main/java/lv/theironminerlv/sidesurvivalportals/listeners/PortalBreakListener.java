@@ -17,14 +17,12 @@ import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 
 public class PortalBreakListener implements Listener {
 
-    private SurvivalPortals plugin;
     private static PortalManager portalManager;
     private static PermissionManager permissionManager;
 
     public PortalBreakListener(SurvivalPortals plugin) {
-        this.plugin = plugin;
-        portalManager = this.plugin.getPortalManager();
-        permissionManager = this.plugin.getPermissionManager();
+        portalManager = plugin.getPortalManager();
+        permissionManager = plugin.getPermissionManager();
     }
 
     @EventHandler

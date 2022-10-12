@@ -2,9 +2,9 @@ package lv.theironminerlv.sidesurvivalportals.objects;
 
 public class PortalRequest {
 
-    private String player;
-    private String uuid;
-    private String portalId;
+    private final String player;
+    private final String uuid;
+    private final String portalId;
     private boolean safe;
 
     public PortalRequest(String player, String uuid, String portalId) {

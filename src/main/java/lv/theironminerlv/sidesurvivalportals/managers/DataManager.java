@@ -23,7 +23,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class DataManager {
 
-    private SurvivalPortals plugin;
+    private final SurvivalPortals plugin;
 
     public DataManager(SurvivalPortals plugin) {
         this.plugin = plugin;

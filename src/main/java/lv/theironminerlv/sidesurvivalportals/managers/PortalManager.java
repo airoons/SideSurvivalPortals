@@ -40,12 +40,12 @@ import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
 public class PortalManager {
 
-    private SurvivalPortals plugin;
+    private final SurvivalPortals plugin;
     private static DataManager dataManager;
 
     public Map<UUID, BukkitTask> tasks = new HashMap<>();
     public List<Material> safeBlocks = new ArrayList<>();
-    private static Map<UUID, Portal> requests = new HashMap<>();
+    private static final Map<UUID, Portal> requests = new HashMap<>();
 
     public PortalManager(SurvivalPortals plugin) {
         this.plugin = plugin;
@@ -180,7 +180,7 @@ public class PortalManager {
             return null;
 
         ApplicableRegionSet applicable = regionManager.getApplicableRegions(BukkitAdapter.asBlockVector(loc));
-        if ((applicable == null) || (applicable.size() < 1))
+        if (applicable.size() < 1)
             return null;
 
         ProtectedRegion region = applicable.iterator().next();

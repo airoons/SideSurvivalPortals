@@ -15,10 +15,10 @@ import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
 public class EditPortalAccess implements InventoryProvider {
 
-    private static SurvivalPortals plugin = SurvivalPortals.getInstance();
-    private InventoryManager invManager = plugin.getInvManager();
-    private MenuManager menuManager = plugin.getMenuManager();
-    private DataManager dataManager = plugin.getDataManager();
+    private static final SurvivalPortals plugin = SurvivalPortals.getInstance();
+    private final InventoryManager invManager = plugin.getInvManager();
+    private final MenuManager menuManager = plugin.getMenuManager();
+    private final DataManager dataManager = plugin.getDataManager();
     private SmartInventory inventory;
     private Portal portal;
 

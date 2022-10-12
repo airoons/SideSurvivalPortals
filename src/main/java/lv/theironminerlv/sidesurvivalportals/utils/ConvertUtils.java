@@ -1,20 +1,16 @@
 package lv.theironminerlv.sidesurvivalportals.utils;
 
+import com.sk89q.worldedit.math.BlockVector3;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Location;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.sk89q.worldedit.math.BlockVector3;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-
-import net.md_5.bungee.api.ChatColor;
-import org.bukkit.World;
-
 public class ConvertUtils {
 
-    private static Pattern HEX_PATTERN = Pattern.compile("&(#[a-f0-9]{6})", 2);
+    private static final Pattern HEX_PATTERN = Pattern.compile("&(#[a-f0-9]{6})", 2);
 
     public static BlockVector3 toBlockVector3(Location loc) {
         return BlockVector3.at(loc.getX(), loc.getY(), loc.getZ());

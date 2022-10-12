@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class CrossServerHandler implements Listener {
 
-    private SurvivalPortals plugin;
+    private final SurvivalPortals plugin;
     public static Map<String, Portal> requests = new HashMap<>();
     public static Map<String, PortalRequest> tpRequests = new HashMap<>();
 
@@ -36,9 +36,6 @@ public class CrossServerHandler implements Listener {
     public void onPortalDeleted(String portalId) {
         PortalData.removePortalById(portalId, false);
     }
-
-
-
 
     @MessageHandler(namespace = "survivalportals", subject = "locationSafeRequest")
     public void onLocationSafeRequest(PortalRequest request) {

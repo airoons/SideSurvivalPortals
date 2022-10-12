@@ -11,7 +11,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 public class Messages {
 
-    private static Map<String, String> messageMap = new HashMap<>();
+    private static final Map<String, String> messageMap = new HashMap<>();
     private static ConfigurationSection configuration = null;
 
     public void load(ConfigurationSection messages) {

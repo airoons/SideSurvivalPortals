@@ -13,15 +13,15 @@ import lv.theironminerlv.sidesurvivalportals.gui.MenuItems;
 public class Portal {
 
     private String id;
-    private Location pos1;
-    private Location pos2;
+    private final Location pos1;
+    private final Location pos2;
     private Location tpLoc;
     private String locStr;
-    private String worldStr;
-    private World world;
+    private final String worldStr;
+    private final World world;
     private boolean isPublic = false;
-    private boolean isNorthSouth;
-    private String owner;
+    private final boolean isNorthSouth;
+    private final String owner;
     private ItemStack icon = MenuItems.defaultIcon.clone();
     private String desc = "-";
     private List<String> allowedGroups = new ArrayList<>();

@@ -19,8 +19,8 @@ import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
 public class MenuManager {
 
-    private SurvivalPortals plugin;
-    private PermissionManager permissionManager;
+    private final SurvivalPortals plugin;
+    private final PermissionManager permissionManager;
 
     public MenuManager(SurvivalPortals plugin) {
         this.plugin = plugin;

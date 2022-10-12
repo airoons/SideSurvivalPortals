@@ -20,10 +20,10 @@ import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
 public class MainMenu implements InventoryProvider {
 
-    private static SurvivalPortals plugin = SurvivalPortals.getInstance();
-    private InventoryManager invManager = plugin.getInvManager();
-    private PermissionManager permissionManager = plugin.getPermissionManager();
-    private PortalManager portalManager = plugin.getPortalManager();
+    private static final SurvivalPortals plugin = SurvivalPortals.getInstance();
+    private final InventoryManager invManager = plugin.getInvManager();
+    private final PermissionManager permissionManager = plugin.getPermissionManager();
+    private final PortalManager portalManager = plugin.getPortalManager();
     private SmartInventory inventory;
     private Portal portal;
 
@@ -71,7 +71,7 @@ public class MainMenu implements InventoryProvider {
                     portalManager.teleportToSpawn(player, false);
             }));
         } else {
-            contents.set(1, 0 + offset, ClickableItem.of(MenuItems.goNetherBedrock, e -> {
+            contents.set(1, offset, ClickableItem.of(MenuItems.goNetherBedrock, e -> {
                 portalManager.teleportToSpawn(player, true);
             }));
             contents.set(1, 1 + offset, ClickableItem.of(MenuItems.goSpawnBedrock, e -> {

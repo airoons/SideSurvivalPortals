@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -27,16 +26,17 @@ import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 import org.bukkit.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 public class PortalCommand implements CommandExecutor, TabExecutor {
 
-    private static SurvivalPortals plugin = SurvivalPortals.getInstance();
-    private static PortalManager portalManager = plugin.getPortalManager();
-    private static PermissionManager permissionManager = plugin.getPermissionManager();
-    private static DataManager dataManager = plugin.getDataManager();
+    private static final SurvivalPortals plugin = SurvivalPortals.getInstance();
+    private static final PortalManager portalManager = plugin.getPortalManager();
+    private static final PermissionManager permissionManager = plugin.getPermissionManager();
+    private static final DataManager dataManager = plugin.getDataManager();
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (sender instanceof Player) {
             String argAdd = Messages.get("command-arguments.add");
             String argRemove = Messages.get("command-arguments.remove");
@@ -242,7 +242,7 @@ public class PortalCommand implements CommandExecutor, TabExecutor {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         List<String> completions = new ArrayList<>();
 
         String argDesc = Messages.get("command-arguments.description");

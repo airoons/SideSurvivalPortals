@@ -8,15 +8,7 @@ import lv.sidesurvival.objects.perms.PermissableAction;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import lv.theironminerlv.sidesurvivalportals.SurvivalPortals;
-
-public class PermissionManager{
-
-    private SurvivalPortals plugin;
-
-    public PermissionManager(SurvivalPortals plugin) {
-        this.plugin = plugin;
-    }
+public class PermissionManager {
 
     public boolean canCreatePortal(Player player, ClaimOwner owner, Location loc) {
         if (player.hasPermission("sidesurvivalportals.admin"))

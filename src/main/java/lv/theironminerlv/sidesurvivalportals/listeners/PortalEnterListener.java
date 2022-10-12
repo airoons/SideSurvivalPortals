@@ -14,23 +14,21 @@ import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 
 public class PortalEnterListener implements Listener {
 
-    private SurvivalPortals plugin;
     private static PortalManager portalManager;
     private static MenuManager menuManager;
 
     public PortalEnterListener(SurvivalPortals plugin) {
-        this.plugin = plugin;
-        portalManager = this.plugin.getPortalManager();
-        menuManager = this.plugin.getMenuManager();
+        portalManager = plugin.getPortalManager();
+        menuManager = plugin.getMenuManager();
     }
 
     @EventHandler
     public void onPortalEvent(PlayerMoveEvent event) {
         Location to = event.getTo(), from = event.getFrom();
-        if (to != null && to.equals(from))
+        if (to.equals(from))
             return;
 
-        if (to != null && portalManager.isPortalAt(from) && !portalManager.isPortalAt(to)) {
+        if (portalManager.isPortalAt(from) && !portalManager.isPortalAt(to)) {
             BukkitTask task = portalManager.tasks.get(event.getPlayer().getUniqueId());
             if (task != null) {
                 task.cancel();

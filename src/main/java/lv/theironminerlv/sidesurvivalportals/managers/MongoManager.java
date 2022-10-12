@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 
 public class MongoManager {
 
-    private SurvivalPortals plugin;
+    private final SurvivalPortals plugin;
     private static MongoManager instance;
 
     private MongoClient mongoClient;

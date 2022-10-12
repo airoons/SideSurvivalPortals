@@ -23,14 +23,12 @@ import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
 public class PortalCreateListener implements Listener {
 
-    private SurvivalPortals plugin;
     private static PortalManager portalManager;
     private static PermissionManager permissionManager;
 
     public PortalCreateListener(SurvivalPortals plugin) {
-        this.plugin = plugin;
-        portalManager = this.plugin.getPortalManager();
-        permissionManager = this.plugin.getPermissionManager();
+        portalManager = plugin.getPortalManager();
+        permissionManager = plugin.getPermissionManager();
     }
 
     @EventHandler

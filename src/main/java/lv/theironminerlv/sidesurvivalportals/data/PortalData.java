@@ -15,7 +15,6 @@ import lv.theironminerlv.sidesurvivalportals.utils.LocationSerialization;
 
 public class PortalData {
 
-    private SurvivalPortals plugin;
     private static DataManager dataManager;
     public static Map<String, Portal> CACHED_PORTALS = new ConcurrentHashMap<>();
 
@@ -25,7 +24,6 @@ public class PortalData {
     private static Location netherSpawn;
 
     public PortalData(SurvivalPortals plugin) {
-        this.plugin = plugin;
         dataManager = plugin.getDataManager();
 
         worldSpawnServer = plugin.getConfiguration().getString("teleportLocs.spawn-server");

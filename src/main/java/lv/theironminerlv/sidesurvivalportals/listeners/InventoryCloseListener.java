@@ -23,7 +23,7 @@ import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 
 public class InventoryCloseListener implements Listener {
 
-    private SurvivalPortals plugin;
+    private final SurvivalPortals plugin;
     private static PortalManager portalManager;
     private static InventoryManager invManager;
     private static MenuManager menuManager;

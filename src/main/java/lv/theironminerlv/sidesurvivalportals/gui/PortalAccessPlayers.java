@@ -24,11 +24,11 @@ import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
 public class PortalAccessPlayers implements InventoryProvider {
 
-    private static SurvivalPortals plugin = SurvivalPortals.getInstance();
-    private InventoryManager invManager = plugin.getInvManager();
-    private PortalManager portalManager = plugin.getPortalManager();
+    private static final SurvivalPortals plugin = SurvivalPortals.getInstance();
+    private final InventoryManager invManager = plugin.getInvManager();
+    private final PortalManager portalManager = plugin.getPortalManager();
     private SmartInventory inventory;
-    private Portal portal;
+    private final Portal portal;
 
     public PortalAccessPlayers(Portal portal) {
         this.portal = portal;

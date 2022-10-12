@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import lv.sidesurvival.SurvivalCoreBukkit;
-import lv.sidesurvival.listeners.ProtonListener;
 import lv.theironminerlv.sidesurvivalportals.listeners.*;
 import lv.theironminerlv.sidesurvivalportals.managers.*;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -29,9 +28,9 @@ public class SurvivalPortals extends JavaPlugin {
     private PortalData portalData;
 
     private FileConfiguration config;
-    private File portalFolder = new File(this.getDataFolder() + "/portals");
+    private final File portalFolder = new File(this.getDataFolder() + "/portals");
 
-    public Set<Player> handleClose = new HashSet<Player>();
+    public Set<Player> handleClose = new HashSet<>();
 
     public static SurvivalPortals getInstance() {
         return instance;
@@ -50,7 +49,7 @@ public class SurvivalPortals extends JavaPlugin {
         dataManager = new DataManager(this);
         portalData = new PortalData(this);
         portalManager = new PortalManager(this);
-        permissionManager = new PermissionManager(this);
+        permissionManager = new PermissionManager();
         menuManager = new MenuManager(this);
         new MenuItems();
 
