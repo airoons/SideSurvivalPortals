@@ -3,6 +3,10 @@ Custom portal plugin for Side Survival server.
 
 The plugin is based on Side public SMP 3rd Season's portal system where every player can create portals (in form of Nether portals) to get around the server more easily.
 
+## IMPORTANT
+
+Description below is for an [earlier version of this plugin](https://github.com/airoons/SideSurvivalPortals/tree/84ca7be7328b7f5dc765076cf94d3f1ada9d472b). Since then plugin has been partially recoded for a quite more complicated cross-server portal system using [Proton](https://www.spigotmc.org/resources/proton-cross-server-plugin-messaging.87159/) and other (including private) plugins.
+
 ## Plugin features
 Portals are directly linked to [Lands](https://www.spigotmc.org/resources/53313/) plugin.
 
