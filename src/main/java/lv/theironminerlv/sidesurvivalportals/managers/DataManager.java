@@ -101,6 +101,11 @@ public class DataManager {
                 pos1 = LocationSerialization.getLocationFromString(locStr);
                 pos2 = LocationSerialization.getLocationFromString(doc.getString("pos2"));
                 worldStr = doc.getString("world");
+                if (worldStr == null) {
+                    plugin.getLogger().warning("Couldn't load portal " + doc.getString("_id") + " (" + owner + ")");
+                    continue;
+                }
+
                 world = Bukkit.getWorld(worldStr);
                 isNorthSouth = doc.getBoolean("isNorthSouth");
                 isPublic = doc.getBoolean("isPublic");
