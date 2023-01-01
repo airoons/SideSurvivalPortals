@@ -141,7 +141,7 @@ public class PortalCommand implements CommandExecutor, TabExecutor {
                             
                             allowedGroups.add(group.getId());
                             portal.setAllowedGroups(allowedGroups);
-                            dataManager.save(portal);
+                            dataManager.saveAccess(portal);
 
                             player.sendMessage(Messages.getParam("chat.commands.add-remove.add-success-group", "{1}", group.getName()));
 
@@ -173,7 +173,7 @@ public class PortalCommand implements CommandExecutor, TabExecutor {
                             
                             allowedPlayers.add(addUUID);
                             portal.setAllowedPlayers(allowedPlayers);
-                            dataManager.save(portal);
+                            dataManager.saveAccess(portal);
 
                             player.sendMessage(Messages.getParam("chat.commands.add-remove.add-success-player", "{1}", input));
 

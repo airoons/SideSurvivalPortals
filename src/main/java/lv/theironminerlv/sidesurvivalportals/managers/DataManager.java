@@ -67,6 +67,33 @@ public class DataManager {
         }.runTaskAsynchronously(plugin);
     }
 
+    public void saveAccess(Portal portal) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                MongoCollection<Document> col = MongoManager.get().getPortalCollection();
+                Document doc = new Document("_id", portal.getId());
+                Document found = col.find(doc).first();
+                if (found == null) {
+                    return;
+                }
+
+                doc.put("settings-allowedGroups", portal.getAllowedGroups());
+                doc.put("settings-allowedPlayers", portal.getAllowedPlayers());
+
+                Document update = new Document("$set", doc);
+                col.updateOne(found, update, new UpdateOptions().upsert(true));
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        SurvivalCoreBukkit.getInstance().getProtonManager().broadcast("survivalportals", "portalUpdated", portal.getId());
+                    }
+                }.runTask(plugin);
+            }
+        }.runTaskAsynchronously(plugin);
+    }
+
     public void delete(Portal portal) {
         new BukkitRunnable() {
             @Override

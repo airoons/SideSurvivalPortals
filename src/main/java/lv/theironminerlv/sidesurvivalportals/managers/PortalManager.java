@@ -259,7 +259,7 @@ public class PortalManager {
 
         allowedGroups.remove(groupId);
         portal.setAllowedGroups(allowedGroups);
-        dataManager.save(portal);
+        dataManager.saveAccess(portal);
     }
 
     public void removePlayerAccess(Portal portal, String uuid) {
@@ -270,7 +270,7 @@ public class PortalManager {
 
         allowedPlayers.remove(uuid);
         portal.setAllowedPlayers(allowedPlayers);
-        dataManager.save(portal);
+        dataManager.saveAccess(portal);
     }
 
     public void fakePortalBlocks(Player player, Portal portal, boolean enable) {
