@@ -53,7 +53,7 @@ public class PortalCreateListener implements Listener {
             block = portalBlock.getBlock();
 
             if (ClaimManager.get().getOwnerAt(new Claim(block)) == null) {
-                player.sendMessage(Messages.get("chat.error-creating-outside-group"));
+                player.sendMessage(Messages.get(player, "chat.error-creating-outside-group"));
                 return;
             }
 
@@ -96,7 +96,7 @@ public class PortalCreateListener implements Listener {
         }
 
         if (block != null && !permissionManager.canCreatePortal(player, owner, block.getLocation())) {
-            player.sendMessage(Messages.get("chat.no-create-permission"));
+            player.sendMessage(Messages.get(player, "chat.no-create-permission"));
             return;
         }
 

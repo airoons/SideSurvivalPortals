@@ -19,6 +19,8 @@ import lv.theironminerlv.sidesurvivalportals.managers.MenuManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
+import java.util.List;
+
 public class EditPortalIcon implements InventoryProvider {
 
     private static final SurvivalPortals plugin = SurvivalPortals.getInstance();
@@ -32,18 +34,18 @@ public class EditPortalIcon implements InventoryProvider {
         this.portal = portal;
     }
 
-    private void load(Portal portal) {
+    private void load(Player player, Portal portal) {
         this.inventory = SmartInventory.builder()
             .manager(invManager)
             .provider(new EditPortalIcon(portal))
             .size(6, 9)
-            .title(Messages.get("gui.portal-settings.change-icon.gui-title"))
+            .title(Messages.get(player, "gui.portal-settings.change-icon.gui-title"))
             .build();
     }
 
     public void open(Player player, Portal portal) {
         this.portal = portal;
-        this.load(portal);
+        this.load(player, portal);
         player.closeInventory();
         this.inventory.open(player);
         plugin.handleClose.add(player);
@@ -55,18 +57,19 @@ public class EditPortalIcon implements InventoryProvider {
         ItemMeta itemMeta;
         Pagination pagination = contents.pagination();
 
-        int iconAmount = MenuItems.availableIcons.size();
-        
+        List<ItemStack> available = MenuItems.availableIcons(player);
+        int iconAmount = available.size();
+
         ClickableItem[] items = new ClickableItem[iconAmount];
 
         for(int i = 0; i < items.length; i++) {
-            item = MenuItems.availableIcons.get(i).clone();
+            item = available.get(i).clone();
             ItemStack loopIcon = item.clone();
             
             if (portal.getIcon().getType() == item.getType()) {
                 item.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
                 itemMeta = item.getItemMeta();
-                itemMeta.setLore(Messages.getList("gui.portal-settings.change-icon.item-lores.current-icon"));
+                itemMeta.setLore(Messages.getList(player, "gui.portal-settings.change-icon.item-lores.current-icon"));
                 itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 item.setItemMeta(itemMeta);
                 items[i] = ClickableItem.empty(item);

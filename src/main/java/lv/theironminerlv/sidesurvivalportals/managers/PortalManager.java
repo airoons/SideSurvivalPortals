@@ -333,7 +333,7 @@ public class PortalManager {
                 if (isPortalAt(player.getLocation()))
                     fakePortalBlocks(player, getPortalAt(player.getLocation()), true);
 
-                final String tpTitle = Messages.get("chat.teleport-title");
+                final String tpTitle = Messages.get(player, "chat.teleport-title");
 
                 tasks.put(player.getUniqueId(), new BukkitRunnable() {
                     int n = 0;
@@ -387,7 +387,7 @@ public class PortalManager {
 
     public void crossServerPortalSafe(Player player, Portal portal, boolean safe) {
         if (!safe) {
-            player.sendMessage(Messages.get("chat.teleport-not-safe"));
+            player.sendMessage(Messages.get(player, "chat.teleport-not-safe"));
             return;
         }
 
@@ -433,7 +433,7 @@ public class PortalManager {
 
             if (loc == null) {
                 if (player != null && player.isOnline())
-                    player.sendMessage(Messages.get("chat.teleport-not-safe"));
+                    player.sendMessage(Messages.get(player, "chat.teleport-not-safe"));
                 return null;
             }
 
@@ -457,7 +457,7 @@ public class PortalManager {
             if (isPortalAt(player.getLocation()))
                 fakePortalBlocks(player, getPortalAt(player.getLocation()), true);
 
-            final String tpTitle = Messages.get("chat.teleport-title");
+            final String tpTitle = Messages.get(player, "chat.teleport-title");
 
             tasks.put(player.getUniqueId(), new BukkitRunnable() {
                 int n = 0;

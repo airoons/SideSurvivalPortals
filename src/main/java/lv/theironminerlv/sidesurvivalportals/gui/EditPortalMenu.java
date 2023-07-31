@@ -26,18 +26,18 @@ public class EditPortalMenu implements InventoryProvider {
         this.portal = portal;
     }
 
-    private void load(Portal portal) {
+    private void load(Player player, Portal portal) {
         this.inventory = SmartInventory.builder()
             .manager(invManager)
             .provider(new EditPortalMenu(portal))
             .size(3, 9)
-            .title(Messages.get("gui.portal-settings.gui-title"))
+            .title(Messages.get(player, "gui.portal-settings.gui-title"))
             .build();
     }
 
     public void open(Player player, Portal portal) {
         this.portal = portal;
-        this.load(portal);
+        this.load(player, portal);
         player.closeInventory();
         this.inventory.open(player);
         plugin.handleClose.add(player);
@@ -58,13 +58,13 @@ public class EditPortalMenu implements InventoryProvider {
         contents.set(2, 4, ClickableItem.empty(MenuItems.lightGrayPane));
         contents.set(2, 7, ClickableItem.empty(MenuItems.blackPane));
 
-        contents.set(1, 2, ClickableItem.of(MenuItems.editPortalAccess, e -> menuManager.openEditPortalAccess(player, portal)));
-        contents.set(1, 4, ClickableItem.of(MenuItems.editPortalDescr, e -> editPortalDescr(player, portal)));
+        contents.set(1, 2, ClickableItem.of(MenuItems.editPortalAccess(player), e -> menuManager.openEditPortalAccess(player, portal)));
+        contents.set(1, 4, ClickableItem.of(MenuItems.editPortalDescr(player), e -> editPortalDescr(player, portal)));
 
         item = portal.getIcon().clone();
         meta = item.getItemMeta();
-        meta.setDisplayName(Messages.get("gui.portal-settings.item-names.change-icon"));
-        meta.setLore(Messages.getList("gui.portal-settings.item-lores.change-icon"));
+        meta.setDisplayName(Messages.get(player, "gui.portal-settings.item-names.change-icon"));
+        meta.setLore(Messages.getList(player, "gui.portal-settings.item-lores.change-icon"));
         item.setItemMeta(meta);
         contents.set(1, 6, ClickableItem.of(item, e -> menuManager.openEditPortalIcon(player, portal)));
     }
@@ -77,6 +77,6 @@ public class EditPortalMenu implements InventoryProvider {
     public void editPortalDescr(Player player, Portal portal) {
         plugin.handleClose.remove(player);
         player.closeInventory();
-        player.sendMessage(Messages.get("chat.commands.description.from-gui"));
+        player.sendMessage(Messages.get(player, "chat.commands.description.from-gui"));
     }
 }

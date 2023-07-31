@@ -34,24 +34,24 @@ public class PortalAccessGroups implements InventoryProvider {
         this.portal = portal;
     }
 
-    private void load() {
+    private void load(Player player) {
         this.inventory = SmartInventory.builder()
             .manager(invManager)
             .provider(new PortalAccessGroups(portal))
             .size(4, 9)
-            .title(Messages.get("gui.portal-settings.access-menu.access-groups.gui-title"))
+            .title(Messages.get(player, "gui.portal-settings.access-menu.access-groups.gui-title"))
             .build();
     }
 
     public void open(Player player, Portal portal) {
-        this.load();
+        this.load(player);
         player.closeInventory();
         this.inventory.open(player);
         plugin.handleClose.add(player);
     }
 
     public void open(Player player, Portal portal, int page) {
-        this.load();
+        this.load(player);
         this.inventory.open(player, page);
     }
 
@@ -81,8 +81,8 @@ public class PortalAccessGroups implements InventoryProvider {
             
             item = new ItemStack(Material.BOOK);
             itemMeta = item.getItemMeta();
-            itemMeta.setDisplayName(Messages.getParam("gui.portal-settings.access-menu.access-groups.item-names.group", "{1}", group.getName()));
-            itemMeta.setLore(Messages.getList("gui.portal-settings.access-menu.access-groups.item-lores.group"));
+            itemMeta.setDisplayName(Messages.getParam(player, "gui.portal-settings.access-menu.access-groups.item-names.group", "{1}", group.getName(null)));
+            itemMeta.setLore(Messages.getList(player, "gui.portal-settings.access-menu.access-groups.item-lores.group"));
             item.setItemMeta(itemMeta);
 
             items[i] = ClickableItem.of(item, 
@@ -93,9 +93,9 @@ public class PortalAccessGroups implements InventoryProvider {
         pagination.setItemsPerPage(27);
         pagination.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 0, 0));
 
-        contents.set(3, 2, ClickableItem.of(MenuItems.prevPage,
+        contents.set(3, 2, ClickableItem.of(MenuItems.prevPage(player),
             e -> open(player, portal, pagination.previous().getPage())));
-        contents.set(3, 6, ClickableItem.of(MenuItems.nextPage,
+        contents.set(3, 6, ClickableItem.of(MenuItems.nextPage(player),
             e -> open(player, portal, pagination.next().getPage())));
 
     }

@@ -43,9 +43,6 @@ public class SurvivalPortals extends JavaPlugin {
 
         this.saveDefaultConfig();
 
-        Messages messages = new Messages();
-        messages.load(config.getConfigurationSection("messages"));
-
         dataManager = new DataManager(this);
         portalData = new PortalData(this);
         portalManager = new PortalManager(this);

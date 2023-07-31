@@ -31,14 +31,14 @@ public class MainMenu implements InventoryProvider {
         this.portal = portal;
     }
 
-    private void load(Portal portal) {
+    private void load(Player player, Portal portal) {
         this.inventory = SmartInventory.builder().manager(invManager).provider(new MainMenu(portal)).size(3, 9)
-                .title(Messages.get("gui.main-menu.gui-title")).build();
+                .title(Messages.get(player, "gui.main-menu.gui-title")).build();
     }
 
     public void open(Player player, Portal portal) {
         this.portal = portal;
-        this.load(portal);
+        this.load(player, portal);
         this.inventory.open(player);
     }
 
@@ -64,34 +64,34 @@ public class MainMenu implements InventoryProvider {
             offset = 1;
         }
         if (!player.hasPermission("group.bedrock")) {
-            contents.set(1, 1 + offset, ClickableItem.of(MenuItems.goSpawn, e -> {
+            contents.set(1, 1 + offset, ClickableItem.of(MenuItems.goSpawn(player), e -> {
                 if (e.isRightClick())
                     portalManager.teleportToSpawn(player, true);
                 else
                     portalManager.teleportToSpawn(player, false);
             }));
         } else {
-            contents.set(1, offset, ClickableItem.of(MenuItems.goNetherBedrock, e -> {
+            contents.set(1, offset, ClickableItem.of(MenuItems.goNetherBedrock(player), e -> {
                 portalManager.teleportToSpawn(player, true);
             }));
-            contents.set(1, 1 + offset, ClickableItem.of(MenuItems.goSpawnBedrock, e -> {
+            contents.set(1, 1 + offset, ClickableItem.of(MenuItems.goSpawnBedrock(player), e -> {
                 portalManager.teleportToSpawn(player, false);
             }));
         }
 
         item = SkullCreator.itemFromUuid(player.getUniqueId());
         meta = item.getItemMeta();
-        meta.setDisplayName(Messages.get("gui.main-menu.item-names.private-portals"));
-        meta.setLore(Messages.getList("gui.main-menu.item-lores.private-portals"));
+        meta.setDisplayName(Messages.get(player, "gui.main-menu.item-names.private-portals"));
+        meta.setLore(Messages.getList(player, "gui.main-menu.item-lores.private-portals"));
         item.setItemMeta(meta);
         contents.set(1, 3 + offset, ClickableItem.of(item, e -> plugin.getMenuManager().openPrivate(player)));
 
         contents.set(1, 5 + offset,
-                ClickableItem.of(MenuItems.pubPortals, e -> plugin.getMenuManager().openPublic(player)));
+                ClickableItem.of(MenuItems.pubPortals(player), e -> plugin.getMenuManager().openPublic(player)));
         ;
 
         if (offset == 0) {
-            contents.set(1, 7, ClickableItem.of(MenuItems.portalSettings,
+            contents.set(1, 7, ClickableItem.of(MenuItems.portalSettings(player),
                     e -> plugin.getMenuManager().openEditPortal(player, portal)));
         }
     }

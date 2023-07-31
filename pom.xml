@@ -86,14 +86,21 @@
             <artifactId>SurvivalCoreBukkit</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/SurvivalCoreBukkit.jar</systemPath>
+            <systemPath>${project.basedir}/depend/SurvivalCoreBukkit.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>lv.sidesurvival</groupId>
             <artifactId>SurvivalZemes</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/SurvivalZemes.jar</systemPath>
+            <systemPath>${project.basedir}/depend/SurvivalZemes.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>lv.side.lang</groupId>
+            <artifactId>SideLang</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/depend/SideLang.jar</systemPath>
         </dependency>
     </dependencies>
 

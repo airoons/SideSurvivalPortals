@@ -29,7 +29,7 @@ public class MenuManager {
 
     public boolean portalPermCheck(Player player, Portal portal) {
         if (!PortalData.portalExists(portal)) {
-            player.sendMessage(Messages.get("chat.portal-doesnt-exist-anymore"));
+            player.sendMessage(Messages.get(player, "chat.portal-doesnt-exist-anymore"));
             plugin.handleClose.remove(player);
             player.closeInventory();
             return false;
@@ -37,7 +37,7 @@ public class MenuManager {
 
         ClaimOwner owner = ClaimManager.get().getOwnerById(portal.getOwner());
         if (owner == null || !permissionManager.canEditPortal(player, owner, portal.getPos1())) {
-            player.sendMessage(Messages.get("chat.no-edit-permission"));
+            player.sendMessage(Messages.get(player, "chat.no-edit-permission"));
             return false;
         }
         
@@ -46,7 +46,7 @@ public class MenuManager {
 
     public void openMain(Player player, Portal portal) {
         if (portal == null || portal.getId() == null) {
-            player.sendMessage(Messages.get("chat.portal-doesnt-exist-anymore"));
+            player.sendMessage(Messages.get(player, "chat.portal-doesnt-exist-anymore"));
             plugin.handleClose.remove(player);
             player.closeInventory();
             return;

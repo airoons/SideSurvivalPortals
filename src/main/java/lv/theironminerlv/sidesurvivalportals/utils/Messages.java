@@ -1,57 +1,80 @@
 package lv.theironminerlv.sidesurvivalportals.utils;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import lv.side.lang.api.LangAPI;
+import org.bukkit.entity.Player;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.bukkit.configuration.ConfigurationSection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Messages {
 
-    private static final Map<String, String> messageMap = new HashMap<>();
-    private static ConfigurationSection configuration = null;
+    public static String getPlayerLanguage(Player player) {
+        if (player == null)
+            return LangAPI.getDefaultLang();
 
-    public void load(ConfigurationSection messages) {
-        configuration = messages;
-        Collection<String> keys = messages.getKeys(true);
-        for (String key : keys) {
-            if (messages.isString(key)) {
-                String value = messages.getString(key);
-                value = ConvertUtils.color(StringEscapeUtils.unescapeHtml(value));
-                messageMap.put(key, value);
-            }
-        }
+        String lang = LangAPI.getPlayerSelected(player.getName());
+        if (lang == null)
+            lang = LangAPI.getDefaultLang();
+
+        return lang;
     }
 
-    public static String get(String key) {
-        if (messageMap.containsKey(key)) {
-            return messageMap.get(key);
-        }
-        return "???";
+    public static String get(Player player, String key) {
+        key = "s-portals." + key;
+        String r = LangAPI.localize(getPlayerLanguage(player), key);
+        if (r.equalsIgnoreCase("???"))
+            System.out.println("Missing LangAPI key " + key);
+
+        return ConvertUtils.color(r);
     }
 
-    public static List<String> getList(String key) {
-		if (configuration.contains(key) && !configuration.getString(key).equals("")) {
-            return ConvertUtils.color(Arrays.asList(configuration.getString(key).split("\n")));
-        }
-        return null;
-	}
-
-    public static String getParam(String key, String paramName, String paramValue) {
-        return get(key).replace(paramName, paramValue);
+    public static List<String> getList(Player player, String key) {
+        return ConvertUtils.color(
+                new ArrayList<>(Arrays.asList(
+                        get(player, key).split("\n")
+                ))
+        );
     }
 
-    public String getParam(String key, String paramName1, String paramValue1, String paramName2, String paramValue2) {
-        return get(key).replace(paramName1, paramValue1).replace(paramName2, paramValue2);
+    public static String paramsReplace(String msg, String[] paramsName, String[] paramsValue) {
+        for (int i = 0; i < paramsValue.length; i++) {
+            if (i < paramsName.length)
+                msg = msg.replace(paramsName[i], paramsValue[i]);
+        }
+
+        return msg;
     }
 
-	public static List<String> getListParam(String key, String paramName, String paramValue) {
-        if (configuration.contains(key) && !configuration.getString(key).equals("")) {
-            return ConvertUtils.color(Arrays.asList(configuration.getString(key).replace(paramName, paramValue).split("\n")));
+    public static List<String> paramsReplace(List<String> msgList, String[] paramsName, String[] paramsValue) {
+        for (int i = 0; i < msgList.size(); i++) {
+            msgList.set(i, paramsReplace(msgList.get(i), paramsName, paramsValue));
         }
-        return null;
-	}
+
+        return msgList;
+    }
+
+    public static String getParam(Player player, String key, String paramName, String paramValue) {
+        return ConvertUtils.color(get(player, key).replace(paramName, paramValue));
+    }
+
+    public static String getParam(Player player, String key, String[] paramsName, String[] paramsValue) {
+        return ConvertUtils.color(paramsReplace(get(player, key), paramsName, paramsValue));
+    }
+
+    public static List<String> getListParam(Player player, String key, String paramName, String paramValue) {
+        return ConvertUtils.color(
+                new ArrayList<>(Arrays.asList(
+                        get(player, key).replace(paramName, paramValue).split("\n")
+                ))
+        );
+    }
+
+    public static List<String> getListParam(Player player, String key, String[] paramsName, String[] paramsValue) {
+        return ConvertUtils.color(
+                new ArrayList<>(Arrays.asList(
+                        paramsReplace(get(player, key), paramsName, paramsValue).split("\n")
+                ))
+        );
+    }
 }

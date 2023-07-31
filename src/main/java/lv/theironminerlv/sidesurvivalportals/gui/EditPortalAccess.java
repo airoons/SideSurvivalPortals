@@ -26,18 +26,18 @@ public class EditPortalAccess implements InventoryProvider {
         this.portal = portal;
     }
 
-    private void load(Portal portal) {
+    private void load(Player player, Portal portal) {
         this.inventory = SmartInventory.builder()
             .manager(invManager)
             .provider(new EditPortalAccess(portal))
             .size(3, 9)
-            .title(Messages.get("gui.portal-settings.access-menu.gui-title"))
+            .title(Messages.get(player, "gui.portal-settings.access-menu.gui-title"))
             .build();
     }
 
     public void open(Player player, Portal portal) {
         this.portal = portal;
-        this.load(portal);
+        this.load(player, portal);
         player.closeInventory();
         this.inventory.open(player);
         plugin.handleClose.add(player);
@@ -56,12 +56,12 @@ public class EditPortalAccess implements InventoryProvider {
         contents.set(2, 7, ClickableItem.empty(MenuItems.blackPane));
 
         if (portal.getIsPublic())
-            contents.set(1, 2, ClickableItem.of(MenuItems.accessPublic, e -> togglePublic(player, portal, false, contents)));
+            contents.set(1, 2, ClickableItem.of(MenuItems.accessPublic(player), e -> togglePublic(player, portal, false, contents)));
         else
-            contents.set(1, 2, ClickableItem.of(MenuItems.accessPrivate, e -> togglePublic(player, portal, true, contents)));
+            contents.set(1, 2, ClickableItem.of(MenuItems.accessPrivate(player), e -> togglePublic(player, portal, true, contents)));
 
-        contents.set(1, 4, ClickableItem.of(MenuItems.accessGroups, e -> menuManager.openPortalGroupAccess(player, portal)));
-        contents.set(1, 6, ClickableItem.of(MenuItems.accessPlayers, e -> menuManager.openPortalPlayerAccess(player, portal)));
+        contents.set(1, 4, ClickableItem.of(MenuItems.accessGroups(player), e -> menuManager.openPortalGroupAccess(player, portal)));
+        contents.set(1, 6, ClickableItem.of(MenuItems.accessPlayers(player), e -> menuManager.openPortalPlayerAccess(player, portal)));
     }
 
     @Override
@@ -77,9 +77,9 @@ public class EditPortalAccess implements InventoryProvider {
         }
 
         if (isPublic)
-            contents.set(1, 2, ClickableItem.of(MenuItems.accessPublic, e -> togglePublic(player, portal, false, contents)));
+            contents.set(1, 2, ClickableItem.of(MenuItems.accessPublic(player), e -> togglePublic(player, portal, false, contents)));
         else
-            contents.set(1, 2, ClickableItem.of(MenuItems.accessPrivate, e -> togglePublic(player, portal, true, contents)));
+            contents.set(1, 2, ClickableItem.of(MenuItems.accessPrivate(player), e -> togglePublic(player, portal, true, contents)));
         
         portal.setIsPublic(isPublic);
         dataManager.save(portal);

@@ -34,24 +34,24 @@ public class PortalAccessPlayers implements InventoryProvider {
         this.portal = portal;
     }
 
-    private void load() {
+    private void load(Player player) {
         this.inventory = SmartInventory.builder()
             .manager(invManager)
             .provider(new PortalAccessPlayers(portal))
             .size(4, 9)
-            .title(Messages.get("gui.portal-settings.access-menu.access-players.gui-title"))
+            .title(Messages.get(player, "gui.portal-settings.access-menu.access-players.gui-title"))
             .build();
     }
 
     public void open(Player player, Portal portal) {
-        this.load();
+        this.load(player);
         player.closeInventory();
         this.inventory.open(player);
         plugin.handleClose.add(player);
     }
 
     public void open(Player player, Portal portal, int page) {
-        this.load();
+        this.load(player);
         this.inventory.open(player, page);
     }
 
@@ -69,8 +69,11 @@ public class PortalAccessPlayers implements InventoryProvider {
             item = SkullCreator.itemFromUuid(UUID.fromString(allowedPlayers.get(i)));
             String uuid = allowedPlayers.get(i);
             itemMeta = item.getItemMeta();
-            itemMeta.setDisplayName(Messages.getParam("gui.portal-settings.access-menu.access-players.item-names.player", "{1}", SurvivalCoreAPI.getFullNickFromUUIDString(uuid)));
-            itemMeta.setLore(Messages.getList("gui.portal-settings.access-menu.access-players.item-lores.player"));
+            itemMeta.setDisplayName(Messages.getParam(
+                    player, "gui.portal-settings.access-menu.access-players.item-names.player",
+                    "{1}", SurvivalCoreAPI.getFullNickFromUUIDString(uuid)
+            ));
+            itemMeta.setLore(Messages.getList(player, "gui.portal-settings.access-menu.access-players.item-lores.player"));
             item.setItemMeta(itemMeta);
 
             items[i] = ClickableItem.of(item, 
@@ -81,9 +84,9 @@ public class PortalAccessPlayers implements InventoryProvider {
         pagination.setItemsPerPage(27);
         pagination.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 0, 0));
 
-        contents.set(3, 2, ClickableItem.of(MenuItems.prevPage,
+        contents.set(3, 2, ClickableItem.of(MenuItems.prevPage(player),
             e -> open(player, portal, pagination.previous().getPage())));
-        contents.set(3, 6, ClickableItem.of(MenuItems.nextPage,
+        contents.set(3, 6, ClickableItem.of(MenuItems.nextPage(player),
             e -> open(player, portal, pagination.next().getPage())));
 
     }
@@ -95,7 +98,6 @@ public class PortalAccessPlayers implements InventoryProvider {
 
     public void removePlayerAccess(Player player, Portal portal, int page, String uuid) {
         plugin.handleClose.remove(player);
-
         portalManager.removePlayerAccess(portal, uuid);
         
         open(player, portal, page);

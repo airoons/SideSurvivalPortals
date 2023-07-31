@@ -76,7 +76,7 @@ safeBlocks:
   - SNOW_BLOCK
   - GRASS_BLOCK
 
-messages:
+default-messages:
   chat:
     not-in-portal: "&cTev ir jāatrodas portālā, lai izmantotu šo komandu!"
     no-create-permission: "&cTev nav atļauts izveidot šeit portālu!"
