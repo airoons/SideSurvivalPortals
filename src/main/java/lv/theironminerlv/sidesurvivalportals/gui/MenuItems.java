@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -151,6 +152,7 @@ public class MenuItems {
 
             itemMeta = item.getItemMeta();
             itemMeta.setLore(Messages.getList(player, "gui.portal-settings.change-icon.item-lores.icon"));
+            itemMeta.addItemFlags(ItemFlag.HIDE_ITEM_SPECIFICS);
             item.setItemMeta(itemMeta);
 
             result.add(item);

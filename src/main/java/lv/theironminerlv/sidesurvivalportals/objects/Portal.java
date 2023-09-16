@@ -6,9 +6,11 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import lv.theironminerlv.sidesurvivalportals.gui.MenuItems;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class Portal {
 
@@ -52,6 +54,9 @@ public class Portal {
         this.id = id;
 
         this.icon = new ItemStack(Material.valueOf(icon));
+        ItemMeta meta = this.getIcon().getItemMeta();
+        meta.addItemFlags(ItemFlag.HIDE_ITEM_SPECIFICS);
+        this.icon.setItemMeta(meta);
         this.desc = desc;
         this.allowedGroups = allowedGroups;
         this.allowedPlayers = allowedPlayers;
