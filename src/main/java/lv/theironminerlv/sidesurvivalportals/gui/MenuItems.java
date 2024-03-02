@@ -161,6 +161,27 @@ public class MenuItems {
         return result;
     }
 
+    public static List<ItemStack> availableColors(Player player) {
+        List<Material> configIcons = plugin.getPortalManager().allowedBlocks;
+        ItemStack item;
+
+        List<ItemStack> result = new ArrayList<>();
+        ItemMeta itemMeta;
+
+        for (Material configIcon : configIcons) {
+            item = new ItemStack(configIcon);
+
+            itemMeta = item.getItemMeta();
+            itemMeta.setLore(Messages.getList(player, "gui.portal-settings.change-color.select-color"));
+            itemMeta.addItemFlags(ItemFlag.HIDE_ITEM_SPECIFICS);
+            item.setItemMeta(itemMeta);
+
+            result.add(item);
+        }
+
+        return result;
+    }
+
     public static ItemStack accessPublic(Player player) {
         ItemStack item = accessPublic.clone();
         ItemMeta itemMeta = item.getItemMeta();
