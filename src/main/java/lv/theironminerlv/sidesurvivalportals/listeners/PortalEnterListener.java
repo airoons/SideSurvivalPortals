@@ -39,8 +39,8 @@ public class PortalEnterListener implements Listener {
             return;
         }
 
-        ProtectedRegion toRegion = portalManager.getRegionAt(to);
-        if ((toRegion == null) || (toRegion.equals(portalManager.getRegionAt(from))))
+        ProtectedRegion toRegion = portalManager.getPortalRegionAt(to);
+        if ((toRegion == null) || (toRegion.equals(portalManager.getPortalRegionAt(from))))
             return;
 
         if (!portalManager.isPortalAt(to))

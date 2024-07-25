@@ -13,14 +13,12 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 
 import lv.sidesurvival.SurvivalCoreBukkit;
-import lv.sidesurvival.api.SurvivalCoreAPI;
 import lv.sidesurvival.managers.ClaimManager;
-import lv.sidesurvival.managers.RedisManager;
 import lv.sidesurvival.objects.Claim;
 import lv.sidesurvival.objects.ClaimOwner;
+import lv.sidesurvival.objects.SafeZone;
 import lv.theironminerlv.sidesurvivalportals.listeners.CrossServerHandler;
 import lv.theironminerlv.sidesurvivalportals.objects.PortalRequest;
-import lv.theironminerlv.sidesurvivalportals.utils.LocationSerialization;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -148,7 +146,7 @@ public class PortalManager {
     }
 
     public boolean isPortalAt(Location loc) {
-        ProtectedRegion region = getRegionAt(loc);
+        ProtectedRegion region = getPortalRegionAt(loc);
 
         if (region == null)
             return false;
@@ -163,7 +161,7 @@ public class PortalManager {
     }
 
     public Portal getPortalAt(Location loc) {
-        ProtectedRegion region = getRegionAt(loc);
+        ProtectedRegion region = getPortalRegionAt(loc);
         if ((region != null) && (region.getId().contains("portal_"))) {
 
             return PortalData.CACHED_PORTALS.get(region.getId());
@@ -172,8 +170,7 @@ public class PortalManager {
         return null;
     }
 
-    // Returns first WorldGuard region found at given location
-    public ProtectedRegion getRegionAt(Location loc) {
+    public ProtectedRegion getPortalRegionAt(Location loc) {
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         RegionManager regionManager = container.get(BukkitAdapter.adapt(loc.getWorld()));
         if (regionManager == null)
@@ -183,11 +180,12 @@ public class PortalManager {
         if (applicable.size() < 1)
             return null;
 
-        ProtectedRegion region = applicable.iterator().next();
-        if (region == null)
-            return null;
+        for (ProtectedRegion region : applicable.getRegions()) {
+            if (region.getId().startsWith("portal"))
+                return region;
+        }
 
-        return region;
+        return null;
     }
 
     public void removeRegion(String id, World world) {
@@ -275,6 +273,9 @@ public class PortalManager {
 
     public void fakePortalBlocks(Player player, Portal portal, boolean enable) {
         if (!PortalData.portalExists(portal))
+            return;
+
+        if (ClaimManager.get().getOwnerAt(new Claim(player.getLocation())) instanceof SafeZone)
             return;
 
         ArrayList<Location> portalBlocks = BlockUtils.getBlocksBetween(portal.getPos1(), portal.getPos2());
