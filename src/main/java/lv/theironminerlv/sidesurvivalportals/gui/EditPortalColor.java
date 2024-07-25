@@ -1,5 +1,7 @@
 package lv.theironminerlv.sidesurvivalportals.gui;
 
+import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -21,7 +23,7 @@ import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
 import java.util.List;
 
-public class EditPortalIcon implements InventoryProvider {
+public class EditPortalColor implements InventoryProvider {
 
     private static final SurvivalPortals plugin = SurvivalPortals.getInstance();
     private final InventoryManager invManager = plugin.getInvManager();
@@ -30,17 +32,17 @@ public class EditPortalIcon implements InventoryProvider {
     private SmartInventory inventory;
     private Portal portal;
 
-    public EditPortalIcon(Portal portal) {
+    public EditPortalColor(Portal portal) {
         this.portal = portal;
     }
 
     private void load(Player player, Portal portal) {
         this.inventory = SmartInventory.builder()
-            .manager(invManager)
-            .provider(new EditPortalIcon(portal))
-            .size(6, 9)
-            .title(Messages.get(player, "gui.portal-settings.change-icon.gui-title"))
-            .build();
+                .manager(invManager)
+                .provider(new EditPortalColor(portal))
+                .size(2, 9)
+                .title(Messages.get(player, "gui.portal-settings.change-color.gui-title"))
+                .build();
     }
 
     public void open(Player player, Portal portal) {
@@ -53,28 +55,26 @@ public class EditPortalIcon implements InventoryProvider {
 
     @Override
     public void init(Player player, InventoryContents contents) {
-        ItemStack item;
-        ItemMeta itemMeta;
         Pagination pagination = contents.pagination();
 
-        List<ItemStack> available = MenuItems.availableIcons(player);
+        List<ItemStack> available = MenuItems.availableColors(player);
         int iconAmount = available.size();
 
         ClickableItem[] items = new ClickableItem[iconAmount];
 
         for(int i = 0; i < items.length; i++) {
-            item = available.get(i).clone();
+            ItemStack item = available.get(i).clone();
             ItemStack loopIcon = item.clone();
-            
+
             if (portal.getIcon().getType() == item.getType()) {
                 item.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
-                itemMeta = item.getItemMeta();
-                itemMeta.setLore(Messages.getList(player, "gui.portal-settings.change-icon.item-lores.current-icon"));
+                ItemMeta itemMeta = item.getItemMeta();
+                itemMeta.setLore(Messages.getList(player, "gui.portal-settings.change-color.current-color"));
                 itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 item.setItemMeta(itemMeta);
                 items[i] = ClickableItem.empty(item);
             } else {
-                items[i] = ClickableItem.of(item, e -> changePortalIcon(player, portal, loopIcon));
+                items[i] = ClickableItem.of(item, e -> changePortalColor(player, portal, loopIcon));
             }
         }
 
@@ -88,17 +88,20 @@ public class EditPortalIcon implements InventoryProvider {
 
     }
 
-    public void changePortalIcon(Player player, Portal portal, ItemStack icon) {
+    public void changePortalColor(Player player, Portal portal, ItemStack color) {
         if (!menuManager.portalPermCheck(player, portal)) {
             player.closeInventory();
             return;
         }
 
-        portal.setIcon(icon);
-        dataManager.save(portal);
+        plugin.getPortalManager().setPortalGlass(
+                portal.getPos1(),
+                portal.getPos2(),
+                portal.getNorthSouth(),
+                color.getType()
+        );
 
         plugin.handleClose.remove(player);
-        
         menuManager.openEditPortal(player, portal);
     }
 }

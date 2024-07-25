@@ -5,15 +5,14 @@ import lv.sidesurvival.events.GroupDisbandEvent;
 import lv.sidesurvival.managers.ClaimManager;
 import lv.sidesurvival.objects.Claim;
 import lv.sidesurvival.objects.ClaimOwner;
-import org.bukkit.Material;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-
 import lv.theironminerlv.sidesurvivalportals.SurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.managers.PermissionManager;
 import lv.theironminerlv.sidesurvivalportals.managers.PortalManager;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
+import org.bukkit.Material;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 
 public class PortalBreakListener implements Listener {
 
@@ -27,7 +26,7 @@ public class PortalBreakListener implements Listener {
 
     @EventHandler
     public void onPortalBlockBreak(BlockBreakEvent event) {
-        if (event.getBlock().getType() == Material.PURPLE_STAINED_GLASS_PANE) {
+        if (portalManager.allowedBlocks.contains(event.getBlock().getType())) {
             if (portalManager.isPortalAt(event.getBlock().getLocation())) {
                 event.setCancelled(true);
 

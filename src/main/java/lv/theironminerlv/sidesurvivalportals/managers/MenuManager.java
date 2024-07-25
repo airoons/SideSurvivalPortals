@@ -2,18 +2,11 @@ package lv.theironminerlv.sidesurvivalportals.managers;
 
 import lv.sidesurvival.managers.ClaimManager;
 import lv.sidesurvival.objects.ClaimOwner;
+import lv.theironminerlv.sidesurvivalportals.gui.*;
 import org.bukkit.entity.Player;
 
 import lv.theironminerlv.sidesurvivalportals.SurvivalPortals;
 import lv.theironminerlv.sidesurvivalportals.data.PortalData;
-import lv.theironminerlv.sidesurvivalportals.gui.EditPortalAccess;
-import lv.theironminerlv.sidesurvivalportals.gui.EditPortalIcon;
-import lv.theironminerlv.sidesurvivalportals.gui.EditPortalMenu;
-import lv.theironminerlv.sidesurvivalportals.gui.MainMenu;
-import lv.theironminerlv.sidesurvivalportals.gui.PortalAccessGroups;
-import lv.theironminerlv.sidesurvivalportals.gui.PortalAccessPlayers;
-import lv.theironminerlv.sidesurvivalportals.gui.PrivatePortalsMenu;
-import lv.theironminerlv.sidesurvivalportals.gui.PublicPortalsMenu;
 import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 
@@ -81,6 +74,16 @@ public class MenuManager {
         plugin.handleClose.remove(player);
 
         EditPortalIcon gui = new EditPortalIcon(portal);
+        gui.open(player, portal);
+    }
+
+    public void openEditPortalColor(Player player, Portal portal) {
+        if (!portalPermCheck(player, portal))
+            return;
+
+        plugin.handleClose.remove(player);
+
+        EditPortalColor gui = new EditPortalColor(portal);
         gui.open(player, portal);
     }
 

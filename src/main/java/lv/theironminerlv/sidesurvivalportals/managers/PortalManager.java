@@ -1,7 +1,5 @@
 package lv.theironminerlv.sidesurvivalportals.managers;
 
-import java.util.*;
-
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
@@ -11,14 +9,19 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
-
 import lv.sidesurvival.SurvivalCoreBukkit;
 import lv.sidesurvival.managers.ClaimManager;
 import lv.sidesurvival.objects.Claim;
 import lv.sidesurvival.objects.ClaimOwner;
+import lv.theironminerlv.sidesurvivalportals.SurvivalPortals;
+import lv.theironminerlv.sidesurvivalportals.data.PortalData;
 import lv.sidesurvival.objects.SafeZone;
 import lv.theironminerlv.sidesurvivalportals.listeners.CrossServerHandler;
+import lv.theironminerlv.sidesurvivalportals.objects.Portal;
 import lv.theironminerlv.sidesurvivalportals.objects.PortalRequest;
+import lv.theironminerlv.sidesurvivalportals.utils.BlockUtils;
+import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
+import lv.theironminerlv.sidesurvivalportals.utils.Messages;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -26,15 +29,11 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Orientable;
 import org.bukkit.block.data.type.GlassPane;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import lv.theironminerlv.sidesurvivalportals.SurvivalPortals;
-import lv.theironminerlv.sidesurvivalportals.data.PortalData;
-import lv.theironminerlv.sidesurvivalportals.objects.Portal;
-import lv.theironminerlv.sidesurvivalportals.utils.BlockUtils;
-import lv.theironminerlv.sidesurvivalportals.utils.ConvertUtils;
-import lv.theironminerlv.sidesurvivalportals.utils.Messages;
+import java.util.*;
 
 public class PortalManager {
 
@@ -44,6 +43,25 @@ public class PortalManager {
     public Map<UUID, BukkitTask> tasks = new HashMap<>();
     public List<Material> safeBlocks = new ArrayList<>();
     private static final Map<UUID, Portal> requests = new HashMap<>();
+    public final List<Material> allowedBlocks = List.of(
+            Material.GLASS_PANE,
+            Material.WHITE_STAINED_GLASS_PANE,
+            Material.LIGHT_GRAY_STAINED_GLASS_PANE,
+            Material.GRAY_STAINED_GLASS_PANE,
+            Material.BLACK_STAINED_GLASS_PANE,
+            Material.BROWN_STAINED_GLASS_PANE,
+            Material.RED_STAINED_GLASS_PANE,
+            Material.ORANGE_STAINED_GLASS_PANE,
+            Material.YELLOW_STAINED_GLASS_PANE,
+            Material.LIME_STAINED_GLASS_PANE,
+            Material.GREEN_STAINED_GLASS_PANE,
+            Material.CYAN_STAINED_GLASS_PANE,
+            Material.LIGHT_BLUE_STAINED_GLASS_PANE,
+            Material.BLUE_STAINED_GLASS_PANE,
+            Material.PURPLE_STAINED_GLASS_PANE,
+            Material.MAGENTA_STAINED_GLASS_PANE,
+            Material.PINK_STAINED_GLASS_PANE
+    );
 
     public PortalManager(SurvivalPortals plugin) {
         this.plugin = plugin;
@@ -118,14 +136,14 @@ public class PortalManager {
 
     // Used to place purple stained glass pane blocks between positions,
     // IsNorthSouth controls how panes are going to connect to adjacent blocks
-    private void setPortalGlass(Location pos1, Location pos2, boolean isNorthSouth) {
+    public void setPortalGlass(Location pos1, Location pos2, boolean isNorthSouth, Material color) {
         ArrayList<Location> portalBlocks = BlockUtils.getBlocksBetween(pos1, pos2);
         Block loopBlock;
 
         for (Location blockLoc : portalBlocks) {
             loopBlock = blockLoc.getBlock();
             if (loopBlock.getType() != Material.OBSIDIAN) {
-                loopBlock.setType(Material.PURPLE_STAINED_GLASS_PANE);
+                loopBlock.setType(color);
                 BlockData data = loopBlock.getBlockData();
                 if (isNorthSouth) {
                     ((GlassPane) data).setFace(BlockFace.NORTH, true);
@@ -139,6 +157,10 @@ public class PortalManager {
                 loopBlock.getState().update(true);
             }
         }
+    }
+
+    private void setPortalGlass(Location pos1, Location pos2, boolean isNorthSouth) {
+        setPortalGlass(pos1, pos2, isNorthSouth, Material.PURPLE_STAINED_GLASS_PANE);
     }
 
     private String generatePortalName(Location loc, World world) {
@@ -273,9 +295,6 @@ public class PortalManager {
 
     public void fakePortalBlocks(Player player, Portal portal, boolean enable) {
         if (!PortalData.portalExists(portal))
-            return;
-
-        if (ClaimManager.get().getOwnerAt(new Claim(player.getLocation())) instanceof SafeZone)
             return;
 
         ArrayList<Location> portalBlocks = BlockUtils.getBlocksBetween(portal.getPos1(), portal.getPos2());
