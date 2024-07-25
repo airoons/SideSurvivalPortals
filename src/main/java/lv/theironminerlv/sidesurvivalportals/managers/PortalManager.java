@@ -297,6 +297,9 @@ public class PortalManager {
         if (!PortalData.portalExists(portal))
             return;
 
+        if (ClaimManager.get().getOwnerAt(new Claim(player.getLocation())) instanceof SafeZone)
+            return;
+
         ArrayList<Location> portalBlocks = BlockUtils.getBlocksBetween(portal.getPos1(), portal.getPos2());
         Orientable fakePortal = (Orientable) Material.NETHER_PORTAL.createBlockData();
 
