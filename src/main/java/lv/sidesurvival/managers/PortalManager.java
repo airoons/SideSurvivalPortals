@@ -9,19 +9,15 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
-import lv.sidesurvival.SurvivalCoreBukkit;
 import lv.sidesurvival.SurvivalPortals;
-import lv.sidesurvival.listeners.CrossServerHandler;
-import lv.sidesurvival.managers.ClaimManager;
+import lv.sidesurvival.data.PortalData;
 import lv.sidesurvival.objects.Claim;
 import lv.sidesurvival.objects.ClaimOwner;
-import lv.sidesurvival.utils.Messages;
-import lv.sidesurvival.data.PortalData;
-import lv.sidesurvival.objects.SafeZone;
 import lv.sidesurvival.objects.Portal;
-import lv.sidesurvival.objects.PortalRequest;
+import lv.sidesurvival.objects.SafeZone;
 import lv.sidesurvival.utils.BlockUtils;
 import lv.sidesurvival.utils.ConvertUtils;
+import lv.sidesurvival.utils.Messages;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -41,7 +37,6 @@ public class PortalManager {
 
     public Map<UUID, BukkitTask> tasks = new HashMap<>();
     public List<Material> safeBlocks = new ArrayList<>();
-    private static final Map<UUID, Portal> requests = new HashMap<>();
     public final List<Material> allowedBlocks = List.of(
             Material.GLASS_PANE,
             Material.WHITE_STAINED_GLASS_PANE,
@@ -323,16 +318,11 @@ public class PortalManager {
         if (!PortalData.portalExists(portal))
             return;
 
-        if (portal.getPos1() != null) { // Portal is in this server
+        if (portal.getPos1() != null) {
             if (getFinalSafeLoc(player, portal) == null)
                 return;
 
             teleportAccept(player, portal, true);
-
-        } else { // If in a different server
-            PortalRequest reply = new PortalRequest(player.getName(), player.getUniqueId().toString(), portal.getId());
-            CrossServerHandler.requests.put(player.getUniqueId().toString(), portal);
-            SurvivalCoreBukkit.getInstance().getProtonManager().broadcast("survivalportals", "locationSafeRequest", reply);
         }
     }
 
@@ -341,11 +331,6 @@ public class PortalManager {
             if (player.hasPermission("sidesurvivalportals.tp.bypass")) {
                 if (portal.getPos1() != null) {
                     forceTeleportToPortal(player, portal);
-                } else {
-                    PortalRequest reply = new PortalRequest(player.getName(), player.getUniqueId().toString(), portal.getId());
-                    CrossServerHandler.requests.put(player.getUniqueId().toString(), portal);
-                    requests.put(player.getUniqueId(), portal);
-                    SurvivalCoreBukkit.getInstance().getProtonManager().broadcast("survivalportals", "locationSafeRequest", reply);
                 }
                 return;
             }
@@ -372,11 +357,6 @@ public class PortalManager {
                                 if (getFinalSafeLoc(player, portal) == null)
                                     return;
                                 teleportAccept(player, portal, false);
-                            } else {
-                                PortalRequest reply = new PortalRequest(player.getName(), player.getUniqueId().toString(), portal.getId());
-                                CrossServerHandler.requests.put(player.getUniqueId().toString(), portal);
-                                requests.put(player.getUniqueId(), portal);
-                                SurvivalCoreBukkit.getInstance().getProtonManager().broadcast("survivalportals", "locationSafeRequest", reply);
                             }
                             return;
                         }
@@ -404,20 +384,6 @@ public class PortalManager {
             }
         } else {
             forceTeleportToPortal(player, portal);
-        }
-    }
-
-    public void crossServerPortalSafe(Player player, Portal portal, boolean safe) {
-        if (!safe) {
-            player.sendMessage(Messages.get(player, "chat.teleport-not-safe"));
-            return;
-        }
-
-        if (!requests.containsKey(player.getUniqueId())) {
-            teleportAccept(player, portal, true);
-        } else {
-            PortalRequest request = new PortalRequest(player.getName(), player.getUniqueId().toString(), portal.getId());
-            SurvivalCoreBukkit.getInstance().getProtonManager().broadcast("survivalportals", "teleportRequest", request);
         }
     }
 
@@ -524,16 +490,10 @@ public class PortalManager {
         if (!isNether) {
             if (PortalData.getSpawnLocation() != null) {
                 player.teleport(PortalData.getSpawnLocation());
-            } else {
-                PortalRequest request = new PortalRequest(player.getName(), player.getUniqueId().toString(), "0");
-                SurvivalCoreBukkit.getInstance().getProtonManager().send("survivalportals", "teleportRequest", request, PortalData.getWorldSpawnServer());
             }
         } else {
             if (PortalData.getNetherSpawnLocation() != null) {
                 player.teleport(PortalData.getNetherSpawnLocation());
-            } else {
-                PortalRequest request = new PortalRequest(player.getName(), player.getUniqueId().toString(), "-1");
-                SurvivalCoreBukkit.getInstance().getProtonManager().send("survivalportals", "teleportRequest", request, PortalData.getNetherSpawnServer());
             }
         }
     }

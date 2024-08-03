@@ -4,11 +4,12 @@ import java.util.List;
 import java.util.UUID;
 
 import lv.sidesurvival.SurvivalPortals;
-import lv.sidesurvival.api.SurvivalCoreAPI;
 
 import lv.sidesurvival.managers.PortalManager;
 import lv.sidesurvival.objects.Portal;
 import lv.sidesurvival.utils.Messages;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -66,18 +67,23 @@ public class PortalAccessPlayers implements InventoryProvider {
         ClickableItem[] items = new ClickableItem[allowedPlayers.size()];
 
         for(int i = 0; i < items.length; i++) {
-            item = SkullCreator.itemFromUuid(UUID.fromString(allowedPlayers.get(i)));
-            String uuid = allowedPlayers.get(i);
+            String uuidStr = allowedPlayers.get(i);
+            UUID uuid = UUID.fromString(uuidStr);
+            OfflinePlayer offline = Bukkit.getOfflinePlayer(uuid);
+            if (!offline.hasPlayedBefore())
+                continue;
+
+            item = SkullCreator.itemFromUuid(uuid);
             itemMeta = item.getItemMeta();
             itemMeta.setDisplayName(Messages.getParam(
                     player, "gui.portal-settings.access-menu.access-players.item-names.player",
-                    "{1}", SurvivalCoreAPI.getFullNickFromUUIDString(uuid)
+                    "{1}", offline.getName()
             ));
             itemMeta.setLore(Messages.getList(player, "gui.portal-settings.access-menu.access-players.item-lores.player"));
             item.setItemMeta(itemMeta);
 
             items[i] = ClickableItem.of(item, 
-                e -> removePlayerAccess(player, portal, pagination.getPage(), uuid));
+                e -> removePlayerAccess(player, portal, pagination.getPage(), uuidStr));
         }
 
         pagination.setItems(items);

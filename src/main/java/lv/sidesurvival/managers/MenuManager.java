@@ -2,10 +2,8 @@ package lv.sidesurvival.managers;
 
 import lv.sidesurvival.SurvivalPortals;
 import lv.sidesurvival.gui.*;
-import lv.sidesurvival.managers.ClaimManager;
 import lv.sidesurvival.objects.ClaimOwner;
 import lv.sidesurvival.utils.Messages;
-import lv.theironminerlv.sidesurvivalportals.gui.*;
 import org.bukkit.entity.Player;
 
 import lv.sidesurvival.data.PortalData;

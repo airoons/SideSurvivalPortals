@@ -55,7 +55,7 @@ public class Portal {
 
         this.icon = new ItemStack(Material.valueOf(icon));
         ItemMeta meta = this.getIcon().getItemMeta();
-        meta.addItemFlags(ItemFlag.HIDE_ITEM_SPECIFICS);
+        meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         this.icon.setItemMeta(meta);
         this.desc = desc;
         this.allowedGroups = allowedGroups;

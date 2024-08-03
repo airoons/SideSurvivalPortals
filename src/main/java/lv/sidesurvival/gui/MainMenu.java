@@ -52,8 +52,7 @@ public class MainMenu implements InventoryProvider {
         contents.set(0, 1, ClickableItem.empty(MenuItems.blackPane));
         contents.set(0, 4, ClickableItem.empty(MenuItems.lightGrayPane));
         contents.set(0, 7, ClickableItem.empty(MenuItems.blackPane));
-        if (!player.hasPermission("group.bedrock"))
-            contents.set(1, 0, ClickableItem.empty(MenuItems.blackPane));
+        contents.set(1, 0, ClickableItem.empty(MenuItems.blackPane));
         contents.set(1, 8, ClickableItem.empty(MenuItems.blackPane));
         contents.set(2, 1, ClickableItem.empty(MenuItems.blackPane));
         contents.set(2, 4, ClickableItem.empty(MenuItems.lightGrayPane));
@@ -63,21 +62,9 @@ public class MainMenu implements InventoryProvider {
         if (owner == null || !permissionManager.canEditPortal(player, owner, portal.getPos1())) {
             offset = 1;
         }
-        if (!player.hasPermission("group.bedrock")) {
-            contents.set(1, 1 + offset, ClickableItem.of(MenuItems.goSpawn(player), e -> {
-                if (e.isRightClick())
-                    portalManager.teleportToSpawn(player, true);
-                else
-                    portalManager.teleportToSpawn(player, false);
-            }));
-        } else {
-            contents.set(1, offset, ClickableItem.of(MenuItems.goNetherBedrock(player), e -> {
-                portalManager.teleportToSpawn(player, true);
-            }));
-            contents.set(1, 1 + offset, ClickableItem.of(MenuItems.goSpawnBedrock(player), e -> {
-                portalManager.teleportToSpawn(player, false);
-            }));
-        }
+        contents.set(1, 1 + offset, ClickableItem.of(MenuItems.goSpawn(player), e -> {
+            portalManager.teleportToSpawn(player, e.isRightClick());
+        }));
 
         item = SkullCreator.itemFromUuid(player.getUniqueId());
         meta = item.getItemMeta();

@@ -1,25 +1,22 @@
 package lv.sidesurvival.managers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
-import lv.sidesurvival.SurvivalCoreBukkit;
 import lv.sidesurvival.SurvivalPortals;
-import lv.sidesurvival.managers.ClaimManager;
+import lv.sidesurvival.data.PortalData;
 import lv.sidesurvival.objects.ClaimOwner;
+import lv.sidesurvival.objects.Portal;
 import lv.sidesurvival.utils.LocationSerialization;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-
-import lv.sidesurvival.data.PortalData;
-import lv.sidesurvival.objects.Portal;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataManager {
 
@@ -56,13 +53,6 @@ public class DataManager {
                 } else {
                     col.insertOne(doc);
                 }
-
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        SurvivalCoreBukkit.getInstance().getProtonManager().broadcast("survivalportals", "portalUpdated", portal.getId());
-                    }
-                }.runTask(plugin);
             }
         }.runTaskAsynchronously(plugin);
     }
@@ -83,13 +73,6 @@ public class DataManager {
 
                 Document update = new Document("$set", doc);
                 col.updateOne(found, update, new UpdateOptions().upsert(true));
-
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        SurvivalCoreBukkit.getInstance().getProtonManager().broadcast("survivalportals", "portalUpdated", portal.getId());
-                    }
-                }.runTask(plugin);
             }
         }.runTaskAsynchronously(plugin);
     }
@@ -149,38 +132,5 @@ public class DataManager {
                     PortalData.addPortal(portal, false);
             }
         }
-    }
-
-    public void updateOne(String portalId) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                Document doc = MongoManager.get().getPortalCollection().find(Filters.eq("_id", portalId)).first();
-                if (doc == null)
-                    return;
-
-                String owner = doc.getString("ownerId");
-
-                String locStr = doc.getString("pos1");
-                Location pos1 = LocationSerialization.getLocationFromString(locStr);
-                Location pos2 = LocationSerialization.getLocationFromString(doc.getString("pos2"));
-                String worldStr = doc.getString("world");
-                World world = Bukkit.getWorld(worldStr);
-                boolean isNorthSouth = doc.getBoolean("isNorthSouth");
-                boolean isPublic = doc.getBoolean("isPublic");
-                String icon = doc.getString("settings-icon");
-                String desc = doc.getString("settings-desc");
-
-                List<String> allowedGroups = doc.getList("settings-allowedGroups", String.class, new ArrayList<>());
-                List<String> allowedPlayers = doc.getList("settings-allowedPlayers", String.class, new ArrayList<>());
-
-                Portal portal = new Portal(pos1, pos2, world, locStr, worldStr, isNorthSouth, isPublic, owner, doc.getString("_id"), icon, desc, allowedGroups, allowedPlayers);
-                ClaimOwner claimOwner = ClaimManager.get().getOwnerById(owner);
-                if (claimOwner == null)
-                    return;
-
-                PortalData.updatePortal(portal);
-            }
-        }.runTaskAsynchronously(plugin);
     }
 }

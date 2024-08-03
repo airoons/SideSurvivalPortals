@@ -1,6 +1,5 @@
 package lv.sidesurvival.managers;
 
-import lv.sidesurvival.managers.PlayerManager;
 import lv.sidesurvival.objects.CPlayer;
 import lv.sidesurvival.objects.Claim;
 import lv.sidesurvival.objects.ClaimOwner;

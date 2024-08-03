@@ -1,16 +1,5 @@
 package lv.sidesurvival.gui;
 
-import lv.sidesurvival.SurvivalPortals;
-import lv.sidesurvival.managers.DataManager;
-import lv.sidesurvival.managers.MenuManager;
-import lv.sidesurvival.objects.Portal;
-import lv.sidesurvival.utils.Messages;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.InventoryManager;
 import fr.minuskube.inv.SmartInventory;
@@ -18,6 +7,14 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
+import lv.sidesurvival.SurvivalPortals;
+import lv.sidesurvival.managers.DataManager;
+import lv.sidesurvival.managers.MenuManager;
+import lv.sidesurvival.objects.Portal;
+import lv.sidesurvival.utils.Messages;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
@@ -65,10 +62,9 @@ public class EditPortalColor implements InventoryProvider {
             ItemStack loopIcon = item.clone();
 
             if (portal.getIcon().getType() == item.getType()) {
-                item.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
                 ItemMeta itemMeta = item.getItemMeta();
+                itemMeta.setEnchantmentGlintOverride(true);
                 itemMeta.setLore(Messages.getList(player, "gui.portal-settings.change-color.current-color"));
-                itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 item.setItemMeta(itemMeta);
                 items[i] = ClickableItem.empty(item);
             } else {

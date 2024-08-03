@@ -152,7 +152,7 @@ public class MenuItems {
 
             itemMeta = item.getItemMeta();
             itemMeta.setLore(Messages.getList(player, "gui.portal-settings.change-icon.item-lores.icon"));
-            itemMeta.addItemFlags(ItemFlag.HIDE_ITEM_SPECIFICS);
+            itemMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
             item.setItemMeta(itemMeta);
 
             result.add(item);
@@ -173,7 +173,7 @@ public class MenuItems {
 
             itemMeta = item.getItemMeta();
             itemMeta.setLore(Messages.getList(player, "gui.portal-settings.change-color.select-color"));
-            itemMeta.addItemFlags(ItemFlag.HIDE_ITEM_SPECIFICS);
+            itemMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
             item.setItemMeta(itemMeta);
 
             result.add(item);

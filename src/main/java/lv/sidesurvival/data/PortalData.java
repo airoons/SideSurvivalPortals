@@ -1,10 +1,5 @@
 package lv.sidesurvival.data;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
-import lv.sidesurvival.SurvivalCoreBukkit;
 import lv.sidesurvival.SurvivalPortals;
 import lv.sidesurvival.managers.DataManager;
 import lv.sidesurvival.objects.Portal;
@@ -12,22 +7,22 @@ import lv.sidesurvival.utils.LocationSerialization;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
 public class PortalData {
 
     private static DataManager dataManager;
     public static Map<String, Portal> CACHED_PORTALS = new ConcurrentHashMap<>();
 
-    private static String worldSpawnServer;
     private static Location worldSpawn;
-    private static String netherSpawnServer;
     private static Location netherSpawn;
 
     public PortalData(SurvivalPortals plugin) {
         dataManager = plugin.getDataManager();
 
-        worldSpawnServer = plugin.getConfiguration().getString("teleportLocs.spawn-server");
         worldSpawn = LocationSerialization.getLocationFromString(plugin.getConfiguration().getString("teleportLocs.spawn"));
-        netherSpawnServer = plugin.getConfiguration().getString("teleportLocs.netherspawn-server");
         netherSpawn = LocationSerialization.getLocationFromString(plugin.getConfiguration().getString("teleportLocs.netherspawn"));
     }
 
@@ -52,7 +47,6 @@ public class PortalData {
         CACHED_PORTALS.remove(portal.getId());
         if (db) {
             dataManager.delete(portal);
-            SurvivalCoreBukkit.getInstance().getProtonManager().broadcast("survivalportals", "portalDeleted", portal.getId());
         }
     }
 
@@ -66,14 +60,6 @@ public class PortalData {
         return CACHED_PORTALS.entrySet().stream()
         .filter(map -> map.getValue().getOwner().equals(ownerId))
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-
-    public static String getWorldSpawnServer() {
-        return worldSpawnServer;
-    }
-
-    public static String getNetherSpawnServer() {
-        return netherSpawnServer;
     }
 
     public static Location getSpawnLocation() {

@@ -2,31 +2,25 @@ package lv.sidesurvival.commands;
 
 import lv.side.lang.api.LangAPI;
 import lv.sidesurvival.SurvivalPortals;
-import lv.sidesurvival.api.SurvivalCoreAPI;
-import lv.sidesurvival.managers.ClaimManager;
-import lv.sidesurvival.managers.DataManager;
-import lv.sidesurvival.managers.GroupManager;
-import lv.sidesurvival.managers.PermissionManager;
-import lv.sidesurvival.managers.PortalManager;
+import lv.sidesurvival.managers.*;
 import lv.sidesurvival.objects.ClaimOwner;
 import lv.sidesurvival.objects.Group;
 import lv.sidesurvival.objects.Portal;
 import lv.sidesurvival.utils.Config;
 import lv.sidesurvival.utils.Messages;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class PortalCommand implements CommandExecutor, TabExecutor {
 
@@ -171,13 +165,9 @@ public class PortalCommand implements CommandExecutor, TabExecutor {
                             Player addPlayer = Bukkit.getPlayer(input);
                             String addUUID = addPlayer != null ? addPlayer.getUniqueId().toString() : null;
 
-                            if (addPlayer == null || !addPlayer.isOnline() || !addPlayer.getName().equalsIgnoreCase(input)) {
-                                if (SurvivalCoreAPI.getVisiblePlayers().contains(input))
-                                    addUUID = SurvivalCoreAPI.getUUIDStringFromNick(input);
-                                else {
-                                    player.sendMessage(Messages.get(player, "chat.commands.add-remove.error-not-online"));
-                                    return true;
-                                }
+                            if (addPlayer == null || !addPlayer.isOnline()) {
+                                player.sendMessage(Messages.get(player, "chat.commands.add-remove.error-not-online"));
+                                return true;
                             }
 
                             List<String> allowedPlayers = portal.getAllowedPlayers();
@@ -231,13 +221,15 @@ public class PortalCommand implements CommandExecutor, TabExecutor {
 
                             return true;
                         } else {
-                            String remUUID = SurvivalCoreAPI.getUUIDStringFromNick(input);
+                            OfflinePlayer offline = Bukkit.getOfflinePlayer(input);
 
-                            if (remUUID == null) {
+                            if (!offline.hasPlayedBefore()) {
                                 player.sendMessage(Messages.get(player, "chat.commands.add-remove.error-hasnt-joined"));
                                 return true;
                             }
-                            
+
+                            String remUUID = offline.getUniqueId().toString();
+
                             if (!portal.getAllowedPlayers().contains(remUUID)) {
                                 player.sendMessage(Messages.get(player, "chat.commands.add-remove.error-not-added-player"));
                                 return true;

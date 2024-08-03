@@ -1,13 +1,13 @@
 author: TheIronMinerLv
-website: www.side.lv
+website: www.siderealms.com
 name: SurvivalPortals
 description: Plugin for handling portal stuff in Side Survival server
 
-main: lv.theironminerlv.sidesurvivalportals.SurvivalPortals
-version: 1.0
-api-version: '1.20'
+main: lv.sidesurvival.SurvivalPortals
+version: 2.0
+api-version: '1.21'
 load: POSTWORLD
-depend: [SideLang, WorldGuard, SurvivalCoreBukkit, SurvivalZemes, Proton]
+depend: [SideLang, WorldGuard, SurvivalZemes]
 
 commands:
   portal:
