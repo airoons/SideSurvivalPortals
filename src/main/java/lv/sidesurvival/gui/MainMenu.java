@@ -32,8 +32,12 @@ public class MainMenu implements InventoryProvider {
     }
 
     private void load(Player player, Portal portal) {
-        this.inventory = SmartInventory.builder().manager(invManager).provider(new MainMenu(portal)).size(3, 9)
-                .title(Messages.get(player, "gui.main-menu.gui-title")).build();
+        this.inventory = SmartInventory.builder()
+                .manager(invManager)
+                .provider(new MainMenu(portal))
+                .size(1, 9)
+                .title(Messages.get(player, "gui.main-menu.gui-title"))
+                .build();
     }
 
     public void open(Player player, Portal portal) {
@@ -48,21 +52,11 @@ public class MainMenu implements InventoryProvider {
         ItemMeta meta;
         int offset = 0;
 
-        contents.fillBorders(ClickableItem.empty(MenuItems.grayPane));
-        contents.set(0, 1, ClickableItem.empty(MenuItems.blackPane));
-        contents.set(0, 4, ClickableItem.empty(MenuItems.lightGrayPane));
-        contents.set(0, 7, ClickableItem.empty(MenuItems.blackPane));
-        contents.set(1, 0, ClickableItem.empty(MenuItems.blackPane));
-        contents.set(1, 8, ClickableItem.empty(MenuItems.blackPane));
-        contents.set(2, 1, ClickableItem.empty(MenuItems.blackPane));
-        contents.set(2, 4, ClickableItem.empty(MenuItems.lightGrayPane));
-        contents.set(2, 7, ClickableItem.empty(MenuItems.blackPane));
-
         ClaimOwner owner = ClaimManager.get().getOwnerById(portal.getOwner());
         if (owner == null || !permissionManager.canEditPortal(player, owner, portal.getPos1())) {
             offset = 1;
         }
-        contents.set(1, 1 + offset, ClickableItem.of(MenuItems.goSpawn(player), e -> {
+        contents.set(0, 1 + offset, ClickableItem.of(MenuItems.goSpawn(player), e -> {
             portalManager.teleportToSpawn(player, e.isRightClick());
         }));
 
@@ -71,14 +65,13 @@ public class MainMenu implements InventoryProvider {
         meta.setDisplayName(Messages.get(player, "gui.main-menu.item-names.private-portals"));
         meta.setLore(Messages.getList(player, "gui.main-menu.item-lores.private-portals"));
         item.setItemMeta(meta);
-        contents.set(1, 3 + offset, ClickableItem.of(item, e -> plugin.getMenuManager().openPrivate(player)));
+        contents.set(0, 3 + offset, ClickableItem.of(item, e -> plugin.getMenuManager().openPrivate(player)));
 
-        contents.set(1, 5 + offset,
+        contents.set(0, 5 + offset,
                 ClickableItem.of(MenuItems.pubPortals(player), e -> plugin.getMenuManager().openPublic(player)));
-        ;
 
         if (offset == 0) {
-            contents.set(1, 7, ClickableItem.of(MenuItems.portalSettings(player),
+            contents.set(0, 7, ClickableItem.of(MenuItems.portalSettings(player),
                     e -> plugin.getMenuManager().openEditPortal(player, portal)));
         }
     }

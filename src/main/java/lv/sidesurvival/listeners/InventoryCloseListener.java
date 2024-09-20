@@ -1,6 +1,7 @@
 package lv.sidesurvival.listeners;
 
 import lv.sidesurvival.SurvivalPortals;
+import lv.sidesurvival.gui.*;
 import lv.sidesurvival.managers.MenuManager;
 import lv.sidesurvival.managers.PortalManager;
 import lv.sidesurvival.objects.Portal;
@@ -13,13 +14,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import fr.minuskube.inv.InventoryManager;
 import fr.minuskube.inv.SmartInventory;
-import lv.sidesurvival.gui.EditPortalAccess;
-import lv.sidesurvival.gui.EditPortalIcon;
-import lv.sidesurvival.gui.EditPortalMenu;
-import lv.sidesurvival.gui.PortalAccessGroups;
-import lv.sidesurvival.gui.PortalAccessPlayers;
-import lv.sidesurvival.gui.PrivatePortalsMenu;
-import lv.sidesurvival.gui.PublicPortalsMenu;
 
 public class InventoryCloseListener implements Listener {
 
@@ -55,7 +49,7 @@ public class InventoryCloseListener implements Listener {
                         }
                     }.runTaskLater(plugin, 1);
                 }
-            } else if ((inv.getProvider() instanceof EditPortalIcon || inv.getProvider() instanceof EditPortalAccess) && plugin.handleClose.contains(player)) {
+            } else if ((inv.getProvider() instanceof EditPortalIcon || inv.getProvider() instanceof EditPortalAccess || inv.getProvider() instanceof EditPortalColor) && plugin.handleClose.contains(player)) {
                 Portal portal = portalManager.getPortalAt(player.getLocation());
 
                 if (portal != null) {

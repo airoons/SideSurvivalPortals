@@ -31,7 +31,7 @@ public class EditPortalMenu implements InventoryProvider {
         this.inventory = SmartInventory.builder()
             .manager(invManager)
             .provider(new EditPortalMenu(portal))
-            .size(3, 9)
+            .size(1, 9)
             .title(Messages.get(player, "gui.portal-settings.gui-title"))
             .build();
     }
@@ -46,32 +46,22 @@ public class EditPortalMenu implements InventoryProvider {
 
     @Override
     public void init(Player player, InventoryContents contents) {
-        contents.fillBorders(ClickableItem.empty(MenuItems.grayPane));
-        contents.set(0, 1, ClickableItem.empty(MenuItems.blackPane));
-        contents.set(0, 4, ClickableItem.empty(MenuItems.lightGrayPane));
-        contents.set(0, 7, ClickableItem.empty(MenuItems.blackPane));
-        contents.set(1, 0, ClickableItem.empty(MenuItems.blackPane));
-        contents.set(1, 8, ClickableItem.empty(MenuItems.blackPane));
-        contents.set(2, 1, ClickableItem.empty(MenuItems.blackPane));
-        contents.set(2, 4, ClickableItem.empty(MenuItems.lightGrayPane));
-        contents.set(2, 7, ClickableItem.empty(MenuItems.blackPane));
-
-        contents.set(1, 1, ClickableItem.of(MenuItems.editPortalAccess(player), e -> menuManager.openEditPortalAccess(player, portal)));
-        contents.set(1, 3, ClickableItem.of(MenuItems.editPortalDescr(player), e -> editPortalDescr(player, portal)));
+        contents.set(0, 1, ClickableItem.of(MenuItems.editPortalAccess(player), e -> menuManager.openEditPortalAccess(player, portal)));
+        contents.set(0, 3, ClickableItem.of(MenuItems.editPortalDescr(player), e -> editPortalDescr(player, portal)));
 
         ItemStack item = portal.getIcon().clone();
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(Messages.get(player, "gui.portal-settings.item-names.change-icon"));
         meta.setLore(Messages.getList(player, "gui.portal-settings.item-lores.change-icon"));
         item.setItemMeta(meta);
-        contents.set(1, 5, ClickableItem.of(item, e -> menuManager.openEditPortalIcon(player, portal)));
+        contents.set(0, 5, ClickableItem.of(item, e -> menuManager.openEditPortalIcon(player, portal)));
 
         ItemStack changePortalBlocksIcon = new ItemStack(Material.LIGHT_GRAY_DYE, 1);
         ItemMeta changePortalBlocksIconMeta = changePortalBlocksIcon.getItemMeta();
         changePortalBlocksIconMeta.setDisplayName(Messages.get(player, "gui.portal-settings.item-names.change-portal-color"));
         changePortalBlocksIconMeta.setLore(Messages.getList(player, "gui.portal-settings.item-lores.change-portal-color"));
         changePortalBlocksIcon.setItemMeta(changePortalBlocksIconMeta);
-        contents.set(1, 7, ClickableItem.of(changePortalBlocksIcon, e -> menuManager.openEditPortalColor(player, portal)));
+        contents.set(0, 7, ClickableItem.of(changePortalBlocksIcon, e -> menuManager.openEditPortalColor(player, portal)));
     }
 
     @Override

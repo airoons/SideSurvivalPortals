@@ -32,8 +32,8 @@ public class MenuItems {
             "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjFkZDRmZTRhNDI5YWJkNjY1ZGZkYjNlMjEzMjFkNmVmYTZhNmI1ZTdiOTU2ZGI5YzVkNTljOWVmYWIyNSJ9fX0");
     private static final ItemStack portalSettings = new ItemStack(Material.WRITABLE_BOOK);
 
-    private static final ItemStack prevPage = new ItemStack(Material.ARROW);
-    private static final ItemStack nextPage = new ItemStack(Material.ARROW);
+    private static final ItemStack prevPage = new ItemStack(Material.IRON_NUGGET);
+    private static final ItemStack nextPage = new ItemStack(Material.IRON_NUGGET);
 
     private static final ItemStack editPortalAccess = new ItemStack(Material.NAME_TAG);
     private static final ItemStack editPortalDescr = new ItemStack(Material.OAK_SIGN);
@@ -59,6 +59,14 @@ public class MenuItems {
         itemMeta = blackPane.getItemMeta();
         itemMeta.setDisplayName(" ");
         blackPane.setItemMeta(itemMeta);
+
+        itemMeta = prevPage.getItemMeta();
+        itemMeta.setCustomModelData(2);
+        prevPage.setItemMeta(itemMeta);
+
+        itemMeta = nextPage.getItemMeta();
+        itemMeta.setCustomModelData(3);
+        nextPage.setItemMeta(itemMeta);
     }
 
     public static ItemStack goSpawn(Player player) {

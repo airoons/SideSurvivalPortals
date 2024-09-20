@@ -8,7 +8,6 @@ import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
 import lv.sidesurvival.SurvivalPortals;
-import lv.sidesurvival.managers.DataManager;
 import lv.sidesurvival.managers.MenuManager;
 import lv.sidesurvival.objects.Portal;
 import lv.sidesurvival.utils.Messages;
@@ -23,7 +22,6 @@ public class EditPortalColor implements InventoryProvider {
     private static final SurvivalPortals plugin = SurvivalPortals.getInstance();
     private final InventoryManager invManager = plugin.getInvManager();
     private final MenuManager menuManager = plugin.getMenuManager();
-    private final DataManager dataManager = plugin.getDataManager();
     private SmartInventory inventory;
     private Portal portal;
 
