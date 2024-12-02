@@ -5,13 +5,12 @@ import java.util.List;
 
 import lv.sidesurvival.SurvivalPortals;
 import lv.sidesurvival.utils.Messages;
+import lv.sidesurvival.utils.SkullCreator;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import dev.dbassett.skullcreator.SkullCreator;
 
 public class MenuItems {
 

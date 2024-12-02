@@ -28,10 +28,6 @@
             <id>sk89q-repo</id>
             <url>https://maven.enginehub.org/repo/</url>
         </repository>
-        <repository>
-            <id>skullcreator-repo</id>
-            <url>https://github.com/deanveloper/SkullCreator/raw/mvn-repo/</url>
-        </repository>
     </repositories>
 
     <dependencies>
@@ -57,12 +53,6 @@
                     <artifactId>bstats-bukkit</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>dev.dbassett</groupId>
-            <artifactId>skullcreator</artifactId>
-            <version>3.0.0</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -132,7 +122,6 @@
                             <include>com.google.guava</include>
                             <include>fr.minuskube.inv</include>
                             <include>org.mongodb</include>
-                            <include>dev.dbassett</include>
                             <include>org.apache.commons</include>
                         </includes>
                     </artifactSet>

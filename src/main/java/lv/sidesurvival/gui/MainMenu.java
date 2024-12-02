@@ -7,11 +7,11 @@ import lv.sidesurvival.managers.PortalManager;
 import lv.sidesurvival.objects.ClaimOwner;
 import lv.sidesurvival.objects.Portal;
 import lv.sidesurvival.utils.Messages;
+import lv.sidesurvival.utils.SkullCreator;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import dev.dbassett.skullcreator.SkullCreator;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.InventoryManager;
 import fr.minuskube.inv.SmartInventory;
