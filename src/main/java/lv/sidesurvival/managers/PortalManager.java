@@ -56,6 +56,7 @@ public class PortalManager {
             Material.MAGENTA_STAINED_GLASS_PANE,
             Material.PINK_STAINED_GLASS_PANE
     );
+    public List<String> disabledWorlds;
 
     public PortalManager(SurvivalPortals plugin) {
         this.plugin = plugin;
@@ -67,6 +68,8 @@ public class PortalManager {
                     safeBlocks.add(Material.valueOf(material));
             }
         }
+
+        disabledWorlds = plugin.getConfig().getStringList("disabledWorlds");
     }
 
     // Fully creates portal (region + blocks), but saving has to be done after
@@ -496,5 +499,14 @@ public class PortalManager {
                 player.teleport(PortalData.getNetherSpawnLocation());
             }
         }
+    }
+
+    public boolean isDisabledWorld(String queryWorld) {
+        for (String disabledWorld : disabledWorlds) {
+            if (queryWorld.startsWith(disabledWorld))
+                return true;
+        }
+
+        return false;
     }
 }

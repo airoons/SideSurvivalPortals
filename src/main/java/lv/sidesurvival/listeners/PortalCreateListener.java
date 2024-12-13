@@ -41,6 +41,9 @@ public class PortalCreateListener implements Listener {
         if (portalManager.getPortalAt(event.getBlocks().get(2).getLocation()) != null)
             return;
 
+        if (portalManager.isDisabledWorld(event.getEntity().getWorld().getName()))
+            return;
+
         boolean isNorthSouth = false;
         Block block = null;
         BlockVector3 min = null;
