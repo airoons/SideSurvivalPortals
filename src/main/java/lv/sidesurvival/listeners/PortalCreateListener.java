@@ -3,9 +3,11 @@ package lv.sidesurvival.listeners;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 
+import lv.sidesurvival.data.PortalData;
 import lv.sidesurvival.managers.ClaimManager;
 import lv.sidesurvival.objects.Claim;
 import lv.sidesurvival.objects.ClaimOwner;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -20,6 +22,7 @@ import lv.sidesurvival.managers.PermissionManager;
 import lv.sidesurvival.managers.PortalManager;
 import lv.sidesurvival.objects.Portal;
 import lv.sidesurvival.utils.Messages;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class PortalCreateListener implements Listener {
 
@@ -34,6 +37,15 @@ public class PortalCreateListener implements Listener {
     @EventHandler
     public void onPortalCreate(PortalCreateEvent event) {
         event.setCancelled(true);
+        if (event.getEntity() != null && event.getReason() == PortalCreateEvent.CreateReason.END_PLATFORM) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    event.getEntity().teleport(PortalData.getEndSpawnLocation());
+                }
+            }.runTaskLater(SurvivalPortals.getInstance(), 1L);
+            return;
+        }
 
         if (event.getEntity() == null)
             return;

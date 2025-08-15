@@ -18,12 +18,14 @@ public class PortalData {
 
     private static Location worldSpawn;
     private static Location netherSpawn;
+    private static Location endSpawn;
 
     public PortalData(SurvivalPortals plugin) {
         dataManager = plugin.getDataManager();
 
         worldSpawn = LocationSerialization.getLocationFromString(plugin.getConfiguration().getString("teleportLocs.spawn"));
         netherSpawn = LocationSerialization.getLocationFromString(plugin.getConfiguration().getString("teleportLocs.netherspawn"));
+        endSpawn = LocationSerialization.getLocationFromString(plugin.getConfiguration().getString("teleportLocs.endspawn"));
     }
 
     public static void addPortal(Portal portal, boolean save) {
@@ -70,7 +72,11 @@ public class PortalData {
         return netherSpawn;
     }
 
-	public static Map<String, Portal> getAccessablePortalsByGroup(String groupId) {
+    public static Location getEndSpawnLocation() {
+        return endSpawn;
+    }
+
+    public static Map<String, Portal> getAccessablePortalsByGroup(String groupId) {
 		return CACHED_PORTALS.entrySet().stream()
         .filter(map -> map.getValue().getAllowedGroups().contains(groupId))
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
