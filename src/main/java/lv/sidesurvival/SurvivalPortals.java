@@ -14,6 +14,7 @@ import fr.minuskube.inv.InventoryManager;
 import lv.sidesurvival.commands.PortalCommand;
 import lv.sidesurvival.data.PortalData;
 import lv.sidesurvival.gui.MenuItems;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class SurvivalPortals extends JavaPlugin {
 
@@ -56,7 +57,12 @@ public class SurvivalPortals extends JavaPlugin {
         invManager = new InventoryManager(this);
         invManager.init();
 
-        dataManager.loadPortals();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                dataManager.loadPortals();
+            }
+        }.runTaskLater(this, 100L);
 
         getServer().getPluginManager().registerEvents(new PortalCreateListener(this), this);
         getServer().getPluginManager().registerEvents(new PortalBreakListener(this), this);

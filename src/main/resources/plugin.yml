@@ -7,7 +7,7 @@ main: lv.sidesurvival.SurvivalPortals
 version: 2.0
 api-version: '1.21'
 load: POSTWORLD
-depend: [SideLang, WorldGuard, SurvivalZemes]
+depend: [SideLang, WorldGuard, SurvivalZemes, Worlds]
 
 commands:
   portal:

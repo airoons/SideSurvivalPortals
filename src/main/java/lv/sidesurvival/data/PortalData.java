@@ -13,19 +13,16 @@ import java.util.stream.Collectors;
 
 public class PortalData {
 
+    private static final SurvivalPortals plugin = SurvivalPortals.getInstance();
     private static DataManager dataManager;
     public static Map<String, Portal> CACHED_PORTALS = new ConcurrentHashMap<>();
 
-    private static Location worldSpawn;
-    private static Location netherSpawn;
-    private static Location endSpawn;
+    private static Location worldSpawn = null;
+    private static Location netherSpawn = null;
+    private static Location endSpawn = null;
 
     public PortalData(SurvivalPortals plugin) {
         dataManager = plugin.getDataManager();
-
-        worldSpawn = LocationSerialization.getLocationFromString(plugin.getConfiguration().getString("teleportLocs.spawn"));
-        netherSpawn = LocationSerialization.getLocationFromString(plugin.getConfiguration().getString("teleportLocs.netherspawn"));
-        endSpawn = LocationSerialization.getLocationFromString(plugin.getConfiguration().getString("teleportLocs.endspawn"));
     }
 
     public static void addPortal(Portal portal, boolean save) {
@@ -65,14 +62,23 @@ public class PortalData {
     }
 
     public static Location getSpawnLocation() {
+        if (worldSpawn == null)
+            worldSpawn = LocationSerialization.getLocationFromString(plugin.getConfiguration().getString("teleportLocs.spawn"));
+
         return worldSpawn;
     }
 
     public static Location getNetherSpawnLocation() {
+        if (netherSpawn == null)
+            netherSpawn = LocationSerialization.getLocationFromString(plugin.getConfiguration().getString("teleportLocs.netherspawn"));
+
         return netherSpawn;
     }
 
     public static Location getEndSpawnLocation() {
+        if (endSpawn == null)
+            endSpawn = LocationSerialization.getLocationFromString(plugin.getConfiguration().getString("teleportLocs.endspawn"));
+
         return endSpawn;
     }
 
