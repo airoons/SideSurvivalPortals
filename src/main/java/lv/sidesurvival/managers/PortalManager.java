@@ -11,6 +11,8 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import lv.sidesurvival.SurvivalPortals;
 import lv.sidesurvival.data.PortalData;
+import lv.sidesurvival.events.PortalEnterEvent;
+import lv.sidesurvival.events.PortalTeleportEvent;
 import lv.sidesurvival.objects.Claim;
 import lv.sidesurvival.objects.ClaimOwner;
 import lv.sidesurvival.objects.Portal;
@@ -396,6 +398,8 @@ public class PortalManager {
             loc.setPitch(player.getLocation().getPitch());
             loc.setYaw(player.getLocation().getYaw());
             player.teleport(loc);
+
+            Bukkit.getServer().getPluginManager().callEvent(new PortalTeleportEvent(player, portal, PortalTeleportEvent.TeleportType.NORMAL));
         }
     }
 
@@ -493,10 +497,14 @@ public class PortalManager {
         if (!isNether) {
             if (PortalData.getSpawnLocation() != null) {
                 player.teleport(PortalData.getSpawnLocation());
+
+                Bukkit.getServer().getPluginManager().callEvent(new PortalTeleportEvent(player, null, PortalTeleportEvent.TeleportType.OVERWORLD_SPAWN));
             }
         } else {
             if (PortalData.getNetherSpawnLocation() != null) {
                 player.teleport(PortalData.getNetherSpawnLocation());
+
+                Bukkit.getServer().getPluginManager().callEvent(new PortalTeleportEvent(player, null, PortalTeleportEvent.TeleportType.NETHER_SPAWN));
             }
         }
     }

@@ -2,6 +2,9 @@ package lv.sidesurvival.listeners;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
+import lv.sidesurvival.events.PortalEnterEvent;
+import lv.sidesurvival.objects.Portal;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -46,6 +49,9 @@ public class PortalEnterListener implements Listener {
         if (!portalManager.isPortalAt(to))
             return;
 
-        menuManager.openMain(event.getPlayer(), portalManager.getPortalAt(to));
+        Portal portal = portalManager.getPortalAt(to);
+        Bukkit.getServer().getPluginManager().callEvent(new PortalEnterEvent(event.getPlayer(), portal));
+
+        menuManager.openMain(event.getPlayer(), portal);
     }
 }
